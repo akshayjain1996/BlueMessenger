@@ -2,4 +2,5 @@
     <string name="app_name">CSC301</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_chat">chatActivity</string>
+    <string name="title_activity_connected_chat_list">ConnectedChatListActivity</string>
 </resources>
