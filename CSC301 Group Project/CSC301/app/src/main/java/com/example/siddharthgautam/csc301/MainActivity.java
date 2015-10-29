@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             //Toast.makeText(getApplicationContext(), name, Toast.LENGTH_LONG).show();
         }
         //Intent intent = new Intent(MainActivity.this, chatActivity.class);
-        Intent intent = new Intent(getApplicationContext(), chatActivity.class);
+        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
         intent.putExtra("BLUETOOTH_VALUE", bluetooth.toString());
 
         MainActivity.this.startActivity(intent);
