@@ -1,0 +1,8 @@
+The initial challenge of organizing the group was finding a mutually agreeable point of contact for each other. Due to time constraints, it was unviable for the entire group to meet in person, so we held meetings twice a week consisting of most of the members. Additionally, we discussed our ideas via Facebook and Skype almost daily, since internet meetings were easier for all the group members to attend. Because not all members were present during the in person meetings, we discussed ideas together, but ultimately we would present our ideas electronically, whether by document or explanation, for consideration by all our members. All members were required to agree before a feature, persona, etc. was accepted.
+Product choice was voted for in one meeting from a few ideas for its utility.
+
+We drafted our features in two steps. First, we would just list all of our features for features, then we would eliminate features which could not be implemented within 6 weeks. Personas were created outside of meetings. Any feature that all the personas wanted were automatically considered as part of our MVP. Furthermore, personas were ranked
+by which persona would be the most common, and which one would be most likely to require/want a Bluetooth based chat. 
+
+The features that made up the highest ranked persona were prioritized, and if we determined that a given persona needed only features we could implement, then those features were part of our MVP. In summary, our MVP = (features common to all
+personas + features most useful to highest ranked persona).
