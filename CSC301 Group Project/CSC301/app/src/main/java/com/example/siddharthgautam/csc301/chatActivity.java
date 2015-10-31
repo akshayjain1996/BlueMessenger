@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Handler;
 
-public class ChatActivity extends AppCompatActivity {
+public class chatActivity extends AppCompatActivity {
 
     private BluetoothAdapter bluetooth;
     private Set<BluetoothDevice> devices;

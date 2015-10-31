@@ -1,7 +1,9 @@
 package com.example.siddharthgautam.csc301;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +19,8 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import java.util.ArrayList;
@@ -38,7 +42,9 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        scan = (Button)findViewById(R.id.deviceScan);
+        devices = new HashSet<BluetoothDevice>();
+
+        scan = (Button)findViewById(R.id.scanButton);
         list = (Button)findViewById(R.id.deviceList);
 
         bluetooth = BluetoothAdapter.getDefaultAdapter();
@@ -50,22 +56,51 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             Toast.makeText(getApplicationContext(), "Bluetooth is not supported on this device",
                     Toast.LENGTH_LONG).show();
             //System.exit(1);
-        } else if (!bluetooth.isEnabled()) {
+        }
+
+        if (!bluetooth.isEnabled()) {
             flag = 1;
             Intent start = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(start, 1);
             Toast.makeText(getApplicationContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(getApplicationContext(), "Bluetooth is ready", Toast.LENGTH_LONG).show();
         }
 
-        if (flag == 1) {
-            Toast.makeText(getApplicationContext(), "Bluetooth has been enabled", Toast.LENGTH_LONG).show();
-        }
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        this.registerReceiver(receiver, filter);
 
+        scan.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                findNewDevices();
+            }
+        });
     }
 
-    public  void show(View view){
+
+    public void findNewDevices(){
+        bluetooth.startDiscovery();
+    }
+
+
+    // Reciever for discovering new devices..
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if(device != null) {
+                    devices.add(device);
+                    Toast.makeText(getApplicationContext(), "New Device Discovered", Toast.LENGTH_LONG).show();
+
+                    listDevices();
+                }
+
+            }
+        }
+    };
+
+
+    public void show(View view){
         Intent show = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         startActivityForResult(show, 0);
 
@@ -89,28 +124,25 @@ public class MainActivity extends AppCompatActivity implements Serializable{
 
     }
 
-    public void listDevices(View view){
-        // set focus
-        View v = this.getCurrentFocus();
-        if (v != null) {
-            InputMethodManager manager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-            manager.hideSoftInputFromWindow(v.getWindowToken(), 0);
-        }
+    public void listDevices(){
 
-        devices = bluetooth.getBondedDevices();
+//        View v = this.getCurrentFocus();
+//        if (v != null) {
+//            InputMethodManager manager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+//            manager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+//        }
+
         ArrayList deviceList = new ArrayList();
 
         for(BluetoothDevice blueDevice : devices) {
             String name = blueDevice.getName();
             deviceList.add(blueDevice.getName());
-            //Toast.makeText(getApplicationContext(), name, Toast.LENGTH_LONG).show();
         }
-
-        //Toast.makeText(getApplicationContext(),"Showing Paired Devices",Toast.LENGTH_SHORT).show();
-
 
         final ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, deviceList);
         listView.setAdapter(adapter);
+
+
 
 
     }
@@ -125,8 +157,8 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             deviceList.add(blueDevice.getName());
             //Toast.makeText(getApplicationContext(), name, Toast.LENGTH_LONG).show();
         }
-        //Intent intent = new Intent(MainActivity.this, ChatActivity.class);
-        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+        //Intent intent = new Intent(MainActivity.this, chatActivity.class);
+        Intent intent = new Intent(getApplicationContext(), chatActivity.class);
         intent.putExtra("BLUETOOTH_VALUE", bluetooth.toString());
 
         MainActivity.this.startActivity(intent);
