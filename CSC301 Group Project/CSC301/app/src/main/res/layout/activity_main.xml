@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:text="Scan for Devices"
         android:onClick="show"
-        android:id="@+id/deviceScan"
+        android:id="@+id/scanButton"
         android:layout_marginTop="95dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
@@ -38,7 +38,7 @@
          android:text="Show Devices"
          android:onClick="listDevices"
          android:id="@+id/deviceList"
-         android:layout_below="@+id/deviceScan"
+         android:layout_below="@+id/scanButton"
          android:layout_alignParentLeft="true"
          android:layout_alignParentStart="true" />
 
