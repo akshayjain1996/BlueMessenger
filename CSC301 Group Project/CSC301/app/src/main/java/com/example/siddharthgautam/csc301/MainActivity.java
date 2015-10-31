@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
     }
 
     public void listDevices(View view){
-
+        // set focus
         View v = this.getCurrentFocus();
         if (v != null) {
             InputMethodManager manager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
