@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
 
     private BluetoothAdapter bluetooth;
     private Set<BluetoothDevice> devices;
+    private Set<BluetoothDevice> connectedDevices;
     Button scan, list;
     ListView devicesList;
     private static final UUID uuid = UUID.fromString("a9a8791e-10f3-4223-b0c7-5ade55943a84");
@@ -110,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                     //Connect
                     Method m = device.getClass().getMethod("createBond", (Class[]) null);
                     m.invoke(device, (Object[]) null);
+                    connectedDevices.add(device);
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 } catch (NoSuchMethodException e) {
@@ -127,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                 try {
                 Method m = device.getClass().getMethod("removeBond", (Class[]) null);
                 m.invoke(device, (Object[]) null);
+                connectedDevices.remove(device);
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             } catch (NoSuchMethodException e) {
