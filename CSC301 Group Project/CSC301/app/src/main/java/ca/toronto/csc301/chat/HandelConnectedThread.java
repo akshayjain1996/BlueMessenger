@@ -3,6 +3,8 @@ package ca.toronto.csc301.chat;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 
+import com.example.siddharthgautam.csc301.Message;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,10 +21,8 @@ public class HandelConnectedThread extends Thread {
     private BluetoothSocket socket;
     private InputStream inputStream = null;
     private OutputStream outputStream = null;
-    BluetoothAdapter bluetoothAdapter;
 
     public HandelConnectedThread(BluetoothSocket bluetoothSocket){
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         socket = bluetoothSocket;
         InputStream tmpIn = null;
@@ -47,6 +47,7 @@ public class HandelConnectedThread extends Thread {
 
         try {
             bytes = inputStream.read(buffer);
+//            Message message = new Message(, buffer);
         } catch (IOException e) {
             e.printStackTrace();
         }
