@@ -2,10 +2,14 @@ package com.example.siddharthgautam.csc301;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.AdapterView.OnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,7 +19,10 @@ import ca.toronto.csc301.chat.ConnectionsList;
 
 public class contactsActivity extends AppCompatActivity {
     private BluetoothAdapter bluetooth;
-    ListView contactsList;
+    private ListView contactsList;
+    private ArrayList cL = new ArrayList();
+    private ArrayAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,12 +30,21 @@ public class contactsActivity extends AppCompatActivity {
         setContentView(R.layout.contacts_page);
         contactsList = (ListView)findViewById(R.id.listContacts);
         updateContactsList();
+
+        // allow each item in contacts to be clickable 
+        contactsList.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(contactsActivity.this, chatActivity.class);
+
+                startActivity(intent);
+            }
+        });
     }
 
     private void updateContactsList(){
         ConnectionsList c = ConnectionsList.getInstance();
         Set<BluetoothDevice> d = bluetooth.getBondedDevices();
-        ArrayList cL = new ArrayList();
         Iterator<BluetoothDevice> i = d.iterator();
 
         while(i.hasNext()){
@@ -43,7 +59,7 @@ public class contactsActivity extends AppCompatActivity {
                 cL.add(device_name);
             }**/
         }
-        ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, cL);
+        adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, cL);
         contactsList.setAdapter(adapter);
     }
 
