@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
     private BluetoothAdapter bluetooth;
     private Set<BluetoothDevice> devices;
     private Set<BluetoothDevice> connectedDevices;
-    Button scan, list;
+    Button scan, contacts;
     ListView devicesList;
     private static final UUID uuid = UUID.fromString("a9a8791e-10f3-4223-b0c7-5ade55943a84");
     private BluetoothServerSocket blueSocket;
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         devices = new HashSet<BluetoothDevice>();
 
         scan = (Button)findViewById(R.id.scanButton);
-        list = (Button)findViewById(R.id.deviceList);
+        contacts = (Button)findViewById(R.id.deviceList);
 
         bluetooth = BluetoothAdapter.getDefaultAdapter();
         devicesList = (ListView)findViewById(R.id.listView);
@@ -78,10 +78,16 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         scan.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String device_name = bluetooth.getName();
-                if (!device_name.contains("BlueM-")){
+                if (!device_name.contains("BlueM-")) {
                     bluetooth.setName("BlueM-" + device_name);
                 }
                 findNewDevices();
+            }
+        });
+
+        contacts.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                openContacts();
             }
         });
 
@@ -98,6 +104,10 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         });
     }
 
+    //Go to contacts activity
+    public void openContacts() {
+        startActivity(new Intent(MainActivity.this, contactsActivity.class));
+    }
 
     public void findNewDevices(){
         bluetooth.startDiscovery();
