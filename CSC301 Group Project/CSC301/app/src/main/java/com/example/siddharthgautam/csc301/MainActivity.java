@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         }
     };
 
+    // heres a comment
     public void connectDevice(String deviceName){
 
         for(BluetoothDevice device : devices){
