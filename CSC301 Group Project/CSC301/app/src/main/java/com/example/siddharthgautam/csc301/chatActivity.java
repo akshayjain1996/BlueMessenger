@@ -34,7 +34,11 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Handler;
 
+import ca.toronto.csc301.chat.BluetoothController;
+
 public class chatActivity extends AppCompatActivity {
+
+    public static int MAX_MSGS_ON_SCREEN = 5;
 
     private BluetoothAdapter bluetooth;
     private Set<BluetoothDevice> devices;
@@ -60,7 +64,6 @@ public class chatActivity extends AppCompatActivity {
         if (extras != null) {
             String bluetoothValue = extras.getString("BLUETOOTH_VALUE");
             Toast.makeText(getApplicationContext(), bluetoothValue, Toast.LENGTH_LONG).show();
-
         }
         sendButton = (Button) findViewById(R.id.sendMessageButton);
         setSendButtonFunction(sendButton);
@@ -74,7 +77,9 @@ public class chatActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         //// TODO: 10/31/2015 replace "Test.txt" with unique identifier for chat.
-        loadMessages(getApplicationContext().getFilesDir().getAbsoluteFile(), "Test.txt");
+        //if(stringArrayAdapter.getCount() == 0) {
+            loadMessages(getApplicationContext().getFilesDir().getAbsoluteFile(), "Test.txt");
+        //}
         super.onStart();
     }
 
@@ -103,13 +108,22 @@ public class chatActivity extends AppCompatActivity {
      * send it through a BlueTooth connection and write the message on your own message log.
      */
     private void sendMessage(){
-        Toast.makeText(this, messageTextView.getText(), Toast.LENGTH_SHORT);
-        stringArrayAdapter.add("You: " + messageTextView.getText().toString()); //Todo: replace with message
+        stringArrayAdapter.add(messageTextView.getText().toString()); //Todo: replace with message
+        if(stringArrayAdapter.getCount() > MAX_MSGS_ON_SCREEN){
+            stringArrayAdapter.remove(stringArrayAdapter.getItem(0));
+        }
         stringArrayAdapter.notifyDataSetChanged();
+        //BluetoothController.getInstance().sendMessage(new Message());
         //implement this!
     }
 
-
+    public void receiveMessage(Message m){
+        stringArrayAdapter.add(m.toString()); //Todo: replace with message
+        if(stringArrayAdapter.getCount() > MAX_MSGS_ON_SCREEN){
+            stringArrayAdapter.remove(stringArrayAdapter.getItem(0));
+        }
+        stringArrayAdapter.notifyDataSetChanged();
+    }
 
     /**
      * Loads all the messages from a given message log file onto the UI.
@@ -127,9 +141,9 @@ public class chatActivity extends AppCompatActivity {
             }
             stringArrayAdapter.notifyDataSetChanged();
         } catch (FileNotFoundException e) {
-            //no saved messages
+            //nothing, just don't load messages
         } catch (IOException e) {
-            stringList.clear();
+            //stringList.clear();
         }
     }
 
@@ -142,13 +156,15 @@ public class chatActivity extends AppCompatActivity {
      */
     public void saveMessages(File dir, String username){
         File saveFile = new File(dir, username + ".ser");
+
         try {
             BufferedWriter messageSaveWriter = new BufferedWriter(new FileWriter(saveFile));
-            for(int i = 0; i < messageView.getCount(); i++){
-                messageSaveWriter.write(stringArrayAdapter.getItem(i));
+            for(int i = 0; i < stringList.size(); i++){
+                messageSaveWriter.write(stringList.get(i) + "\n");
             }
+            messageSaveWriter.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            //pass
         }
     }
 

@@ -59,13 +59,13 @@
             android:layout_below="@+id/button"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:id="@+id/button2" />
+            android:id="@+id/openMainButton" />
 
         <ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/listView"
-            android:layout_below="@+id/button2"
+            android:layout_below="@+id/openMainButton"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
