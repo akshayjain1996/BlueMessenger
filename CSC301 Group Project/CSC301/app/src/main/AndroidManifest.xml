@@ -19,11 +19,7 @@
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
-<<<<<<< HEAD
-            android:name="ChatActivity"
-=======
             android:name=".ChatActivity"
->>>>>>> refs/remotes/csc301-fall-2015/master
             android:label="@string/title_activity_chat"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
