@@ -19,7 +19,7 @@ public class RequestConnectionThread extends Thread{
     private BluetoothDevice device;
     private BluetoothSocket socket;
     BluetoothAdapter bluetoothAdapter;
-
+    ConnectedDevice connectedDevice;
 
     public RequestConnectionThread(BluetoothDevice bluetoothDevice){
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -29,12 +29,19 @@ public class RequestConnectionThread extends Thread{
             tmp = device.createRfcommSocketToServiceRecord(uuid);
         } catch (IOException e) { }
         socket = tmp;
+
+        connectedDevice = new ConnectedDevice();
+        connectedDevice.setDevice(device);
+        connectedDevice.setSocket(socket);
     }
 
     @Override
     public void run() {
         try {
             socket.connect();
+            connectedDevice.connectionComplete();
+            ConnectionsList connectionsList = ConnectionsList.getInstance();
+            connectionsList.addConnection(connectedDevice);
         } catch (IOException e) {
             try {
                 socket.close();

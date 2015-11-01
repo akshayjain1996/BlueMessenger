@@ -9,7 +9,10 @@ import com.example.siddharthgautam.csc301.Message;
  */
 public class BluetoothController {
 
+    ConnectionsList connectionsList;
+
     BluetoothController(){
+        connectionsList = new ConnectionsList();
 
     }
 
