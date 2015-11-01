@@ -36,5 +36,9 @@ public class StartScreenActivity extends AppCompatActivity {
         });
     }
 
+    public void openMain(View view) {
+        Intent intent = new Intent(StartScreenActivity.this, MainActivity.class);
+        StartScreenActivity.this.startActivity(intent);
+    }
 
 }
