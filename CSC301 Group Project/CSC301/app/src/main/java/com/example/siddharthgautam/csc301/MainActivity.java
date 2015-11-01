@@ -87,16 +87,15 @@ public class MainActivity extends AppCompatActivity implements Serializable{
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if(device != null) {
-                    devices.add(device);
-                    Toast.makeText(getApplicationContext(), "New Device Discovered", Toast.LENGTH_LONG).show();
-                    listDevices();
-                }
-
+        String action = intent.getAction();
+        if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            if(device != null) {
+                devices.add(device);
+                Toast.makeText(getApplicationContext(), "New Device Discovered", Toast.LENGTH_LONG).show();
+                listDevices();
             }
+        }
         }
     };
 
