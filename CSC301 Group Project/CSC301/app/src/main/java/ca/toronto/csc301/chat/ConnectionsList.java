@@ -1,6 +1,9 @@
 package ca.toronto.csc301.chat;
 
+import android.bluetooth.BluetoothDevice;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -27,5 +30,14 @@ public class ConnectionsList {
 
     public static ConnectionsList getInstance() {
         return instance;
+    }
+
+    public ConnectedDevice findConnectedDevide(BluetoothDevice device){
+        for(ConnectedDevice connectedDevice : connectedDevices){
+            if(connectedDevice.getDevice().equals(device)){
+                return connectedDevice;
+            }
+        }
+        return null;
     }
 }

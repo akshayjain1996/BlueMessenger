@@ -12,13 +12,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.bluetooth.*;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.lang.reflect.InvocationTargetException;
-import 	java.lang.reflect.Method;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,6 +30,9 @@ import java.util.Set;
 
 import java.util.ArrayList;
 import java.util.UUID;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class MainActivity extends AppCompatActivity implements Serializable{
 
@@ -78,6 +80,15 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                 findNewDevices();
             }
         });
+
+        devicesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getApplicationContext(), "I will connect", Toast.LENGTH_LONG).show();
+                String deviceName = devicesList.getItemAtPosition(position).toString();
+                connectDevice(deviceName);
+            }
+        });
     }
 
 
@@ -98,19 +109,21 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                     Toast.makeText(getApplicationContext(), "New Device Discovered", Toast.LENGTH_LONG).show();
                     listDevices();
                 }
+
             }
         }
     };
-
+    //Pairs with a bluetooth device with deviceName.
     public void connectDevice(String deviceName){
-
+        //Checks if name matches
         for(BluetoothDevice device : devices){
             if(device.getName().equals(deviceName)){
                 try{
-                    //Connect
+                    //Connects
                     Method m = device.getClass().getMethod("createBond", (Class[]) null);
                     m.invoke(device, (Object[]) null);
                     connectedDevices.add(device);
+                    //Exception handling
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 } catch (NoSuchMethodException e) {
@@ -121,23 +134,28 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             }
         }
     }
-
+    // Disconnects paired device with name deviceName.
     public void disconnectDevice(String deviceName){
+        //Checks if name matches
         for(BluetoothDevice device : devices) {
             if (device.getName().equals(deviceName))
                 try {
-                Method m = device.getClass().getMethod("removeBond", (Class[]) null);
-                m.invoke(device, (Object[]) null);
-                connectedDevices.remove(device);
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+                    //Connects
+                    Method m = device.getClass().getMethod("removeBond", (Class[]) null);
+                    m.invoke(device, (Object[]) null);
+                    connectedDevices.remove(device);
+                    //Exception handling
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
         }
     }
+
+
 
     public void startSocket(View view) {
         BluetoothServerSocket socket = null;
@@ -164,6 +182,12 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         devicesList.setAdapter(adapter);
     }
 
+    public void connect() {
+        for (BluetoothDevice bt : devices) {
+            Toast.makeText(getApplicationContext(), bt.getAddress(), Toast.LENGTH_LONG).show();
+        }
+    }
+
     public void startChat(View view) {
         //Toast.makeText(getApplicationContext(), "hello", Toast.LENGTH_LONG).show();
         devices = bluetooth.getBondedDevices();
@@ -188,8 +212,6 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

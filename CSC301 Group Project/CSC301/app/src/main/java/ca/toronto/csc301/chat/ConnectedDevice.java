@@ -8,12 +8,17 @@ import android.bluetooth.BluetoothSocket;
  */
 public class ConnectedDevice {
 
-    BluetoothDevice device;
-    BluetoothSocket socket;
-    boolean connected;
+    private HandelConnectedThread handelConnectedThread;
+    private BluetoothDevice device;
+    private BluetoothSocket socket;
+    private boolean connected;
 
-    ConnectedDevice(){
+    ConnectedDevice(BluetoothDevice device, BluetoothSocket bluetoothSocket){
+        this.device = device;
+        this.socket = bluetoothSocket;
         connected = false;
+        handelConnectedThread = new HandelConnectedThread(socket, device);
+        handelConnectedThread.start();
     }
 
     public BluetoothDevice getDevice() {
@@ -38,5 +43,9 @@ public class ConnectedDevice {
 
     public void connectionLost(){
         connected = false;
+    }
+
+    public HandelConnectedThread getHandelConnectedThread() {
+        return handelConnectedThread;
     }
 }
