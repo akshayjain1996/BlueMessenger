@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
     private BluetoothAdapter bluetooth;
     private Set<BluetoothDevice> devices;
     private Set<BluetoothDevice> connectedDevices;
-    Button scan, list;
+    Button scan, contacts;
     ListView devicesList;
     private static final UUID uuid = UUID.fromString("a9a8791e-10f3-4223-b0c7-5ade55943a84");
     private BluetoothServerSocket blueSocket;
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         devices = new HashSet<BluetoothDevice>();
 
         scan = (Button)findViewById(R.id.scanButton);
-        list = (Button)findViewById(R.id.deviceList);
+        contacts = (Button)findViewById(R.id.deviceList);
 
         bluetooth = BluetoothAdapter.getDefaultAdapter();
         devicesList = (ListView)findViewById(R.id.listView);
@@ -77,7 +77,17 @@ public class MainActivity extends AppCompatActivity implements Serializable{
 
         scan.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                String device_name = bluetooth.getName();
+                if (!device_name.contains("BlueM-")) {
+                    bluetooth.setName("BlueM-" + device_name);
+                }
                 findNewDevices();
+            }
+        });
+
+        contacts.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                openContacts();
             }
         });
 
@@ -85,11 +95,19 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getApplicationContext(), "I will connect", Toast.LENGTH_LONG).show();
-                //connectDevice();
+                String deviceName = devicesList.getItemAtPosition(position).toString();
+                if (deviceName != null) {
+                    connectDevice(deviceName);
+                }
+                //connectDevice(deviceName);
             }
         });
     }
 
+    //Go to contacts activity
+    public void openContacts() {
+        startActivity(new Intent(MainActivity.this, contactsActivity.class));
+    }
 
     public void findNewDevices(){
         bluetooth.startDiscovery();
@@ -112,16 +130,23 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             }
         }
     };
-
+    //Pairs with a bluetooth device with deviceName.
     public void connectDevice(String deviceName){
-
+        //Checks if name matches
         for(BluetoothDevice device : devices){
             if(device.getName().equals(deviceName)){
                 try{
-                    //Connect
+                    //Connects
                     Method m = device.getClass().getMethod("createBond", (Class[]) null);
                     m.invoke(device, (Object[]) null);
-                    connectedDevices.add(device);
+                    Toast.makeText(getApplicationContext(), device.getName(), Toast.LENGTH_LONG).show();
+                    try {
+                        connectedDevices.add(device);
+                    } catch (NullPointerException e) {
+                        Toast.makeText(getApplicationContext(), "cannot add null devices", Toast.LENGTH_LONG);
+                    }
+                    //connectedDevices.add(device);
+                    //Exception handling
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 } catch (NoSuchMethodException e) {
@@ -132,14 +157,21 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             }
         }
     }
-
+    // Disconnects paired device with name deviceName.
     public void disconnectDevice(String deviceName){
+        //Checks if name matches
         for(BluetoothDevice device : devices) {
             if (device.getName().equals(deviceName))
                 try {
+                    //Connects
                     Method m = device.getClass().getMethod("removeBond", (Class[]) null);
                     m.invoke(device, (Object[]) null);
-                    connectedDevices.remove(device);
+                    try {
+                        connectedDevices.remove(device);
+                    } catch (NullPointerException e) {
+                        Toast.makeText(getApplicationContext(), "cannot add null devices", Toast.LENGTH_LONG);
+                    }
+                    //Exception handling
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 } catch (NoSuchMethodException e) {
