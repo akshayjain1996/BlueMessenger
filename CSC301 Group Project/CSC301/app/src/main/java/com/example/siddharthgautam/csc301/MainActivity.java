@@ -166,7 +166,11 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                     //Connects
                     Method m = device.getClass().getMethod("removeBond", (Class[]) null);
                     m.invoke(device, (Object[]) null);
-                    connectedDevices.remove(device);
+                    try {
+                        connectedDevices.remove(device);
+                    } catch (NullPointerException e) {
+                        Toast.makeText(getApplicationContext(), "cannot add null devices", Toast.LENGTH_LONG);
+                    }
                     //Exception handling
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
