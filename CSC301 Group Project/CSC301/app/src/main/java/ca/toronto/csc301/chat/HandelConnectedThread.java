@@ -41,11 +41,6 @@ public class HandelConnectedThread extends Thread {
 
     }
 
-    public void send(ConnectedDevice dev) {
-
-
-    }
-
     @Override
     public void run() {
         byte[] buffer = new byte[MAX_MESSAGE_SIZE];
@@ -59,7 +54,7 @@ public class HandelConnectedThread extends Thread {
         }
     }
 
-    // tried implementing the write function 
+    // tried implementing the write function
     public void write(){
         byte[] toSend=message.getMessage().getBytes();
         try {
