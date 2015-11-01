@@ -17,6 +17,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -186,4 +190,11 @@ public class MainActivity extends AppCompatActivity implements Serializable{
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void onResume(){
+        File resourceLocation = new File(this.getApplicationContext().getFilesDir().getAbsolutePath());
+
+        super.onResume();
+    }
+
 }
