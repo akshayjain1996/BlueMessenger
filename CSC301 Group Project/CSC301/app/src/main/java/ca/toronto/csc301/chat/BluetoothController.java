@@ -4,16 +4,29 @@ import android.bluetooth.BluetoothDevice;
 
 import com.example.siddharthgautam.csc301.Message;
 
+import java.util.List;
+
 /**
  * Created by akshay on 31/10/15.
  */
 public class BluetoothController {
 
     ConnectionsList connectionsList;
+    static BluetoothController instance;
 
-    BluetoothController(){
+    private BluetoothController(){
         connectionsList = new ConnectionsList();
 
+    }
+
+    public static BluetoothController getInstance() {
+        if(instance != null) {
+            return instance;
+        } else {
+            BluetoothController bluetoothController = new BluetoothController();
+            instance = bluetoothController;
+            return  instance;
+        }
     }
 
     public void establishConnection(BluetoothDevice device){
@@ -22,11 +35,11 @@ public class BluetoothController {
     }
 
     public void sendMessage(Message message){
-
-
+        ConnectedDevice connectedDevice = connectionsList.findConnectedDevide(message.getDevice());
+        connectedDevice.getHandelConnectedThread().write(message);
     }
 
-    public void handelRecievedMessage(){
+    public void handelRecievedMessage(Message message){
 
     }
 
