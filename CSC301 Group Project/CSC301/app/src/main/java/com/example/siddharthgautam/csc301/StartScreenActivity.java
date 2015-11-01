@@ -10,6 +10,7 @@ public class StartScreenActivity extends AppCompatActivity {
 
     private Button connectButton;
     private Button openChatsButton;
+    private Button openMainButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +35,16 @@ public class StartScreenActivity extends AppCompatActivity {
                 startActivity(new Intent(StartScreenActivity.this, chatActivity.class)); // open chats
             }
         });
-    }
 
+        openMainButton = (Button) findViewById(R.id.openMain);
+        openMainButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(StartScreenActivity.this, MainActivity.class)); // open chats
+            }
+        });
+
+
+    }
 
 }

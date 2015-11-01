@@ -31,7 +31,6 @@ public class RequestConnectionThread extends Thread{
         socket = tmp;
 
         connectedDevice = new ConnectedDevice(device, socket);
-
     }
 
     @Override
