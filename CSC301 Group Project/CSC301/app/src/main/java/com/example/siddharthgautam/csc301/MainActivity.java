@@ -1,13 +1,8 @@
 package com.example.siddharthgautam.csc301;
 
-import android.Manifest;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -17,7 +12,6 @@ import android.bluetooth.*;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -30,7 +24,6 @@ import java.io.Serializable;
 import java.util.Set;
 
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements Serializable{
@@ -101,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
     }
 
     public void listDevices(View view){
-
+        // set focus
         View v = this.getCurrentFocus();
         if (v != null) {
             InputMethodManager manager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -136,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             deviceList.add(blueDevice.getName());
             //Toast.makeText(getApplicationContext(), name, Toast.LENGTH_LONG).show();
         }
-        //Intent intent = new Intent(MainActivity.this, chatActivity.class);
+        //Intent intent = new Intent(MainActivity.this, ChatActivity.class);
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
         intent.putExtra("BLUETOOTH_VALUE", bluetooth.toString());
 
