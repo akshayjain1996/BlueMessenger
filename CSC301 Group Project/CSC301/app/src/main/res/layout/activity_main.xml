@@ -36,7 +36,6 @@
          android:layout_width="1000px"
          android:layout_height="wrap_content"
          android:text="Show Devices"
-         android:onClick="show"
          android:id="@+id/deviceList"
          android:layout_below="@+id/scanButton"
          android:layout_alignParentLeft="true"

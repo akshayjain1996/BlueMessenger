@@ -20,7 +20,7 @@ public class contactsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bluetooth = BluetoothAdapter.getDefaultAdapter();
-        setContentView(R.layout.activity_contacts);
+        setContentView(R.layout.contacts_page);
         contactsList = (ListView)findViewById(R.id.listContacts);
         updateContactsList();
     }
@@ -46,4 +46,5 @@ public class contactsActivity extends AppCompatActivity {
         ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, cL);
         contactsList.setAdapter(adapter);
     }
+
 }
