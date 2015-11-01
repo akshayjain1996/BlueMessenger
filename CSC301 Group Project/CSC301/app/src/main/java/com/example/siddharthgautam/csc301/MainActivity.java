@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                     Toast.makeText(getApplicationContext(), "New Device Discovered", Toast.LENGTH_LONG).show();
                     listDevices();
                 }
-
             }
         }
     };
