@@ -39,8 +39,9 @@ public class ServerThread extends Thread{
                 e.printStackTrace();
             }
 
-            if(serverSocket !=null){
-
+            if(clientSocket !=null){
+                ConnectedDevice connectedDevice = new ConnectedDevice(clientSocket.getRemoteDevice(), clientSocket);
+                ConnectionsList.getInstance().addConnection(connectedDevice);
             }
         }
     }

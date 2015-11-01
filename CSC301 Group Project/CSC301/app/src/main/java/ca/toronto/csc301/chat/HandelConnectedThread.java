@@ -1,6 +1,7 @@
 package ca.toronto.csc301.chat;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
 import com.example.siddharthgautam.csc301.Message;
@@ -17,15 +18,15 @@ public class HandelConnectedThread extends Thread {
     private static final int MAX_MESSAGE_SIZE = 1024;
     private static final UUID uuid = UUID.fromString("a9a8791e-10f3-4223-b0c7-5ade55943a84");
     private static final String NAME = "BluetoothChat";
-    private Message message;
 
     private BluetoothSocket socket;
     private InputStream inputStream = null;
     private OutputStream outputStream = null;
+    private BluetoothDevice device = null;
 
-    public HandelConnectedThread(BluetoothSocket bluetoothSocket){
-
-        socket = bluetoothSocket;
+    public HandelConnectedThread(BluetoothSocket socket, BluetoothDevice device){
+        this.device = device;
+        this.socket = socket;
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
 
@@ -48,26 +49,21 @@ public class HandelConnectedThread extends Thread {
 
         try {
             bytes = inputStream.read(buffer);
-//             message = new Message(    , buffer);
+            Message message = new Message(device , new String(buffer));
+            BluetoothController.getInstance().handelRecievedMessage(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // tried implementing the write function
-    public void write(){
+    public void write(Message message){
         byte[] toSend=message.getMessage().getBytes();
         try {
             outputStream.write(toSend);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
             outputStream.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
 }

@@ -39,4 +39,7 @@ public class Message {
         this.device = messageOrigin;
     }
 
+    public BluetoothDevice getDevice() {
+        return device;
+    }
 }
