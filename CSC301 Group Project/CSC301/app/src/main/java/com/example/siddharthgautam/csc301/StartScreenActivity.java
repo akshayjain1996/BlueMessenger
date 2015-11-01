@@ -31,9 +31,10 @@ public class StartScreenActivity extends AppCompatActivity {
         openChatsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //open chats
+                startActivity(new Intent(StartScreenActivity.this, chatActivity.class)); // open chats
             }
         });
     }
+
 
 }
