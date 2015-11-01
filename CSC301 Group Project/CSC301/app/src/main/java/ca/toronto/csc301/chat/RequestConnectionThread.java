@@ -30,9 +30,8 @@ public class RequestConnectionThread extends Thread{
         } catch (IOException e) { }
         socket = tmp;
 
-        connectedDevice = new ConnectedDevice();
-        connectedDevice.setDevice(device);
-        connectedDevice.setSocket(socket);
+        connectedDevice = new ConnectedDevice(device, socket);
+
     }
 
     @Override
