@@ -1,34 +1,45 @@
 package com.example.siddharthgautam.csc301;
 
+import android.bluetooth.BluetoothDevice;
+
 import java.util.UUID;
 
 /**
  * Created by Alex on 10/31/2015.
  */
 public class Message {
-    private String displayName;
+
+    private BluetoothDevice device;
     private String message;
-    private UUID uuid;
-    public Message(String displayName, String message, UUID uuid){
-        this.displayName = displayName;
+
+    public Message(BluetoothDevice device, String message){
+        this.device = device;
         this.message = message;
-        this.uuid = uuid;
     }
 
     public String getDisplayName(){
-        return displayName;
+        return device.getName();
     }
 
     public String getMessage(){
         return message;
     }
 
-    public UUID getUuid(){
-        return uuid;
-    }
-
     @Override
     public String toString(){
-        return displayName + ": " + message;
+        return getDisplayName() + ": " + message;
+    }
+
+
+    public BluetoothDevice getMessageOrigin() {
+        return device;
+    }
+
+    public void setMessageOrigin(BluetoothDevice messageOrigin) {
+        this.device = messageOrigin;
+    }
+
+    public BluetoothDevice getDevice() {
+        return device;
     }
 }
