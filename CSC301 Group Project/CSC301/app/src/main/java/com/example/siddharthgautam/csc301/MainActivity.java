@@ -85,7 +85,8 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getApplicationContext(), "I will connect", Toast.LENGTH_LONG).show();
-                //connectDevice();
+                String deviceName = devicesList.getItemAtPosition(position).toString();
+                connectDevice(deviceName);
             }
         });
     }
