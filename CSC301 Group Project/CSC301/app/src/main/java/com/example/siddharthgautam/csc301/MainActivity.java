@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.lang.reflect.InvocationTargetException;
+import 	java.lang.reflect.Method;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -102,9 +104,35 @@ public class MainActivity extends AppCompatActivity implements Serializable{
 
     public void connectDevice(String deviceName){
 
-        for(BluetoothDevice device : device){
+        for(BluetoothDevice device : devices){
             if(device.getName().equals(deviceName)){
+                try{
+                    //Connect
+                    Method m = device.getClass().getMethod("createBond", (Class[]) null);
+                    m.invoke(device, (Object[]) null);
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
+    public void disconnectDevice(String deviceName){
+        for(BluetoothDevice device : devices) {
+            if (device.getName().equals(deviceName))
+                try {
+                Method m = device.getClass().getMethod("removeBond", (Class[]) null);
+                m.invoke(device, (Object[]) null);
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
             }
         }
     }
