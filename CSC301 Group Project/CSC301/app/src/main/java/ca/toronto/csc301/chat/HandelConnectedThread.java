@@ -1,6 +1,7 @@
 package ca.toronto.csc301.chat;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
 import com.example.siddharthgautam.csc301.Message;
@@ -21,10 +22,11 @@ public class HandelConnectedThread extends Thread {
     private BluetoothSocket socket;
     private InputStream inputStream = null;
     private OutputStream outputStream = null;
+    private BluetoothDevice device = null;
 
-    public HandelConnectedThread(BluetoothSocket bluetoothSocket){
-
-        socket = bluetoothSocket;
+    public HandelConnectedThread(BluetoothSocket socket, BluetoothDevice device){
+        this.device = device;
+        this.socket = socket;
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
 
@@ -47,9 +49,21 @@ public class HandelConnectedThread extends Thread {
 
         try {
             bytes = inputStream.read(buffer);
-//            Message message = new Message(, buffer);
+            Message message = new Message(device , new String(buffer));
+            BluetoothController.getInstance().handelRecievedMessage(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    public void write(Message message){
+        byte[] toSend=message.getMessage().getBytes();
+        try {
+            outputStream.write(toSend);
+            outputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
