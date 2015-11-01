@@ -56,7 +56,6 @@ public class HandelConnectedThread extends Thread {
         }
     }
 
-    // tried implementing the write function 
     public void write(Message message){
         byte[] toSend=message.getMessage().getBytes();
         try {
