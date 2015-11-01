@@ -77,6 +77,10 @@ public class MainActivity extends AppCompatActivity implements Serializable{
 
         scan.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                String device_name = bluetooth.getName();
+                if (!device_name.contains("BlueM-")){
+                    bluetooth.setName("BlueM-" + device_name);
+                }
                 findNewDevices();
             }
         });
