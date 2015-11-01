@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.lang.reflect.InvocationTargetException;
+import 	java.lang.reflect.Method;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
 
     private BluetoothAdapter bluetooth;
     private Set<BluetoothDevice> devices;
+    private Set<BluetoothDevice> connectedDevices;
     Button scan, list;
     ListView devicesList;
     private static final UUID uuid = UUID.fromString("a9a8791e-10f3-4223-b0c7-5ade55943a84");
@@ -95,10 +98,46 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                     Toast.makeText(getApplicationContext(), "New Device Discovered", Toast.LENGTH_LONG).show();
                     listDevices();
                 }
-
             }
         }
     };
+
+    public void connectDevice(String deviceName){
+
+        for(BluetoothDevice device : devices){
+            if(device.getName().equals(deviceName)){
+                try{
+                    //Connect
+                    Method m = device.getClass().getMethod("createBond", (Class[]) null);
+                    m.invoke(device, (Object[]) null);
+                    connectedDevices.add(device);
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void disconnectDevice(String deviceName){
+        for(BluetoothDevice device : devices) {
+            if (device.getName().equals(deviceName))
+                try {
+                Method m = device.getClass().getMethod("removeBond", (Class[]) null);
+                m.invoke(device, (Object[]) null);
+                connectedDevices.remove(device);
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public void startSocket(View view) {
         BluetoothServerSocket socket = null;
@@ -149,6 +188,8 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
