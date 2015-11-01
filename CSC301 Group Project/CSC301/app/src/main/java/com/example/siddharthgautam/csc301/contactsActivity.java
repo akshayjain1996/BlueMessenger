@@ -16,7 +16,7 @@ public class contactsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bluetooth = BluetoothAdapter.getDefaultAdapter();
-        setContentView(R.layout.activity_contacts);
+        setContentView(R.layout.contacts_page);
         updateContactsList();
     }
 
@@ -24,6 +24,6 @@ public class contactsActivity extends AppCompatActivity {
         ConnectionsList c = ConnectionsList.getInstance();
         Set<BluetoothDevice> d = bluetooth.getBondedDevices();
         Iterator<BluetoothDevice> i = d.iterator();
-
     }
+
 }
