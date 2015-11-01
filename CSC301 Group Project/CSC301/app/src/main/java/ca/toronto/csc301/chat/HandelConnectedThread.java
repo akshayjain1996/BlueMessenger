@@ -17,6 +17,7 @@ public class HandelConnectedThread extends Thread {
     private static final int MAX_MESSAGE_SIZE = 1024;
     private static final UUID uuid = UUID.fromString("a9a8791e-10f3-4223-b0c7-5ade55943a84");
     private static final String NAME = "BluetoothChat";
+    private Message message;
 
     private BluetoothSocket socket;
     private InputStream inputStream = null;
@@ -40,6 +41,11 @@ public class HandelConnectedThread extends Thread {
 
     }
 
+    public void send(ConnectedDevice dev) {
+
+
+    }
+
     @Override
     public void run() {
         byte[] buffer = new byte[MAX_MESSAGE_SIZE];
@@ -47,9 +53,26 @@ public class HandelConnectedThread extends Thread {
 
         try {
             bytes = inputStream.read(buffer);
-//            Message message = new Message(, buffer);
+//             message = new Message(    , buffer);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    // tried implementing the write function 
+    public void write(){
+        byte[] toSend=message.getMessage().getBytes();
+        try {
+            outputStream.write(toSend);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            outputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }
