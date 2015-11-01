@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
     private BluetoothAdapter bluetooth;
     private Set<BluetoothDevice> devices;
     Button scan, list;
-    ListView listView;
+    ListView devicesList;
     private static final UUID uuid = UUID.fromString("a9a8791e-10f3-4223-b0c7-5ade55943a84");
     private BluetoothServerSocket blueSocket;
 
@@ -48,8 +48,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         list = (Button)findViewById(R.id.deviceList);
 
         bluetooth = BluetoothAdapter.getDefaultAdapter();
-        int flag = 0;
-        listView = (ListView)findViewById(R.id.listView);
+        devicesList = (ListView)findViewById(R.id.listView);
 
         // Check if Bluetooth is supported. If so enable it if necessary
         if (bluetooth == null) {
@@ -59,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         }
 
         if (!bluetooth.isEnabled()) {
-            flag = 1;
             Intent start = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(start, 1);
             Toast.makeText(getApplicationContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
@@ -91,25 +89,12 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                 if(device != null) {
                     devices.add(device);
                     Toast.makeText(getApplicationContext(), "New Device Discovered", Toast.LENGTH_LONG).show();
-
                     listDevices();
                 }
 
             }
         }
     };
-
-
-    public void show(View view){
-        Intent show = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        startActivityForResult(show, 0);
-
-        View v = this.getCurrentFocus();
-        if (v != null) {
-            InputMethodManager manager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-            manager.hideSoftInputFromWindow(v.getWindowToken(), 0);
-        }
-    }
 
     public void startSocket(View view) {
         BluetoothServerSocket socket = null;
@@ -121,16 +106,9 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             Toast.makeText(getApplicationContext(), "Socket not created", Toast.LENGTH_LONG).show();
         }
         blueSocket = socket;
-
     }
 
     public void listDevices(){
-
-//        View v = this.getCurrentFocus();
-//        if (v != null) {
-//            InputMethodManager manager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-//            manager.hideSoftInputFromWindow(v.getWindowToken(), 0);
-//        }
 
         ArrayList deviceList = new ArrayList();
 
@@ -140,11 +118,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         }
 
         final ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, deviceList);
-        listView.setAdapter(adapter);
-
-
-
-
+        devicesList.setAdapter(adapter);
     }
 
     public void startChat(View view) {
