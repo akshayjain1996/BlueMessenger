@@ -13,7 +13,9 @@ public class ConnectedDevice {
     private BluetoothSocket socket;
     private boolean connected;
 
-    ConnectedDevice(){
+    ConnectedDevice(BluetoothDevice device, BluetoothSocket bluetoothSocket){
+        this.device = device;
+        this.socket = bluetoothSocket;
         connected = false;
         handelConnectedThread = new HandelConnectedThread(socket, device);
         handelConnectedThread.start();
