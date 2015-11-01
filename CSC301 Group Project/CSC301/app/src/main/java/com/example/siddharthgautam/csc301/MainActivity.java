@@ -112,16 +112,17 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             }
         }
     };
-
+    //Pairs with a bluetooth device with deviceName.
     public void connectDevice(String deviceName){
-
+        //Checks if name matches
         for(BluetoothDevice device : devices){
             if(device.getName().equals(deviceName)){
                 try{
-                    //Connect
+                    //Connects
                     Method m = device.getClass().getMethod("createBond", (Class[]) null);
                     m.invoke(device, (Object[]) null);
                     connectedDevices.add(device);
+                    //Exception handling
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 } catch (NoSuchMethodException e) {
@@ -132,14 +133,17 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             }
         }
     }
-
+    // Disconnects paired device with name deviceName.
     public void disconnectDevice(String deviceName){
+        //Checks if name matches
         for(BluetoothDevice device : devices) {
             if (device.getName().equals(deviceName))
                 try {
+                    //Connects
                     Method m = device.getClass().getMethod("removeBond", (Class[]) null);
                     m.invoke(device, (Object[]) null);
                     connectedDevices.remove(device);
+                    //Exception handling
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 } catch (NoSuchMethodException e) {
