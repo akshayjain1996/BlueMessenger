@@ -100,6 +100,15 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         }
     };
 
+    public void connectDevice(String deviceName){
+
+        for(BluetoothDevice device : device){
+            if(device.getName().equals(deviceName)){
+
+            }
+        }
+    }
+
     public void startSocket(View view) {
         BluetoothServerSocket socket = null;
         //BluetoothSocket tmp = null;
@@ -149,6 +158,8 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
