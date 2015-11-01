@@ -86,7 +86,10 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getApplicationContext(), "I will connect", Toast.LENGTH_LONG).show();
                 String deviceName = devicesList.getItemAtPosition(position).toString();
-                connectDevice(deviceName);
+                if (deviceName != null) {
+                    connectDevice(deviceName);
+                }
+                //connectDevice(deviceName);
             }
         });
     }
@@ -122,7 +125,13 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                     //Connects
                     Method m = device.getClass().getMethod("createBond", (Class[]) null);
                     m.invoke(device, (Object[]) null);
-                    connectedDevices.add(device);
+                    Toast.makeText(getApplicationContext(), device.getName(), Toast.LENGTH_LONG).show();
+                    try {
+                        connectedDevices.add(device);
+                    } catch (NullPointerException e) {
+                        Toast.makeText(getApplicationContext(), "cannot add null devices", Toast.LENGTH_LONG);
+                    }
+                    //connectedDevices.add(device);
                     //Exception handling
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
