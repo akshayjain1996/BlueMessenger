@@ -16,10 +16,10 @@ For this sprint we planned to accomplish the following for a basic P2P chat that
 4. Select that device so a chat bar can be opened.
 
 Our team divided this sprint into four major parts: 
-1. UI - [ui](https://github.com/csc301-fall-2015/project-team3-L0101/issues/44)
-2. Scanning for nearby devices- [scan](https://github.com/csc301-fall-2015/project-team3-L0101/issues/42)
-3. Pairing to a desired device- [pair](https://github.com/csc301-fall-2015/project-team3-L0101/issues/47)
-4. Sending/receiving messages to/from that device- [send](https://github.com/csc301-fall-2015/project-team3-L0101/issues/45)
+1. UI - [issue1](https://github.com/csc301-fall-2015/project-team3-L0101/issues/44)
+2. Scanning for nearby devices- [issue2](https://github.com/csc301-fall-2015/project-team3-L0101/issues/42)
+3. Pairing to a desired device- [issue3](https://github.com/csc301-fall-2015/project-team3-L0101/issues/47)
+4. Sending/receiving messages to/from that device- [issue4](https://github.com/csc301-fall-2015/project-team3-L0101/issues/45)
 
 We divided our whole group in half to start working on the front-end and the back-end. 
 * The front-end consisted of: creating activities/layouts, navigation between activities, sending/receiving chat messages via text file (front-end) 
@@ -28,11 +28,11 @@ We divided our whole group in half to start working on the front-end and the bac
     - Siddharth, Priyen, Akshay, Taras, Sneh 
 
 The order of tasks that were to be completed were: 
-1. UI was completed, the basic layouts of the app were ready and the navigation between activities were taken care of. Since the Bluetooth backend connections were not yet implemented, we used a text file as the “stand-in” for the basic user interactions (i.e. sending messages). 
-		The user sending message → write to text file 
-        The user receiving message → read from text file 
 
-    Done by: Alex, Taras, Siddharth, Sneh
+1. UI was completed, the basic layouts of the app were ready and the navigation between activities were taken care of. Since the Bluetooth backend connections were not yet implemented, we used a text file as the “stand-in” for the basic user interactions (i.e. sending messages). 
+		* The user sending message → write to text file 
+        * The user receiving message → read from text file 
+    - by Alex, Taras, Siddharth, Sneh
 
 2. The other three were done simultaneously with each person contributing to some part of the backend 
  		* Taras implemented the scanning of devices 
@@ -144,5 +144,7 @@ Things we could have improved:
 3. We should have dedicated more time to the back end development. Since we agreed that the back end is the more code-intensive section, we ended up diverting a member mid-week to work on the back end instead of the front end. This caused organizational problems, as the tasks were split up for three people for front end and three people for back end.
 
 Things we should repeat:
+
 1. Electronic meetings: Though they lack the literal on-the-spot value of a face to face meeting where the person speaking must stand up, a similar effect was achieved by having everyone shut off their microphones with the exception of the person speaking. Though we could not draw on a sheet of paper to show diagrams/UI for our design ideas, screenshots of UI as well as pictures of drawings sent over the internet were just as effective at showing pictures. The ability to actually communicate live despite the fact that we were physically separated meant that meetings were capable of including all members, and we felt that the ability to meet at a time and location more convenient for all members far outweighed the on-the-spot atmosphere created by a face-to-face meeting.
+
 2. Assigning optional tasks in a sprint: As the time required by tasks is extremely unpredictable, this gives those who finish unexpectedly early an important feature to implement. This reduces the future backlog as well as ensure that people are not left with no tasks to complete because of an incorrect prediction about the time required to complete a certain goal in a sprint.
