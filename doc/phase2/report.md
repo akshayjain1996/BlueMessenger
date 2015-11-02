@@ -34,6 +34,7 @@ The order of tasks that were to be completed were:
 1. UI was completed, the basic layouts of the app were ready and the navigation between activities were taken care of. Since the Bluetooth backend connections were not yet implemented, we used a text file as the “stand-in” for the basic user interactions (i.e. sending messages). 
 
 		* The user sending message → write to text file 
+		
         * The user receiving message → read from text file 
 
     - by Alex, Taras, Siddharth, Sneh
@@ -41,14 +42,16 @@ The order of tasks that were to be completed were:
 2. The other three were done simultaneously with each person contributing to some part of the backend
 
  		* Taras implemented the scanning of devices 
+
 		* Taras and Siddharth implemented the pairing of devices
+
 		* Akshay laid out the foundations for the underlying Bluetooth connectivity with little help from Sneh 
+
 		* Akshay and Priyen worked on the Bluetooth socket connections (sending/receiving messages between sockets)  
 
 Meeting notes
 
-1. 19 Oct. 2015
-
+19 Oct. 2015
 Initial planning meeting
 
 Goal: Discuss finer details such as important classes and what IDE to use.
@@ -69,8 +72,7 @@ To do (expected ETA: end of week):
 * Back end: Create BlueTooth Controller and Device.
 * Priority: P2P connection. The ability to chat P2P. These are the bases of our software.
 
-2. 23 Oct 2015
-
+23 Oct 2015
 Status meeting
 
 Progress:
@@ -90,8 +92,7 @@ To do (by 31 Oct 2015):
 * Front end: Create activities, make buttons link to other activities, placeholder message sending
 * Back end: Implement Bluetooth Controller and Device
 
-3. 31 Oct 2015
-
+31 Oct 2015
 Status meeting
 
 Progress:
@@ -126,9 +127,9 @@ Burndown Chart:
 
 ![Taras](https://github.com/snehpatel3/project-team3-L0101/blob/master/doc/phase2/charts/Taras.png?raw=true)
 
-![Akshay](/charts/Akshay.png)
+![Akshay](https://github.com/snehpatel3/project-team3-L0101/blob/master/doc/phase2/charts/Akshay.png?raw=true)
 
-![Group](/charts/Group.png)
+![Group](https://github.com/snehpatel3/project-team3-L0101/blob/master/doc/phase2/charts/Group.png?raw=true)
 
 
 
