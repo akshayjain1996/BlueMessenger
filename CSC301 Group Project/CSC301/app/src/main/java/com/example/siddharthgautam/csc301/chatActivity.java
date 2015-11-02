@@ -37,10 +37,8 @@ public class chatActivity extends AppCompatActivity {
     private ListView messageView;
     private ArrayAdapter<String> stringArrayAdapter;
     private ArrayList<String> stringList;
-    private ConnectedDevice contact;
     private BluetoothDevice contactDevice;
     private String mac;
-    private BluetoothController bluetoothController;
     private Context appContext;
     //private final Handler mHandler;
 
@@ -110,6 +108,7 @@ public class chatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendMessage();
+                messageTextView.setText("");
             }
         });
     }
@@ -189,7 +188,7 @@ public class chatActivity extends AppCompatActivity {
         try {
             FileOutputStream fos = this.openFileOutput(username + ".txt", Context.MODE_PRIVATE);
             for(int i = 0; i < messageView.getCount(); i++){
-                String m = stringArrayAdapter.getItem(i);
+                String m = stringArrayAdapter.getItem(i) + '\n';
                 fos.write(m.getBytes());
             }
             fos.close();

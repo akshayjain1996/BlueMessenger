@@ -9,7 +9,8 @@
         android:id="@+id/editTextContacts"
         android:layout_gravity="center_horizontal"
         android:text="Contacts"
-        android:focusable="true" />
+        android:focusable="false"
+        android:editable="false" />
 
     <ListView
         android:layout_width="match_parent"

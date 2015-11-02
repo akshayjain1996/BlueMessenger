@@ -26,6 +26,7 @@ public class contactsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         bluetooth = BluetoothAdapter.getDefaultAdapter();
         setContentView(R.layout.contacts_page);
         contactsList = (ListView)findViewById(R.id.listContacts);
