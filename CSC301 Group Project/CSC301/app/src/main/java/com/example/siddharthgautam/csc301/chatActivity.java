@@ -56,6 +56,7 @@ public class chatActivity extends AppCompatActivity {
     private ConnectedDevice contact;
     private BluetoothDevice contactDevice;
     private String mac;
+    private BluetoothController bluetoothController;
     //private final Handler mHandler;
 
 
@@ -80,6 +81,9 @@ public class chatActivity extends AppCompatActivity {
         stringList = new ArrayList<String>();
         stringArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stringList);
         messageView.setAdapter(stringArrayAdapter);
+
+        bluetoothController = BluetoothController.getInstance();
+        bluetoothController.establishConnection(contactDevice);
     }
 
     @Override
@@ -121,7 +125,8 @@ public class chatActivity extends AppCompatActivity {
                 BluetoothAdapter.getDefaultAdapter().getAddress());
         stringArrayAdapter.add("You: " + message); //Todo: replace with message
         stringArrayAdapter.notifyDataSetChanged();
-        //BluetoothController.getInstance().sendMessage(message);
+        bluetoothController.sendMessage(message);
+        Toast.makeText(getApplicationContext(), "message sent", Toast.LENGTH_LONG);
         saveMessages(getApplicationContext().getFilesDir().getAbsoluteFile(), mac);
     }
 

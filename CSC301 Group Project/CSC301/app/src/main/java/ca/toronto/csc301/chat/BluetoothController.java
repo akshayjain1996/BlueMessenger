@@ -30,8 +30,10 @@ public class BluetoothController {
     }
 
     public void establishConnection(BluetoothDevice device){
-        RequestConnectionThread connectionThread = new RequestConnectionThread(device);
-        connectionThread.start();
+        if(connectionsList.findConnectedDevide(device) == null) {
+            RequestConnectionThread connectionThread = new RequestConnectionThread(device);
+            connectionThread.start();
+        }
     }
 
     public void sendMessage(Message message){
