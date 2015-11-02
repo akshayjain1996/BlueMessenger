@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        //Creates a hash set to store the devices found during scanning
         devices = new HashSet<BluetoothDevice>();
 
         scan = (Button)findViewById(R.id.scanButton);
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
     }
 
 
-
+    // Creates a bluetooth socket
     public void startSocket(View view) {
         BluetoothServerSocket socket = null;
         //BluetoothSocket tmp = null;
@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         }
         blueSocket = socket;
     }
-
+    //Lists all the devices found during scanning.
     public void listDevices(){
 
         ArrayList deviceList = new ArrayList();
@@ -208,13 +208,13 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         final ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, deviceList);
         devicesList.setAdapter(adapter);
     }
-
+    // Connects with a perticular device
     public void connect() {
         for (BluetoothDevice bt : devices) {
             Toast.makeText(getApplicationContext(), bt.getAddress(), Toast.LENGTH_LONG).show();
         }
     }
-
+    //Starts a chat.
     public void startChat(View view) {
         //Toast.makeText(getApplicationContext(), "hello", Toast.LENGTH_LONG).show();
         devices = bluetooth.getBondedDevices();
