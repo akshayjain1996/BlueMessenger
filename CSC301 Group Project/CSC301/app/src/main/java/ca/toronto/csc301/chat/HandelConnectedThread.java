@@ -49,7 +49,7 @@ public class HandelConnectedThread extends Thread {
 
         try {
             bytes = inputStream.read(buffer);
-            Message message = new Message(device , new String(buffer));
+            Message message = new Message(device , new String(buffer), "MAC OF ORIGIN HERE");
             BluetoothController.getInstance().handelRecievedMessage(message);
         } catch (IOException e) {
             e.printStackTrace();
