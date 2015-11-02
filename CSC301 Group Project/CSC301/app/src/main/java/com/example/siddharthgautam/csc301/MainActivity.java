@@ -5,37 +5,32 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.bluetooth.*;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import ca.toronto.csc301.chat.ServerThread;
+import ca.toronto.csc301.chat.ConnectionsList;
 
 public class MainActivity extends AppCompatActivity implements Serializable{
 
@@ -44,8 +39,6 @@ public class MainActivity extends AppCompatActivity implements Serializable{
     private Set<BluetoothDevice> connectedDevices;
     Button scan, contacts;
     ListView devicesList;
-    private static final UUID uuid = UUID.fromString("a9a8791e-10f3-4223-b0c7-5ade55943a84");
-    private BluetoothServerSocket blueSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,13 +104,28 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                 if (deviceName != null) {
                     connectDevice(deviceName);
                 }
-                //connectDevice(deviceName);
             }
         });
-
-        ServerThread serverThread = new ServerThread();
-        serverThread.start();
+        ConnectionsList.getInstance().setHandler(mHandler);
+        ConnectionsList.getInstance().accept();
     }
+
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            String address = null;
+            switch (msg.what) {
+                case 1:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    //mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
+                    chatActivity.getInstance().recieveMessage(readMessage);
+                    break;
+
+            }
+        }
+    };
 
     //Get devices
     public static BluetoothDevice getDeviceByName(String name) {
