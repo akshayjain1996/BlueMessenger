@@ -56,6 +56,7 @@ public class chatActivity extends AppCompatActivity {
     private ConnectedDevice contact;
     private BluetoothDevice contactDevice;
     private String mac;
+    private BluetoothController bluetoothController;
     //private final Handler mHandler;
 
 
@@ -64,7 +65,7 @@ public class chatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Bundle b = getIntent().getExtras();
         contactDevice = b.getParcelable("BluetoothDevice");
-        Toast.makeText(getApplicationContext(), "Opened chat with device " + contactDevice.getName(), Toast.LENGTH_LONG).show();
+
         setTitle("Chat: " + contactDevice.getName());
         setContentView(R.layout.activity_chat2);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -80,6 +81,10 @@ public class chatActivity extends AppCompatActivity {
         stringList = new ArrayList<String>();
         stringArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stringList);
         messageView.setAdapter(stringArrayAdapter);
+
+        bluetoothController = BluetoothController.getInstance();
+        bluetoothController.establishConnection(contactDevice);
+        Toast.makeText(getApplicationContext(), "connection established " , Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -121,7 +126,8 @@ public class chatActivity extends AppCompatActivity {
                 BluetoothAdapter.getDefaultAdapter().getAddress());
         stringArrayAdapter.add("You: " + message); //Todo: replace with message
         stringArrayAdapter.notifyDataSetChanged();
-        //BluetoothController.getInstance().sendMessage(message);
+        bluetoothController.sendMessage(message);
+        Toast.makeText(getApplicationContext(), "message sent", Toast.LENGTH_LONG);
         saveMessages(getApplicationContext().getFilesDir().getAbsoluteFile(), mac);
     }
 
