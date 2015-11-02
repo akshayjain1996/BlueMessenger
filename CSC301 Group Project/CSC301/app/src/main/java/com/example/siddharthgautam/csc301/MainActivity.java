@@ -25,6 +25,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -57,6 +58,15 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         contacts = (Button)findViewById(R.id.deviceList);
 
         bluetooth = BluetoothAdapter.getDefaultAdapter();
+        //add paired devices to the list
+        Set<BluetoothDevice> d = bluetooth.getBondedDevices();
+        Iterator<BluetoothDevice> i = d.iterator();
+
+        while(i.hasNext()) {
+            BluetoothDevice device = i.next();
+            devices.add(device);
+        }
+
         devicesList = (ListView)findViewById(R.id.listView);
 
         // Check if Bluetooth is supported. If so enable it if necessary

@@ -114,7 +114,7 @@ public class chatActivity extends AppCompatActivity {
                 BluetoothAdapter.getDefaultAdapter().getAddress());
         stringArrayAdapter.add("You: " + message); //Todo: replace with message
         stringArrayAdapter.notifyDataSetChanged();
-        BluetoothController.getInstance().sendMessage(message);
+        //BluetoothController.getInstance().sendMessage(message);
         saveMessages(getApplicationContext().getFilesDir().getAbsoluteFile(), mac);
     }
 
