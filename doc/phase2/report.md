@@ -10,6 +10,7 @@ Sprint Backlog
 Our project is an Android chatting application that uses Bluetooth instead of the traditional WiFi or cellular data.
 
 For this sprint we planned to accomplish the following for a basic P2P chat that displays a complete connection between the UI and the back-end Bluetooth code (backbone of our app):
+
 1. Basic UI(Opening screen, options to search for Bluetooth devices etc.)
 2. Scan for nearby Bluetooth devices 
 3. Pair with a particular Bluetooth device from the device list.
