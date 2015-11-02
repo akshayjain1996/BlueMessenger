@@ -25,6 +25,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -34,10 +35,12 @@ import java.util.UUID;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import ca.toronto.csc301.chat.ServerThread;
+
 public class MainActivity extends AppCompatActivity implements Serializable{
 
     private BluetoothAdapter bluetooth;
-    private Set<BluetoothDevice> devices;
+    private static Set<BluetoothDevice> devices;
     private Set<BluetoothDevice> connectedDevices;
     Button scan, contacts;
     ListView devicesList;
@@ -50,13 +53,22 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        //Creates a hash set to store the devices found during scanning
         devices = new HashSet<BluetoothDevice>();
 
         scan = (Button)findViewById(R.id.scanButton);
         contacts = (Button)findViewById(R.id.deviceList);
 
         bluetooth = BluetoothAdapter.getDefaultAdapter();
+        //add paired devices to the list
+        Set<BluetoothDevice> d = bluetooth.getBondedDevices();
+        Iterator<BluetoothDevice> i = d.iterator();
+
+        while(i.hasNext()) {
+            BluetoothDevice device = i.next();
+            devices.add(device);
+        }
+
         devicesList = (ListView)findViewById(R.id.listView);
 
         // Check if Bluetooth is supported. If so enable it if necessary
@@ -102,6 +114,19 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                 //connectDevice(deviceName);
             }
         });
+
+        ServerThread serverThread = new ServerThread();
+        serverThread.start();
+    }
+
+    //Get devices
+    public static BluetoothDevice getDeviceByName(String name) {
+        for (BluetoothDevice device : devices) {
+            if (device.getName().equals(name)) {
+                return device;
+            }
+        }
+        return null;
     }
 
     //Go to contacts activity
@@ -166,7 +191,11 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                     //Connects
                     Method m = device.getClass().getMethod("removeBond", (Class[]) null);
                     m.invoke(device, (Object[]) null);
-                    connectedDevices.remove(device);
+                    try {
+                        connectedDevices.remove(device);
+                    } catch (NullPointerException e) {
+                        Toast.makeText(getApplicationContext(), "cannot add null devices", Toast.LENGTH_LONG);
+                    }
                     //Exception handling
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
@@ -178,20 +207,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         }
     }
 
-
-
-    public void startSocket(View view) {
-        BluetoothServerSocket socket = null;
-        //BluetoothSocket tmp = null;
-        try {
-            socket = bluetooth.listenUsingRfcommWithServiceRecord("Bluetooth", uuid);
-            Toast.makeText(getApplicationContext(), "Socket has been created", Toast.LENGTH_LONG).show();
-        } catch (IOException e) {
-            Toast.makeText(getApplicationContext(), "Socket not created", Toast.LENGTH_LONG).show();
-        }
-        blueSocket = socket;
-    }
-
+    //Lists all the devices found during scanning.
     public void listDevices(){
 
         ArrayList deviceList = new ArrayList();
@@ -204,13 +220,13 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         final ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, deviceList);
         devicesList.setAdapter(adapter);
     }
-
+    // Connects with a perticular device
     public void connect() {
         for (BluetoothDevice bt : devices) {
             Toast.makeText(getApplicationContext(), bt.getAddress(), Toast.LENGTH_LONG).show();
         }
     }
-
+    //Starts a chat.
     public void startChat(View view) {
         //Toast.makeText(getApplicationContext(), "hello", Toast.LENGTH_LONG).show();
         devices = bluetooth.getBondedDevices();
@@ -228,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         MainActivity.this.startActivity(intent);
 
     }
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

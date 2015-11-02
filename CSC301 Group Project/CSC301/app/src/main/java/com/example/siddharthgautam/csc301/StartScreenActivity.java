@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import ca.toronto.csc301.chat.ServerThread;
+
 public class StartScreenActivity extends AppCompatActivity {
 
     private Button connectButton;
@@ -36,15 +38,19 @@ public class StartScreenActivity extends AppCompatActivity {
             }
         });
 
-        openMainButton = (Button) findViewById(R.id.openMain);
-        openMainButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(StartScreenActivity.this, MainActivity.class)); // open chats
+        openMainButton = (Button) findViewById(R.id.openMainButton);
+        openChatsButton.setOnClickListener(new View.OnClickListener(){
+        @Override
+            public void onClick(View v){
+                openMain(v);
             }
         });
 
+    }
 
+    public void openMain(View view) {
+        Intent intent = new Intent(StartScreenActivity.this, MainActivity.class);
+        StartScreenActivity.this.startActivity(intent);
     }
 
 }
