@@ -24,10 +24,12 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Set;
@@ -35,6 +37,9 @@ import java.util.UUID;
 import java.util.logging.Handler;
 
 import ca.toronto.csc301.chat.BluetoothController;
+import ca.toronto.csc301.chat.ConnectedDevice;
+import ca.toronto.csc301.chat.ConnectionsList;
+
 
 public class chatActivity extends AppCompatActivity {
 
@@ -48,23 +53,27 @@ public class chatActivity extends AppCompatActivity {
     private ListView messageView;
     private ArrayAdapter<String> stringArrayAdapter;
     private ArrayList<String> stringList;
-
+    private ConnectedDevice contact;
+    private BluetoothDevice contactDevice;
+    private String mac;
+    private BluetoothController bluetoothController;
     //private final Handler mHandler;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle b = getIntent().getExtras();
+        contactDevice = b.getParcelable("BluetoothDevice");
+
+        setTitle("Chat: " + contactDevice.getName());
         setContentView(R.layout.activity_chat2);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Toast.makeText(getApplicationContext(), "new activity opened", Toast.LENGTH_LONG).show();
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            String bluetoothValue = extras.getString("BLUETOOTH_VALUE");
-            Toast.makeText(getApplicationContext(), bluetoothValue, Toast.LENGTH_LONG).show();
-        }
+        mac = contactDevice.getAddress().replace(":","");
+        BluetoothController.getInstance().establishConnection(contactDevice);
+
         sendButton = (Button) findViewById(R.id.sendMessageButton);
         setSendButtonFunction(sendButton);
         messageTextView = (TextView) findViewById(R.id.messageTextView);
@@ -72,21 +81,25 @@ public class chatActivity extends AppCompatActivity {
         stringList = new ArrayList<String>();
         stringArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stringList);
         messageView.setAdapter(stringArrayAdapter);
+
+        bluetoothController = BluetoothController.getInstance();
+        bluetoothController.establishConnection(contactDevice);
+        Toast.makeText(getApplicationContext(), "connection established " , Toast.LENGTH_LONG).show();
     }
 
     @Override
     protected void onStart() {
         //// TODO: 10/31/2015 replace "Test.txt" with unique identifier for chat.
-        //if(stringArrayAdapter.getCount() == 0) {
-            loadMessages(getApplicationContext().getFilesDir().getAbsoluteFile(), "Test.txt");
-        //}
+
+        loadMessages(getApplicationContext().getFilesDir().getAbsoluteFile(), mac);
+
         super.onStart();
     }
 
     @Override
     protected void onStop() {
         //// TODO: 10/31/2015 replace "Test.txt" with unique identifier for chat.
-        saveMessages(getApplicationContext().getFilesDir().getAbsoluteFile(), "Test.txt");
+        saveMessages(getApplicationContext().getFilesDir().getAbsoluteFile(), mac);
         super.onStop();
     }
 
@@ -108,7 +121,19 @@ public class chatActivity extends AppCompatActivity {
      * send it through a BlueTooth connection and write the message on your own message log.
      */
     private void sendMessage(){
-        stringArrayAdapter.add(messageTextView.getText().toString()); //Todo: replace with message
+        Toast.makeText(this, messageTextView.getText(), Toast.LENGTH_SHORT);
+        Message message = new Message(contactDevice, messageTextView.getText().toString(),
+                BluetoothAdapter.getDefaultAdapter().getAddress());
+        stringArrayAdapter.add("You: " + message); //Todo: replace with message
+        stringArrayAdapter.notifyDataSetChanged();
+        bluetoothController.sendMessage(message);
+        Toast.makeText(getApplicationContext(), "message sent", Toast.LENGTH_LONG);
+        saveMessages(getApplicationContext().getFilesDir().getAbsoluteFile(), mac);
+    }
+
+    public void recieveMessage(String message){
+        stringArrayAdapter.add("Them: " + message);
+
         if(stringArrayAdapter.getCount() > MAX_MSGS_ON_SCREEN){
             stringArrayAdapter.remove(stringArrayAdapter.getItem(0));
         }
@@ -131,20 +156,19 @@ public class chatActivity extends AppCompatActivity {
      * @param username A unique identifier indicating which message log file you want to view.
      */
     public void loadMessages(File dir, String username){
-        File loadFile = new File(dir, username + ".ser");
         try {
-            FileReader loadFileReader = new FileReader(loadFile);
-            BufferedReader br = new BufferedReader(loadFileReader);
-            String current;
-            while((current = br.readLine()) != null){
-                stringArrayAdapter.add(current);
+            BufferedReader inputReader = new BufferedReader(new InputStreamReader(this.openFileInput(
+                    username + ".txt")));
+            String message;
+            while((message = inputReader.readLine()) != null){
+                stringArrayAdapter.add(message);
             }
-            stringArrayAdapter.notifyDataSetChanged();
-        } catch (FileNotFoundException e) {
-            //nothing, just don't load messages
-        } catch (IOException e) {
-            //stringList.clear();
+            inputReader.close();
         }
+        catch (Exception e){
+
+        }
+
     }
 
     /**
@@ -155,16 +179,18 @@ public class chatActivity extends AppCompatActivity {
      *                 its name for later use.
      */
     public void saveMessages(File dir, String username){
-        File saveFile = new File(dir, username + ".ser");
 
+        //File saveFile = new File(dir, username + ".txt");
         try {
-            BufferedWriter messageSaveWriter = new BufferedWriter(new FileWriter(saveFile));
-            for(int i = 0; i < stringList.size(); i++){
-                messageSaveWriter.write(stringList.get(i) + "\n");
+            FileOutputStream fos = this.openFileOutput(username + ".txt", Context.MODE_PRIVATE);
+            for(int i = 0; i < messageView.getCount(); i++){
+                String m = stringArrayAdapter.getItem(i);
+                fos.write(m.getBytes());
             }
-            messageSaveWriter.close();
-        } catch (IOException e) {
-            //pass
+            fos.close();
+        }
+        catch (Exception e){
+            //do later
         }
     }
 
