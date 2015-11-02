@@ -1,0 +1,46 @@
+Meeting log:
+
+19 Oct. 2015
+Initial planning meeting. 
+Goal: Discuss finer details such as important classes and what IDE to use.
+Progress: None code-wise since this is the first meeting. Interpreted artifacts and discussed
+how to implement.
+Notes:
+-Front end = Activities (Title, Connect, Chat) <- Sneh, Taras, Alex
+-Back end = Classes (BlueTooth Controller, Device, Connection List) <- Akshay, Priyen, Taras
+-Split into "cells" of three, one for front end, one for back end; cells may be reallocated depending
+on progress/requirements
+To do (expected ETA: end of week):
+-Front end: Create activities, make buttons link to other activities, placeholder message sending
+-Back end: Create BlueTooth Controller and Device.
+-Priority: P2P connection. Then ability to chat P2P. These are the bases of our software.
+
+23 Oct 2015 
+Status meeting.
+Progress: Activities created with nonfunctional buttons.
+Basic interface for BlueTooth Manager (unimplemented connect, send message, manage connections) created.
+Significantly less progress than expected or desired.
+Notes:
+-All group members had particularly busy week, thus not as much time committed as should have been.
+-Tasks pushed back to next week (Due 31 Oct 2015)
+-Integration of front and back end required; however front and back end need to be made first
+-Group member Taras moved to work on back-end as back-end had more work left
+To do (by 31 Oct 2015):
+-Front end: Create activities, make buttons link to other activities, placeholder message sending
+-Back end: Implement BlueTooth Controller and Device
+
+31 Oct 2015
+Status meeting:
+Progress:
+-UI updated to "send" messages to partner by printing to a ListView in ChatActivity.
+-TitleScreen button functionality added; these open up new activities
+-BlueTooth Manager checks device BlueTooth on/off status, can connect.
+-BlueTooth connect thread class created
+Notes:
+-Front end and Back end need to be connected
+-Serialization of objects explored as a possibility. Specifically passing client object to ChatActivity.
+-Message class needs to be created to store Device object sender as well as the sent message.
+To do (by 2 Nov 2015):
+-Integrate front end and back end
+-Get P2P chat working (our basic product for the demo!)
+-If time permits, do group chat

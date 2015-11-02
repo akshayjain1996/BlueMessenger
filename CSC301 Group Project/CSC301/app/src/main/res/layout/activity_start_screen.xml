@@ -27,7 +27,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Open Main"
-        android:id="@+id/openMain"
+        android:onClick="openMain"
+        android:id="@+id/openMainButton"
         android:layout_above="@+id/connectButton"
         android:layout_alignRight="@+id/openChatsButton"
         android:layout_alignEnd="@+id/openChatsButton" />
