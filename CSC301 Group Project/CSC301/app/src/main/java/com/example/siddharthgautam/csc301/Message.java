@@ -12,6 +12,7 @@ public class Message {
     private BluetoothDevice device;
     private String message;
     private String originMac;
+
     public Message(BluetoothDevice device, String message, String origin){
         this.device = device;
         this.message = message;
