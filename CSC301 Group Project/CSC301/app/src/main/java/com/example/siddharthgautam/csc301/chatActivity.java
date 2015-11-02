@@ -121,13 +121,13 @@ public class chatActivity extends AppCompatActivity {
      * send it through a BlueTooth connection and write the message on your own message log.
      */
     private void sendMessage(){
-        Toast.makeText(this, messageTextView.getText(), Toast.LENGTH_SHORT);
+        Toast.makeText(this, messageTextView.getText(), Toast.LENGTH_SHORT).show();
         Message message = new Message(contactDevice, messageTextView.getText().toString(),
                 BluetoothAdapter.getDefaultAdapter().getAddress());
-        stringArrayAdapter.add("You: " + message); //Todo: replace with message
+        stringArrayAdapter.add("You: " + message.getMessage()); //Todo: replace with message
         stringArrayAdapter.notifyDataSetChanged();
         bluetoothController.sendMessage(message);
-        Toast.makeText(getApplicationContext(), "message sent", Toast.LENGTH_LONG);
+        Toast.makeText(getApplicationContext(), "message sent", Toast.LENGTH_LONG).show();
         saveMessages(getApplicationContext().getFilesDir().getAbsoluteFile(), mac);
     }
 
@@ -160,6 +160,7 @@ public class chatActivity extends AppCompatActivity {
             BufferedReader inputReader = new BufferedReader(new InputStreamReader(this.openFileInput(
                     username + ".txt")));
             String message;
+            stringArrayAdapter.clear();
             while((message = inputReader.readLine()) != null){
                 stringArrayAdapter.add(message);
             }
