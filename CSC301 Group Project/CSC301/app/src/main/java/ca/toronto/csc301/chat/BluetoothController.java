@@ -75,8 +75,10 @@ public class BluetoothController {
     }
 
     public void handelRecievedMessage(Message message){
-        Toast.makeText(context, "New message Recieved", Toast.LENGTH_SHORT)
-                .show();
+        if(context != null){
+            Toast.makeText(context, "New message Recieved", Toast.LENGTH_SHORT)
+                    .show();
+        }
     }
 
 }
