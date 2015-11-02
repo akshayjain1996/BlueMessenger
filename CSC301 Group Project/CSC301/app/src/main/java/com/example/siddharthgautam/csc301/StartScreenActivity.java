@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import ca.toronto.csc301.chat.ServerThread;
+
 public class StartScreenActivity extends AppCompatActivity {
 
     private Button connectButton;
@@ -43,6 +45,9 @@ public class StartScreenActivity extends AppCompatActivity {
                 openMain(v);
             }
         });
+
+        ServerThread serverThread = new ServerThread();
+        serverThread.run();
     }
 
     public void openMain(View view) {
