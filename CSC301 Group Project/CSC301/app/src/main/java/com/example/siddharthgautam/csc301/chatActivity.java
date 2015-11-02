@@ -65,7 +65,7 @@ public class chatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Bundle b = getIntent().getExtras();
         contactDevice = b.getParcelable("BluetoothDevice");
-        Toast.makeText(getApplicationContext(), "Opened chat with device " + contactDevice.getName(), Toast.LENGTH_LONG).show();
+
         setTitle("Chat: " + contactDevice.getName());
         setContentView(R.layout.activity_chat2);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -84,6 +84,7 @@ public class chatActivity extends AppCompatActivity {
 
         bluetoothController = BluetoothController.getInstance();
         bluetoothController.establishConnection(contactDevice);
+        Toast.makeText(getApplicationContext(), "connection established " , Toast.LENGTH_LONG).show();
     }
 
     @Override
