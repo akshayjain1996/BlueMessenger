@@ -40,7 +40,7 @@ public class ConnectionsList {
         }
         else{ //In case connection fails or is bad remake it
             if(map.get(d).getSocket().isConnected() == false){
-                map.put(d, null);
+                closeConnection(d);
                 makeConnectionTo(d);
             }
         }
