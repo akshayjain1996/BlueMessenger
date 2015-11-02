@@ -2,9 +2,13 @@ package ca.toronto.csc301.chat;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.widget.Toast;
 
 import com.example.siddharthgautam.csc301.Message;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,11 +21,17 @@ public class BluetoothController {
 
     ConnectionsList connectionsList;
     static BluetoothController instance;
+    Context context = null;
 
     private BluetoothController(){
-        connectionsList = new ConnectionsList();
+        connectionsList = ConnectionsList.getInstance();
 
     }
+
+    public void setContext(Context context){
+        this.context = context;
+    }
+
 
     public static BluetoothController getInstance() {
         if(instance != null) {
@@ -42,29 +52,33 @@ public class BluetoothController {
 
     public void sendMessage(Message message){
         ConnectedDevice connectedDevice = connectionsList.findConnectedDevide(message.getDevice());
-        BluetoothSocket socket = connectedDevice.getSocket();
-        OutputStream outputStream = null;
-        OutputStream tmpOut = null;
-
-        try {
-            tmpOut = socket.getOutputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        outputStream = tmpOut;
-
-        byte[] toSend = message.getMessage().getBytes();
-        try {
-            outputStream.write(toSend);
-            outputStream.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        connectedDevice.getHandelConnectedThread().write(message);
+//        BluetoothSocket socket = connectedDevice.getSocket();
+//        OutputStream outputStream = null;
+//        OutputStream tmpOut = null;
+//
+//        try {
+//            tmpOut = socket.getOutputStream();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        outputStream = tmpOut;
+//
+//        byte[] toSend = message.getMessage().getBytes();
+//        try {
+//            outputStream.write(toSend);
+//            outputStream.flush();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
     public void handelRecievedMessage(Message message){
-
+        if(context != null){
+            Toast.makeText(context, "New message Recieved", Toast.LENGTH_SHORT)
+                    .show();
+        }
     }
 
 }
