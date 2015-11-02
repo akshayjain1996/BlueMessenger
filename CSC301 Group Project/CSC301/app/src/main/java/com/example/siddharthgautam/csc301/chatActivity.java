@@ -85,6 +85,7 @@ public class chatActivity extends AppCompatActivity {
         bluetoothController = BluetoothController.getInstance();
         bluetoothController.establishConnection(contactDevice);
         Toast.makeText(getApplicationContext(), "connection established " , Toast.LENGTH_LONG).show();
+        BluetoothController.getInstance().setContext(getApplicationContext());
     }
 
     @Override
@@ -127,7 +128,7 @@ public class chatActivity extends AppCompatActivity {
         stringArrayAdapter.add("You: " + message); //Todo: replace with message
         stringArrayAdapter.notifyDataSetChanged();
         bluetoothController.sendMessage(message);
-        Toast.makeText(getApplicationContext(), "message sent", Toast.LENGTH_LONG);
+        Toast.makeText(getApplicationContext(), "message sent", Toast.LENGTH_LONG).show();
         saveMessages(getApplicationContext().getFilesDir().getAbsoluteFile(), mac);
     }
 

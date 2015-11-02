@@ -15,7 +15,7 @@ public class ConnectionsList {
 
     static ConnectionsList instance;
 
-    public ConnectionsList(){
+    private ConnectionsList(){
         instance = this;
         connectedDevices = new ArrayList<ConnectedDevice>();
     }
@@ -29,7 +29,13 @@ public class ConnectionsList {
     }
 
     public static ConnectionsList getInstance() {
-        return instance;
+        if(instance != null) {
+            return instance;
+        } else {
+            ConnectionsList connectionsList = new ConnectionsList();
+            instance = connectionsList;
+            return  instance;
+        }
     }
 
     public ConnectedDevice findConnectedDevide(BluetoothDevice device){
