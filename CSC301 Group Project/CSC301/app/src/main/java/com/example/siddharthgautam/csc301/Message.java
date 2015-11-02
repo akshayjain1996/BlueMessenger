@@ -11,10 +11,11 @@ public class Message {
 
     private BluetoothDevice device;
     private String message;
-
-    public Message(BluetoothDevice device, String message){
+    private String originMac;
+    public Message(BluetoothDevice device, String message, String origin){
         this.device = device;
         this.message = message;
+        this.originMac = origin;
     }
 
     public String getDisplayName(){
@@ -27,12 +28,15 @@ public class Message {
 
     @Override
     public String toString(){
-        return getDisplayName() + ": " + message;
+        if (device!=null) {
+            return getDisplayName() + ": " + message;
+        }
+        return "You: " + message;
     }
 
 
-    public BluetoothDevice getMessageOrigin() {
-        return device;
+    public String getMessageOriginMac() {
+        return originMac;
     }
 
     public void setMessageOrigin(BluetoothDevice messageOrigin) {

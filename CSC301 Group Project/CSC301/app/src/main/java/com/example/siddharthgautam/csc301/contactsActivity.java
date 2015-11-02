@@ -35,15 +35,16 @@ public class contactsActivity extends AppCompatActivity {
         contactsList.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String deviceName = contactsList.getItemAtPosition(position).toString();
+                BluetoothDevice device = MainActivity.getDeviceByName(deviceName);
                 Intent intent = new Intent(contactsActivity.this, chatActivity.class);
-
+                intent.putExtra("BluetoothDevice", device);
                 startActivity(intent);
             }
         });
     }
 
     private void updateContactsList(){
-        ConnectionsList c = ConnectionsList.getInstance();
         Set<BluetoothDevice> d = bluetooth.getBondedDevices();
         Iterator<BluetoothDevice> i = d.iterator();
 
