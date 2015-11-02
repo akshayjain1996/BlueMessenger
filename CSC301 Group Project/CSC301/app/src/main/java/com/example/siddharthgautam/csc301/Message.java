@@ -28,7 +28,10 @@ public class Message {
 
     @Override
     public String toString(){
-        return getDisplayName() + ": " + message;
+        if (device!=null) {
+            return getDisplayName() + ": " + message;
+        }
+        return "You: " + message;
     }
 
 
