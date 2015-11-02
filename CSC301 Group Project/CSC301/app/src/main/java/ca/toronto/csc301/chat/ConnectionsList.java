@@ -38,6 +38,12 @@ public class ConnectionsList {
             }).start();
             this.map.put(d, t);
         }
+        else{ //In case connection fails or is bad remake it
+            if(map.get(d).getSocket().isConnected() == false){
+                map.put(d, null);
+                makeConnectionTo(d);
+            }
+        }
     }
 
     public ConnectedThread getConnectedThread(BluetoothDevice d){
