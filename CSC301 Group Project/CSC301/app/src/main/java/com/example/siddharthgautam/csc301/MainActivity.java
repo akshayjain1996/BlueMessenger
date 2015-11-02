@@ -35,6 +35,8 @@ import java.util.UUID;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import ca.toronto.csc301.chat.ServerThread;
+
 public class MainActivity extends AppCompatActivity implements Serializable{
 
     private BluetoothAdapter bluetooth;
@@ -112,6 +114,9 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                 //connectDevice(deviceName);
             }
         });
+
+        ServerThread serverThread = new ServerThread();
+        serverThread.start();
     }
 
     //Get devices
@@ -202,19 +207,6 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         }
     }
 
-
-    // Creates a bluetooth socket
-    public void startSocket(View view) {
-        BluetoothServerSocket socket = null;
-        //BluetoothSocket tmp = null;
-        try {
-            socket = bluetooth.listenUsingRfcommWithServiceRecord("Bluetooth", uuid);
-            Toast.makeText(getApplicationContext(), "Socket has been created", Toast.LENGTH_LONG).show();
-        } catch (IOException e) {
-            Toast.makeText(getApplicationContext(), "Socket not created", Toast.LENGTH_LONG).show();
-        }
-        blueSocket = socket;
-    }
     //Lists all the devices found during scanning.
     public void listDevices(){
 
