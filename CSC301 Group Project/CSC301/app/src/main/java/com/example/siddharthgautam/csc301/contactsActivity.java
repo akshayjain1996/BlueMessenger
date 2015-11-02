@@ -50,6 +50,7 @@ public class contactsActivity extends AppCompatActivity {
 
         while(i.hasNext()){
             BluetoothDevice device = i.next();
+            ConnectionsList.getInstance().makeConnectionTo(device);
             String device_name = device.getName();
             cL.add(device_name);
             /**if(device_name.contains("BlueM-")){ //Doesnt properly work for s6 edge so temporarily disabled(other wise I cant test..)
