@@ -127,7 +127,7 @@ public class chatActivity extends AppCompatActivity {
         stringArrayAdapter.add("You: " + message); //Todo: replace with message
         stringArrayAdapter.notifyDataSetChanged();
         bluetoothController.sendMessage(message);
-        Toast.makeText(getApplicationContext(), "message sent", Toast.LENGTH_LONG);
+        Toast.makeText(getApplicationContext(), "message sent", Toast.LENGTH_LONG).show();
         saveMessages(getApplicationContext().getFilesDir().getAbsoluteFile(), mac);
     }
 

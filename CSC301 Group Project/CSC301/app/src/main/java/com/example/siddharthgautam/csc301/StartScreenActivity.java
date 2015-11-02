@@ -46,8 +46,6 @@ public class StartScreenActivity extends AppCompatActivity {
             }
         });
 
-        ServerThread serverThread = new ServerThread();
-        serverThread.run();
     }
 
     public void openMain(View view) {

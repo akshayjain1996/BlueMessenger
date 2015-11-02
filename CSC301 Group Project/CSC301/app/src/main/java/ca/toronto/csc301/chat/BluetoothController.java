@@ -19,7 +19,7 @@ public class BluetoothController {
     static BluetoothController instance;
 
     private BluetoothController(){
-        connectionsList = new ConnectionsList();
+        connectionsList = ConnectionsList.getInstance();
 
     }
 
