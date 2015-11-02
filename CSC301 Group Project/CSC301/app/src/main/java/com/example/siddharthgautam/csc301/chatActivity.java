@@ -85,6 +85,7 @@ public class chatActivity extends AppCompatActivity {
         bluetoothController = BluetoothController.getInstance();
         bluetoothController.establishConnection(contactDevice);
         Toast.makeText(getApplicationContext(), "connection established " , Toast.LENGTH_LONG).show();
+        BluetoothController.getInstance().setContext(getApplicationContext());
     }
 
     @Override
