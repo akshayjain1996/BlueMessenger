@@ -37,7 +37,7 @@ import java.lang.reflect.Method;
 public class MainActivity extends AppCompatActivity implements Serializable{
 
     private BluetoothAdapter bluetooth;
-    private Set<BluetoothDevice> devices;
+    private static Set<BluetoothDevice> devices;
     private Set<BluetoothDevice> connectedDevices;
     Button scan, contacts;
     ListView devicesList;
@@ -102,6 +102,16 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                 //connectDevice(deviceName);
             }
         });
+    }
+
+    //Get devices
+    public static BluetoothDevice getDeviceByName(String name) {
+        for (BluetoothDevice device : devices) {
+            if (device.getName().equals(name)) {
+                return device;
+            }
+        }
+        return null;
     }
 
     //Go to contacts activity
