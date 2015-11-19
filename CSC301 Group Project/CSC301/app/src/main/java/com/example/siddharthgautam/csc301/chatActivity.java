@@ -23,6 +23,7 @@ import java.util.UUID;
 
 import ca.toronto.csc301.chat.ConnectedThread;
 import ca.toronto.csc301.chat.ConnectionsList;
+import ca.toronto.csc301.chat.Event;
 
 
 public class chatActivity extends AppCompatActivity {
@@ -122,10 +123,15 @@ public class chatActivity extends AppCompatActivity {
         String message = messageTextView.getText().toString();
         stringArrayAdapter.add("You: " + message); //Todo: replace with message
         stringArrayAdapter.notifyDataSetChanged();
-        ConnectedThread t = ConnectionsList.getInstance().getConnectedThread(contactDevice);
-        if(t != null){
-            t.sendMessage(message);
-            Toast.makeText(appContext, "Sent a msg to " + t.getSocket().getRemoteDevice().getName(), Toast.LENGTH_LONG).show();
+       // ConnectedThread t = ConnectionsList.getInstance().getConnectedThread(contactDevice);
+        Event e = new Event();
+        e.setType(1);
+        e.allowClient(contactDevice.getAddress());
+        e.setMessage(message);
+        if(true){//fix after
+            //t.sendMessage(message);
+            ConnectionsList.getInstance().sendEvent(e);
+            Toast.makeText(appContext, "Broadcast a msg", Toast.LENGTH_LONG).show();
         }
         else{
             Toast.makeText(appContext, "No connection available right now", Toast.LENGTH_LONG).show();
