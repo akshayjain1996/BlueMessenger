@@ -48,7 +48,6 @@ public class chatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Bundle b = getIntent().getExtras();
         contactDevice = b.getParcelable("BluetoothDevice");
-
         setTitle("Chat: " + contactDevice.getName());
         setContentView(R.layout.activity_chat2);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
