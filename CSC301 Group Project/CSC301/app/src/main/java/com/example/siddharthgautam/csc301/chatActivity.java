@@ -130,16 +130,7 @@ public class chatActivity extends AppCompatActivity {
         e.setType(1);
         e.allowClient(contactDevice.getAddress());
         e.setMessage(message);
-        /* Serializes message so that it can be deserialized and retrieved later on*/
-        try {
-            FileOutputStream out = new FileOutputStream(new File("store.data"));
-            ObjectOutputStream serializer = new ObjectOutputStream(out);
-            serializer.writeObject(e);
-        }catch(FileNotFoundException e){
-            System.out.println("File store.data not found");
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
+
         if(true){//fix after
             //t.sendMessage(message);
             ConnectionsList.getInstance().sendEvent(e);
@@ -155,6 +146,24 @@ public class chatActivity extends AppCompatActivity {
         String senderName = ConnectionsList.getInstance().getNameFromMac(senderMac);
         Toast.makeText(appContext, "Got a message", Toast.LENGTH_LONG).show();
         stringArrayAdapter.add("Them: " + message);
+        //If this chat is not open
+        if(senderMac!=mac){
+            //Creates event and sets details
+            Event e = new Event();
+            e.setType(1);
+            e.setSender(senderMac);
+            e.setMessage(message);
+            try {
+                //Opens file and writes to it
+                FileOutputStream out = new FileOutputStream(senderMac+".txt");
+                ObjectOutputStream serializer = new ObjectOutputStream(out);
+                serializer.writeObject(e);
+            }catch(FileNotFoundException e){
+                System.out.println("File store.data not found");
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
 
         if(stringArrayAdapter.getCount() > MAX_MSGS_ON_SCREEN){
             stringArrayAdapter.remove(stringArrayAdapter.getItem(0));
