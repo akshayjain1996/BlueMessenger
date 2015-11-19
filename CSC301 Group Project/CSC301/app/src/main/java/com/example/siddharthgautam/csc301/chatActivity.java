@@ -15,8 +15,11 @@ import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
@@ -127,6 +130,16 @@ public class chatActivity extends AppCompatActivity {
         e.setType(1);
         e.allowClient(contactDevice.getAddress());
         e.setMessage(message);
+        /* Serializes message so that it can be deserialized and retrieved later on*/
+        try {
+            FileOutputStream out = new FileOutputStream(new File("store.data"));
+            ObjectOutputStream serializer = new ObjectOutputStream(out);
+            serializer.writeObject(e);
+        }catch(FileNotFoundException e){
+            System.out.println("File store.data not found");
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
         if(true){//fix after
             //t.sendMessage(message);
             ConnectionsList.getInstance().sendEvent(e);
