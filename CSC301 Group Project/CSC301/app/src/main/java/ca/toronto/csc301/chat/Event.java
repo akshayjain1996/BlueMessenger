@@ -1,5 +1,10 @@
 package ca.toronto.csc301.chat;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashSet;
 import java.util.Set;
 import java.io.Serializable;
@@ -22,7 +27,20 @@ public class Event implements Serializable{
     //who can see the MESSAGE?
     private HashSet<String> allowedClients = new HashSet<String>();//mac addrs'
     //who has already seen/received this event?
-    private HashSet<String> pendingTargets = new HashSet<String>();
+    private HashSet<String> excludedTargets = new HashSet<String>();
+
+    public static byte[] serialize(Object obj) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(out);
+        os.writeObject(obj);
+        return out.toByteArray();
+    }
+
+    public static Object deserialize(byte[] data) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream in = new ByteArrayInputStream(data);
+        ObjectInputStream is = new ObjectInputStream(in);
+        return is.readObject();
+    }
 
     public void setData(HashSet<String> s)
     {
@@ -49,16 +67,16 @@ public class Event implements Serializable{
         this.message = s;
     }
 
-    public void addTarget(String s){
-        pendingTargets.add(s);
+    public void addExcludedTarget(String s){
+        excludedTargets.add(s);
     }
 
-    public void removeTarget(String s){
-        pendingTargets.remove(s);
+    public void removeExcludedTarget(String s){
+        excludedTargets.remove(s);
     }
 
-    public Set<String> getPendingTargets(){
-        return new HashSet<String>(this.pendingTargets);
+    public Set<String> getExcludedTargets(){
+        return new HashSet<String>(this.excludedTargets);
     }
 
     public int getType(){
@@ -69,6 +87,9 @@ public class Event implements Serializable{
         return this.message;
     }
 
+    public boolean isClientAllowed(String mac){
+        return allowedClients.contains(mac);
+    }
     //lets this client see the msg
     public void allowClient(String s){
         allowedClients.add(s);

@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import ca.toronto.csc301.chat.ConnectionsList;
+import ca.toronto.csc301.chat.Event;
 
 public class MainActivity extends AppCompatActivity implements Serializable{
 
@@ -117,10 +118,27 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             switch (msg.what) {
                 case 1:
                     byte[] readBuf = (byte[]) msg.obj;
-                    // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    //mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
-                    chatActivity.getInstance().recieveMessage(readMessage);
+                    Event e;
+                    try{
+                        e = (Event) Event.deserialize(readBuf);
+                        int type = e.getType();
+                        switch(type) {
+                            case 1:
+                                Toast.makeText(getApplicationContext(), "Recieved a broadcast event", Toast.LENGTH_LONG).show();
+                                String m = e.getMessage();
+                                if(e.isClientAllowed(bluetooth.getAddress())){
+                                    chatActivity.getInstance().recieveMessage(m, e.getSender());
+                                    //this client can see it
+                                }
+                                //code to forward
+                                ConnectionsList.getInstance().sendEvent(e);
+                                break;
+                        }
+
+                    }
+                    catch(Exception ex) {
+
+                    }
                     break;
 
             }
