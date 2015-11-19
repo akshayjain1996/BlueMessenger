@@ -55,6 +55,10 @@ public class ConnectionsList {
         }
     }
 
+    public boolean isDeviceInNetwork(String mac){
+        return networkDevices.containsKey(mac);
+    }
+
     public String getNameFromMac(String mac){
         if(networkDevices.get(mac) == null){
             return "";
@@ -72,6 +76,8 @@ public class ConnectionsList {
                     t.start();
                 }
             }).start();
+            this.networkDevices.put(t.getSocket().getRemoteDevice().getAddress(),
+                    t.getSocket().getRemoteDevice().getName());
             this.map.put(d, t);
         }
         else{ //In case connection fails or is bad remake it
@@ -90,6 +96,7 @@ public class ConnectionsList {
         ConnectedThread s = this.map.get(device);
         s.cancel();
         this.map.put(device, null);
+        this.networkDevices.put(device.getName(), null);
     }
 
     public static ConnectionsList getInstance() {
