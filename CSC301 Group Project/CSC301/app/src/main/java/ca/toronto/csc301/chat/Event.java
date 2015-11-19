@@ -12,15 +12,26 @@ public class Event implements Serializable{
      * type:
      *  int 1 = broadcast msg, visibility to only target clients
      *  int 2 = request copy of receivers' clients
+     *  int 3 = recieving type 2 request, in data value
      */
     private int type;
     private String message;
     private String receiver;
     private String sender;
+    private HashSet<String> data = new HashSet<String>();
     //who can see the MESSAGE?
     private HashSet<String> allowedClients = new HashSet<String>();//mac addrs'
     //who has already seen/received this event?
     private HashSet<String> pendingTargets = new HashSet<String>();
+
+    public void setData(HashSet<String> s)
+    {
+        this.data = s;
+    }
+
+    public HashSet<String> getData(){
+        return this.data;
+    }
 
     public void setSender(String s){
         this.sender = s;
