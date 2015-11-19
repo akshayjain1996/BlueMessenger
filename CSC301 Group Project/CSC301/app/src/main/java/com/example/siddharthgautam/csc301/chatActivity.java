@@ -158,7 +158,7 @@ public class chatActivity extends AppCompatActivity {
                 FileOutputStream out = new FileOutputStream(senderMac+".txt");
                 ObjectOutputStream serializer = new ObjectOutputStream(out);
                 serializer.writeObject(e);
-            }catch(FileNotFoundException e){
+            }catch(FileNotFoundException ex){
                 System.out.println("File store.data not found");
             } catch (IOException e1) {
                 e1.printStackTrace();
