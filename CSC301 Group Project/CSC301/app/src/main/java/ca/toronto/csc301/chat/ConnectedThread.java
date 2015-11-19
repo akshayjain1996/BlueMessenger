@@ -74,6 +74,14 @@ public class ConnectedThread extends Thread {
         }
     }
 
+    public void sendEvent(Event e){
+        try {
+            write(Event.serialize(e));
+        }
+        catch(Exception ex){
+
+        }
+    }
     /* Call this from the main activity to shutdown the connection */
     public void cancel() {
         try {
