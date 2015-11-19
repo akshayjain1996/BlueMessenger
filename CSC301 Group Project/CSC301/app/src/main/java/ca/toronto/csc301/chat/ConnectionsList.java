@@ -6,14 +6,17 @@ import android.os.Handler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by akshay on 31/10/15.
  */
 public class ConnectionsList {
     HashMap<BluetoothDevice,ConnectedThread> map = new HashMap<BluetoothDevice,ConnectedThread>();
+    HashMap<String, String> networkDevices = new HashMap<String, String>();
     private Handler mHandler;
     static ConnectionsList instance;
     static private AcceptThread acceptThread;
@@ -24,6 +27,17 @@ public class ConnectionsList {
 
     private ConnectionsList(){
         instance = this;;
+    }
+
+    public void newDeviceInNetwork(String mac, String name){
+        networkDevices.put(mac, name);
+    }
+
+    public String getNameFromMac(String mac){
+        if(networkDevices.get(mac) == null){
+            return "";
+        }
+        return networkDevices.get(mac);
     }
 
     public void newConnection(BluetoothSocket s, BluetoothDevice d){

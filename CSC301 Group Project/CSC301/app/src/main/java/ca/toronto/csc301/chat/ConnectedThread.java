@@ -6,8 +6,12 @@ import android.os.Handler;
 
 import com.example.siddharthgautam.csc301.chatActivity;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
 public class ConnectedThread extends Thread {
@@ -45,7 +49,7 @@ public class ConnectedThread extends Thread {
             try {
                 // Read from the InputStream
                 bytes = mmInStream.read(buffer);
-                String readMessage = new String(buffer, 0, bytes);
+                //String readMessage = new String(buffer, 0, bytes);
                 mHandler.obtainMessage(1, bytes, -1, buffer)
                         .sendToTarget();
                 //chatActivity.getInstance().recieveMessage(readMessage);

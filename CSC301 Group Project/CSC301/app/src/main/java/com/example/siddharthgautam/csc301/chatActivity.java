@@ -133,7 +133,8 @@ public class chatActivity extends AppCompatActivity {
         saveMessages(appContext.getFilesDir().getAbsoluteFile(), mac);
     }
 
-    public void recieveMessage(String message){
+    public void recieveMessage(String message, String senderMac){
+        String senderName = ConnectionsList.getInstance().getNameFromMac(senderMac);
         Toast.makeText(appContext, "Got a message", Toast.LENGTH_LONG).show();
         stringArrayAdapter.add("Them: " + message);
 
