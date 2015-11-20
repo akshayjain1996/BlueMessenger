@@ -96,4 +96,7 @@
     <string name="title_activity_chat_screen">ChatScreen</string>
     <string name="title_activity_display_screen">DisplayScreenActivity</string>
     <string name="title_activity_all_contacts_frag">AllContactsFrag</string>
+    <string name="title_activity_group_frag">GroupFrag</string>
+    <string name="title_activity_open_chat">OpenChat</string>
+    <string name="title_activity_open_chat_frag">OpenChatFrag</string>
 </resources>

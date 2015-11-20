@@ -10,7 +10,7 @@ import android.support.v4.app.FragmentPagerAdapter;
  */
 public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
     final int PAGE_COUNT = 3;
-    private String tabTitles[] = new String[] { "Tab1", "Tab2", "Tab3" };
+    private String tabTitles[] = new String[] { "All Contacts", "Groups", "Open chats" };
     private Context context;
 
     public SampleFragmentPagerAdapter(FragmentManager fm, Context context) {
@@ -25,7 +25,12 @@ public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return AllContactsFrag.newInstance(position + 1);
+        switch (position){
+            case 0: return AllContactsFrag.newInstance();
+            case 1: return GroupFrag.newInstance();
+            case 2: return OpenChatFrag.newInstance();
+        }
+        return AllContactsFrag.newInstance();
     }
 
     @Override

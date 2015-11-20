@@ -35,7 +35,6 @@
             android:label="@string/title_activity_contacts"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
-
         <activity
             android:name=".DisplayScreenActivity"
             android:label="@string/title_activity_display_screen"
@@ -49,6 +48,21 @@
         <activity
             android:name=".AllContactsFrag"
             android:label="@string/title_activity_all_contacts_frag"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".GroupFrag"
+            android:label="@string/title_activity_group_frag"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".OpenChat"
+            android:label="@string/title_activity_open_chat"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".OpenChatFrag"
+            android:label="@string/title_activity_open_chat_frag"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
     </application>

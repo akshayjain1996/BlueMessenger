@@ -11,12 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class AllContactsFrag extends Fragment {
+public class OpenChatFrag extends Fragment {
 
-    public static final String ARG_PAGE = "ARG_PAGE";
-
-    public static AllContactsFrag newInstance() {
-        AllContactsFrag fragment = new AllContactsFrag();
+    public static OpenChatFrag newInstance() {
+        OpenChatFrag fragment = new OpenChatFrag();
         return fragment;
     }
 
@@ -28,9 +26,9 @@ public class AllContactsFrag extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_all_contacts_frag, container, false);
+        View view = inflater.inflate(R.layout.activity_open_chat_frag, container, false);
         TextView textView = (TextView) view;
-        textView.setText("AllContactsFrag");
+        textView.setText("Open Chat Frag");
         return view;
     }
 
