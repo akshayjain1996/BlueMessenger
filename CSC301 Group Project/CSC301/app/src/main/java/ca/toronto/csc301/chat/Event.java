@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.io.Serializable;
@@ -23,7 +24,7 @@ public class Event implements Serializable{
     private String message;
     private String receiver;
     private String sender;
-    private HashSet<String> data = new HashSet<String>();
+    private HashMap<String, String> data = new HashMap<String, String>();
     //who can see the MESSAGE?
     private HashSet<String> allowedClients = new HashSet<String>();//mac addrs'
     //who has already seen/received this event?
@@ -42,12 +43,12 @@ public class Event implements Serializable{
         return is.readObject();
     }
 
-    public void setData(HashSet<String> s)
+    public void setData(HashMap<String, String> s)
     {
         this.data = s;
     }
 
-    public HashSet<String> getData(){
+    public HashMap<String, String> getData(){
         return this.data;
     }
 

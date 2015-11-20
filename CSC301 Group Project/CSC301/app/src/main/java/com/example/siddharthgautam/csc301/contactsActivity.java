@@ -75,6 +75,15 @@ public class contactsActivity extends AppCompatActivity {
                 cL.add(device_name);
             }**/
         }
+        // now add from network devices
+        Iterator<String> di = ConnectionsList.getInstance().getNamesOfConnectedDevices().iterator();
+        while(di.hasNext()){
+            String name = di.next();
+            if(cL.contains(name)){
+                continue;
+            }
+            cL.add(name);
+        }
         adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, cL);
         contactsList.setAdapter(adapter);
     }
