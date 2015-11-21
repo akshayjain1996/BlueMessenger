@@ -125,7 +125,7 @@ public class chatActivity extends AppCompatActivity {
         String message = messageTextView.getText().toString();
         stringArrayAdapter.add("You: " + message); //Todo: replace with message
         stringArrayAdapter.notifyDataSetChanged();
-       // ConnectedThread t = ConnectionsList.getInstance().getConnectedThread(contactDevice);
+
         Event e = new Event();
         e.setType(1);
         e.allowClient(contactDevice.getAddress());
