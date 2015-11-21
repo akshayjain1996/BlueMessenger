@@ -3,6 +3,7 @@ package ca.toronto.csc301.chat;
 import android.bluetooth.BluetoothAdapter;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -31,5 +32,20 @@ public class GroupController {
         GroupChat groupChat = new GroupChat(name, bluetooth.getAddress());
         groupChats.add(groupChat);
         return groupChat;
+    }
+
+    public GroupChat getGroupChatByName(String name){
+        Iterator<GroupChat> groupChatIterator = groupChats.iterator();
+        while(groupChatIterator.hasNext()){
+            GroupChat groupChat = groupChatIterator.next();
+            if(groupChat.getName().equals(name)){
+                return groupChat;
+            }
+        }
+        return null;
+    }
+
+    public List<GroupChat> getGroupChats(){
+        return groupChats;
     }
 }
