@@ -1,10 +1,15 @@
 package com.example.siddharthgautam.csc301;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import java.util.Set;
 
 public class StartScreenActivity extends AppCompatActivity {
 
@@ -24,7 +29,7 @@ public class StartScreenActivity extends AppCompatActivity {
         connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(StartScreenActivity.this, chatActivity.class));
+                startActivity(new Intent(StartScreenActivity.this, DisplayScreenActivity.class));
             }
         });
 
@@ -37,9 +42,9 @@ public class StartScreenActivity extends AppCompatActivity {
         });
 
         openMainButton = (Button) findViewById(R.id.openMainButton);
-        openChatsButton.setOnClickListener(new View.OnClickListener(){
-        @Override
-            public void onClick(View v){
+        openChatsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 openMain(v);
             }
         });

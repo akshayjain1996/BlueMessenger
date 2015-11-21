@@ -10,11 +10,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
+import ca.toronto.csc301.chat.ConnectedThread;
 import ca.toronto.csc301.chat.ConnectionsList;
 
 public class contactsActivity extends AppCompatActivity {
@@ -38,6 +40,17 @@ public class contactsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String deviceName = contactsList.getItemAtPosition(position).toString();
                 BluetoothDevice device = MainActivity.getDeviceByName(deviceName);
+                if(device != null) {//for paired devices
+                    ConnectedThread t = ConnectionsList.getInstance().getConnectedThread((device));
+                    if (t == null) {//no connection available, try to connect
+                        ConnectionsList.getInstance().makeConnectionTo(device);
+                    }
+                }
+                if(ConnectionsList.getInstance().isDeviceInNetwork(device.getAddress()) == false){
+                    Toast.makeText(getApplicationContext(), deviceName + " is currently not in the network." +
+                            "   Trying to connect..", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 Intent intent = new Intent(contactsActivity.this, chatActivity.class);
                 intent.putExtra("BluetoothDevice", device);
                 startActivity(intent);
@@ -61,6 +74,15 @@ public class contactsActivity extends AppCompatActivity {
             if(device_name == "Priyen Galaxy S6 edge"){
                 cL.add(device_name);
             }**/
+        }
+        // now add from network devices
+        Iterator<String> di = ConnectionsList.getInstance().getNamesOfConnectedDevices().iterator();
+        while(di.hasNext()){
+            String name = di.next();
+            if(cL.contains(name)){
+                continue;
+            }
+            cL.add(name);
         }
         adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, cL);
         contactsList.setAdapter(adapter);

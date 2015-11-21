@@ -15,14 +15,18 @@ import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
 import ca.toronto.csc301.chat.ConnectedThread;
 import ca.toronto.csc301.chat.ConnectionsList;
+import ca.toronto.csc301.chat.Event;
 
 
 public class chatActivity extends AppCompatActivity {
@@ -47,7 +51,6 @@ public class chatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Bundle b = getIntent().getExtras();
         contactDevice = b.getParcelable("BluetoothDevice");
-
         setTitle("Chat: " + contactDevice.getName());
         setContentView(R.layout.activity_chat2);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -122,10 +125,16 @@ public class chatActivity extends AppCompatActivity {
         String message = messageTextView.getText().toString();
         stringArrayAdapter.add("You: " + message); //Todo: replace with message
         stringArrayAdapter.notifyDataSetChanged();
-        ConnectedThread t = ConnectionsList.getInstance().getConnectedThread(contactDevice);
-        if(t != null){
-            t.sendMessage(message);
-            Toast.makeText(appContext, "Sent a msg to " + t.getSocket().getRemoteDevice().getName(), Toast.LENGTH_LONG).show();
+       // ConnectedThread t = ConnectionsList.getInstance().getConnectedThread(contactDevice);
+        Event e = new Event();
+        e.setType(1);
+        e.allowClient(contactDevice.getAddress());
+        e.setMessage(message);
+
+        if(true){//fix after
+            //t.sendMessage(message);
+            ConnectionsList.getInstance().sendEvent(e);
+            Toast.makeText(appContext, "Broadcast a msg", Toast.LENGTH_LONG).show();
         }
         else{
             Toast.makeText(appContext, "No connection available right now", Toast.LENGTH_LONG).show();
@@ -133,9 +142,28 @@ public class chatActivity extends AppCompatActivity {
         saveMessages(appContext.getFilesDir().getAbsoluteFile(), mac);
     }
 
-    public void recieveMessage(String message){
+    public void recieveMessage(String message, String senderMac){
+        String senderName = ConnectionsList.getInstance().getNameFromMac(senderMac);
         Toast.makeText(appContext, "Got a message", Toast.LENGTH_LONG).show();
         stringArrayAdapter.add("Them: " + message);
+        //If this chat is not open
+        if(senderMac!=mac){
+            //Creates event and sets details
+            Event e = new Event();
+            e.setType(1);
+            e.setSender(senderMac);
+            e.setMessage(message);
+            try {
+                //Opens file and writes to it
+                FileOutputStream out = new FileOutputStream(senderMac+".txt");
+                ObjectOutputStream serializer = new ObjectOutputStream(out);
+                serializer.writeObject(e);
+            }catch(FileNotFoundException ex){
+                System.out.println("File store.data not found");
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
 
         if(stringArrayAdapter.getCount() > MAX_MSGS_ON_SCREEN){
             stringArrayAdapter.remove(stringArrayAdapter.getItem(0));

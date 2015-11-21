@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import ca.toronto.csc301.chat.ConnectionsList;
+import ca.toronto.csc301.chat.Event;
 
 public class MainActivity extends AppCompatActivity implements Serializable{
 
@@ -77,8 +78,8 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             Toast.makeText(getApplicationContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
         }
 
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        this.registerReceiver(receiver, filter);
+        //IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        //this.registerReceiver(receiver, filter);
 
         scan.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -108,6 +109,17 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         });
         ConnectionsList.getInstance().setHandler(mHandler);
         ConnectionsList.getInstance().accept();
+        ConnectionsList.getInstance().newDeviceInNetwork(BluetoothAdapter.getDefaultAdapter().getAddress(),
+                BluetoothAdapter.getDefaultAdapter().getName());
+        Toast.makeText(getApplicationContext(),"Connecting to paired devices..." +
+                " asking for all network devices upon connect", Toast.LENGTH_LONG).show();
+        BluetoothAdapter local = BluetoothAdapter.getDefaultAdapter();
+        Set<BluetoothDevice> paired = local.getBondedDevices();
+        Iterator<BluetoothDevice> it = paired.iterator();
+        while(it.hasNext()){
+            BluetoothDevice dev = it.next();
+            ConnectionsList.makeConnectionTo(dev);
+        }
     }
 
     private final Handler mHandler = new Handler() {
@@ -117,10 +129,35 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             switch (msg.what) {
                 case 1:
                     byte[] readBuf = (byte[]) msg.obj;
-                    // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    //mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
-                    chatActivity.getInstance().recieveMessage(readMessage);
+                    Event e;
+                    try{
+                        e = (Event) Event.deserialize(readBuf);
+                        int type = e.getType();
+                        switch(type) {
+                            case 1:
+                                Toast.makeText(getApplicationContext(), "Recieved a broadcast event", Toast.LENGTH_LONG).show();
+                                String m = e.getMessage();
+                                if(e.isClientAllowed(bluetooth.getAddress())){
+                                    chatActivity.getInstance().recieveMessage(m, e.getSender());
+                                    //this client can see it
+                                }
+                                //code to forward
+                                ConnectionsList.getInstance().sendEvent(e);
+                                break;
+                            case 2:
+                                Toast.makeText(getApplicationContext(), "Some device asked for a devices update, sending them", Toast.LENGTH_LONG).show();
+                                ConnectionsList.getInstance().sendEvent(e);
+                                break;
+                            case 3:
+                                Toast.makeText(getApplicationContext(), "Recieved a network devices event update", Toast.LENGTH_LONG).show();
+                                ConnectionsList.getInstance().sendEvent(e);
+                                break;
+                        }
+
+                    }
+                    catch(Exception ex) {
+
+                    }
                     break;
 
             }
