@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
@@ -49,7 +51,9 @@ public class AllContactsFrag extends Fragment {
             BluetoothDevice device = i.next();
             ConnectionsList.getInstance().makeConnectionTo(device);
             String device_name = device.getName();
-            cL.add(device_name);
+            if(cL.contains(device_name) == false){
+                cL.add(device_name);
+            }
         }
         // now add from network devices
         Iterator<String> di = ConnectionsList.getInstance().getNamesOfConnectedDevices().iterator();
@@ -69,28 +73,46 @@ public class AllContactsFrag extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String deviceName = contactsList.getItemAtPosition(position).toString();
-                BluetoothDevice device = MainActivity.getDeviceByName(deviceName);
+                BluetoothDevice device = null;
+                try{
+                    device  = MainActivity.getDeviceByName(deviceName);
+                }
+                catch(Exception ex){
+                    //device isnt connected yet/maybe a outer network device
+                }
+                String mac;
                 if (device != null) {//for paired devices
+                    mac = device.getAddress();
                     ConnectedThread t = ConnectionsList.getInstance().getConnectedThread((device));
                     if (t == null) {//no connection available, try to connect
                         ConnectionsList.getInstance().makeConnectionTo(device);
+                        Toast.makeText(getContext(), deviceName + " is currently not in the network." +
+                                "   Trying to connect..", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    if(t.getSocket().isConnected() == false){
+                        Toast.makeText(getContext(), deviceName + " is currently not in the network." +
+                                "   Trying to connect..", Toast.LENGTH_LONG).show();
+                        return;
                     }
                 }
-                if (ConnectionsList.getInstance().isDeviceInNetwork(device.getAddress()) == false) {
-
-                    return;
-
+                else{//this device is not paired, but maybe its in the network, check.
+                    mac = ConnectionsList.getInstance().getMacFromName(deviceName);
+                    if(ConnectionsList.getInstance().isDeviceInNetwork(mac) == false){
+                        Toast.makeText(getContext(), deviceName + " is currently not in the network." +
+                                "   Trying to connect..", Toast.LENGTH_LONG).show();
+                        return;
+                    }
                 }
-
-                goToChat(getView(), device);
+                goToChat(getView(), mac);
             }
         });
         return view;
     }
 
-    public void goToChat(View v, BluetoothDevice device){
+    public void goToChat(View v, String mac){
     Intent intent = new Intent(getActivity(), chatActivity.class);
-    intent.putExtra("BluetoothDevice", device);
+    intent.putExtra("mac", mac);
     startActivity(intent);
     }
 
