@@ -95,4 +95,8 @@ public class Event implements Serializable{
     public void allowClient(String s){
         allowedClients.add(s);
     }
+
+    public void addAllowedClientsFromSet(HashSet<String> members){
+        allowedClients.addAll(members);
+    }
 }
