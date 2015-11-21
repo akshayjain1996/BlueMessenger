@@ -15,8 +15,11 @@ import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
@@ -122,11 +125,12 @@ public class chatActivity extends AppCompatActivity {
         String message = messageTextView.getText().toString();
         stringArrayAdapter.add("You: " + message); //Todo: replace with message
         stringArrayAdapter.notifyDataSetChanged();
-       // ConnectedThread t = ConnectionsList.getInstance().getConnectedThread(contactDevice);
+
         Event e = new Event();
         e.setType(1);
         e.allowClient(contactDevice.getAddress());
         e.setMessage(message);
+
         if(true){//fix after
             //t.sendMessage(message);
             ConnectionsList.getInstance().sendEvent(e);
@@ -142,6 +146,24 @@ public class chatActivity extends AppCompatActivity {
         String senderName = ConnectionsList.getInstance().getNameFromMac(senderMac);
         Toast.makeText(appContext, "Got a message", Toast.LENGTH_LONG).show();
         stringArrayAdapter.add("Them: " + message);
+        //If this chat is not open
+        if(senderMac!=mac){
+            //Creates event and sets details
+            Event e = new Event();
+            e.setType(1);
+            e.setSender(senderMac);
+            e.setMessage(message);
+            try {
+                //Opens file and writes to it
+                FileOutputStream out = new FileOutputStream(senderMac+".txt");
+                ObjectOutputStream serializer = new ObjectOutputStream(out);
+                serializer.writeObject(e);
+            }catch(FileNotFoundException ex){
+                System.out.println("File store.data not found");
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
 
         if(stringArrayAdapter.getCount() > MAX_MSGS_ON_SCREEN){
             stringArrayAdapter.remove(stringArrayAdapter.getItem(0));

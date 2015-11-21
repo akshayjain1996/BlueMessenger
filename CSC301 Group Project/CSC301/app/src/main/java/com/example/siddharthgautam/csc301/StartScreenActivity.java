@@ -29,7 +29,7 @@ public class StartScreenActivity extends AppCompatActivity {
         connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(StartScreenActivity.this, chatActivity.class));
+                startActivity(new Intent(StartScreenActivity.this, DisplayScreenActivity.class));
             }
         });
 
