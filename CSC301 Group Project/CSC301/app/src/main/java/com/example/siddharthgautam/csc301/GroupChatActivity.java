@@ -15,6 +15,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
@@ -105,5 +109,38 @@ public class GroupChatActivity extends AppCompatActivity {
             Toast.makeText(appContext, "No connection available right now", Toast.LENGTH_LONG).show();
         }
     }
+    public void recieveMessage(String message, String senderMac){
+        String senderName = ConnectionsList.getInstance().getNameFromMac(senderMac);
+        Toast.makeText(appContext, "Got a message", Toast.LENGTH_LONG).show();
+        stringArrayAdapter.add("Them: " + message);
+        //If this chat is not open
+
+        if(!(groupChat.checkMemberByMAC(senderMac))){
+            //Creates event and sets details
+            Event e = new Event();
+            e.setType(1);
+            e.setSender(senderMac);
+            e.setMessage(message);
+            try {
+                //Opens file and writes to it
+                FileOutputStream out = new FileOutputStream(senderMac+".txt");
+                ObjectOutputStream serializer = new ObjectOutputStream(out);
+                serializer.writeObject(e);
+            }catch(FileNotFoundException ex){
+                System.out.println("File store.data not found");
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
+
+        if(stringArrayAdapter.getCount() > MAX_MSGS_ON_SCREEN){
+            stringArrayAdapter.remove(stringArrayAdapter.getItem(0));
+        }
+
+        stringArrayAdapter.notifyDataSetChanged();
+        //BluetoothController.getInstance().sendMessage(new Message());
+        //implement this!
+    }
+
 
 }

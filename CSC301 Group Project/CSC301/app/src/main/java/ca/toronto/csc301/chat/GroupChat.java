@@ -1,11 +1,12 @@
 package ca.toronto.csc301.chat;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
 /**
  * Created by akshay on 21/11/15.
  */
-public class GroupChat {
+public class GroupChat implements Serializable{
     private HashSet<String> members;
     private String name;
 
@@ -29,6 +30,10 @@ public class GroupChat {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean checkMemberByMAC(String mac){
+        return members.contains(mac);
     }
 
 }
