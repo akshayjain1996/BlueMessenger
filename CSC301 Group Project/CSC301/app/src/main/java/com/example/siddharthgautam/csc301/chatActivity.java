@@ -50,15 +50,12 @@ public class chatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle b = getIntent().getExtras();
-        contactDevice = b.getParcelable("BluetoothDevice");
-        setTitle("Chat: " + contactDevice.getName());
+        mac = b.getString("mac");
+        //setTitle("Chat: " + mac);
+        setTitle("Chat: " + ConnectionsList.getInstance().getNameFromMac(mac));
         setContentView(R.layout.activity_chat2);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        mac = contactDevice.getAddress().replace(":","");
-        //BluetoothController.getInstance().establishConnection(contactDevice);
-
         sendButton = (Button) findViewById(R.id.sendMessageButton);
         setSendButtonFunction(sendButton);
         messageTextView = (TextView) findViewById(R.id.messageTextView);
@@ -66,11 +63,6 @@ public class chatActivity extends AppCompatActivity {
         stringList = new ArrayList<String>();
         stringArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stringList);
         messageView.setAdapter(stringArrayAdapter);
-
-        //bluetoothController = BluetoothController.getInstance();
-        //bluetoothController.establishConnection(contactDevice);
-        //Toast.makeText(getApplicationContext(), "connection established " , Toast.LENGTH_LONG).show();
-        //BluetoothController.getInstance().setContext(getApplicationContext());
         appContext = getApplicationContext();
         instance = this;
     }
@@ -128,7 +120,7 @@ public class chatActivity extends AppCompatActivity {
 
         Event e = new Event();
         e.setType(1);
-        e.allowClient(contactDevice.getAddress());
+        e.allowClient(mac);
         e.setMessage(message);
 
         if(true){//fix after
