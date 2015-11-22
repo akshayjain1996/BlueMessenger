@@ -6,12 +6,19 @@ Sprint Backlog:
 This time our group worked on various parts that were yet to be completed based on github issues. There was no specific assignment stating that a person needs to work on a particular section of code. Therefore, it was more open and people were allowed to complete any incomplete section of the project and update the issue on github.
 
 The order of tasks that were to be completed and the people who worked on them are as follows: 
+
 1. Stabilize Current P2P connection - Priyen
+
 2. Store chat messages(Using serializer learned in class) - Alex, Siddharth
+
 3. Create UI for group chat - Taras, Sneh, Alex, Akshay
+
 4. Visual appearence of UI - Sneh, Taras, Akshay, Alex
+
 5. Implement backend for group chat - Akshay, Priyen, Alex
+
 6. Test thoroughly - Everyone
+
 7. Comment - Siddharth
 
 Some issue on github based on Sprint backlog:

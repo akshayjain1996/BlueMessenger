@@ -7,11 +7,17 @@ Our "Scrum Master" was a normal member of the team, except with a few added resp
 Last sprint, we planed and managed to get our P2P chat working (with some connection issues). So for this sprint, we were trying to implement our original MVP which was the implementation of the group chat feature of our application, while also perfecting the connection for P2P chat. Also, we wanted to enhance the appearance of our UI and make imporvements to what seemed to be a very plain looking UI from the previous phase. After we complete our implementation of the group chat, the original MVP will mostly be fulfilled. However, that leaves us with the remaining user stories (recall phase 1) namely, user stories 1, 5, 6, 7, 8 are on our low priority as of now and we plan to complete those in our final sprint. 
 
 To be specific, we planned to accomplish the following:
+
 1. Stable connection for P2P chat
+
 2. Basic group chat
+
 3. Store chat messages and retrieve later on
-4. Store chat messages of a closed chat and retrieve when opened.
-5. Revamp UI to make it more visually appealing.
+
+4. Store chat messages of a closed chat and retrieve when opened
+
+5. Revamp UI to make it more visually appealing
+
 6. Create UI for group chat.
 
 Like the previous sprint, we divided our whole group in half to work on the back-end and the front-end. 
