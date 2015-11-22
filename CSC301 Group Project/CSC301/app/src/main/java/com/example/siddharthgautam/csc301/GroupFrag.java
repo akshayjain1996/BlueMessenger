@@ -42,7 +42,7 @@ public class GroupFrag extends Fragment {
     private BluetoothAdapter bluetooth;
     private ListView groupList;
     private ArrayList gL = new ArrayList();
-    private ArrayAdapter adapter;
+    private ArrayAdapter<GroupChat> adapter;
     String[] items;
     ArrayList<String> listItems=new ArrayList<String>();
     EditText editText;
@@ -65,14 +65,14 @@ public class GroupFrag extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_group_frag, container, false);
 
-        //listView = (ListView) view.findViewById(R.id.group_list);
+        listView = (ListView) view.findViewById(R.id.group_list);
 
 
 
         //listItems = new ArrayList<String>();
         //if (adapter == null) {
-        LinearLayout rl = (LinearLayout) view.findViewById(R.id.myID);
-        Button bt = new Button(getActivity());
+        //LinearLayout rl = (LinearLayout) view.findViewById(R.id.myID);
+        Button bt = (Button)view.findViewById(R.id.Button01);
         bt.setText("Add a Group");
         bt.setBackgroundColor(getResources().getColor(R.color.lightblue));
         bt.setTextColor(getResources().getColor(R.color.white));
@@ -106,16 +106,13 @@ public class GroupFrag extends Fragment {
                 // read data into adapter
                 GroupController controller = GroupController.getInstance();
                 List<GroupChat> data = controller.getGroupChats();
-                int i;
-                for (i = 0; i < data.size(); i++) {
-                    adapter.add(data.get(i).getName());
-                }
+                adapter = new ArrayAdapter<GroupChat>(getActivity(), android.R.layout.simple_list_item_1, data);
                 adapter.notifyDataSetChanged();
             }
 
         });
         //populateListView(view);
-        rl.addView(bt);
+        //rl.addView(bt);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -129,12 +126,12 @@ public class GroupFrag extends Fragment {
         //ArrayList<String> listItems=new ArrayList<String>();
         //listItems.add("hello");
         //listItems.add("goodbye");
-        ListView lv = new ListView(getActivity());
-        adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1);
+        ListView lv = (ListView)view.findViewById(R.id.group_list);
+        adapter = new ArrayAdapter<GroupChat>(getActivity(), android.R.layout.simple_list_item_1, GroupController.getInstance().getGroupChats());
         //adapter.add("hello");
         //adapter.add("goodbye");
         lv.setAdapter(adapter);
-        rl.addView(lv);
+        //rl.addView(lv);
             /*
 
             // the list view is empty, just display the "Add a Group" button
@@ -198,17 +195,13 @@ public class GroupFrag extends Fragment {
         GroupController controller = GroupController.getInstance();
         List<GroupChat> data = controller.getGroupChats();
         Toast.makeText(getContext(), String.valueOf(data.size()), Toast.LENGTH_LONG).show();
-        LinearLayout rl = (LinearLayout) view.findViewById(R.id.myID);
-        ListView lv = new ListView(getActivity());
-        adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1);
-        int i;
-        for (i = 0; i < data.size(); i++) {
-            adapter.add(data.get(i).getName());
-        }
+        //LinearLayout rl = (LinearLayout) view.findViewById(R.id.myID);
+        ListView lv = (ListView)view.findViewById(R.id.group_list);
+        adapter = new ArrayAdapter<GroupChat>(getContext(), android.R.layout.simple_list_item_1, GroupController.getInstance().getGroupChats());
         //adapter.add("hello");
         //adapter.add("goodbye");
         lv.setAdapter(adapter);
-        rl.addView(lv);
+        //rl.addView(lv);
     }
 
 
