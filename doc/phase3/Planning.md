@@ -4,7 +4,15 @@ Inital Plan:
 
 Our "Scrum Master" was a normal member of the team, except with a few added responsibilities. Firstly and most importantly, our Scrum Master planned meetings, considering the time and location constraints of individuals as well as time left for the project. For example, most of our team members had directly conflicting schedules, so our Scrum Master instead insisted that the group meet once a week electronically via Skype early in the morning for planning meetings. Our Scrum Master also frequently consulted individual team members outside meetings, taking and sharing notes about any important status updates (i.e. completion) as status updates were infrequent. This and the meetings meant that the Scrum Master was a note taker during meetings.These notes would be used during status meetings and updated as needed. Details were added since status meetings were more detailed and included progress and not just milestones. Tasks were sized based entirely on difficulty. A small sized task could be completed in an hour, medium sized task in less than a day and large tasks spanned over  more than one day. During our initial planning meeting, our metrics for an easy task and difficult tasks were based entirely on estimates based on our abilities, as well as what each task encompassed. Our entire team, including the scrum master agreed on the size of the task by consensus, and little argument was raised over the size of the task.
 
-Last sprint, we planed and managed to get our P2P chat working. So for this sprint, we were trying to implement our original MVP which was the implementation of the group chat feature of our application. Also, we wanted to enhance the appearance of our UI and make imporvements to what seemed to be a very plain looking UI from the previous phase. After we complete our implementation of the group chat, the original MVP will mostly be fulfilled. However, that leaves us with the remaining user stories (recall phase 1) namely, user stories 1, 5, 6, 7, 8 are on our low priority as of now and we plan to complete those in our final sprint. 
+Last sprint, we planed and managed to get our P2P chat working (with some connection issues). So for this sprint, we were trying to implement our original MVP which was the implementation of the group chat feature of our application, while also perfecting the connection for P2P chat. Also, we wanted to enhance the appearance of our UI and make imporvements to what seemed to be a very plain looking UI from the previous phase. After we complete our implementation of the group chat, the original MVP will mostly be fulfilled. However, that leaves us with the remaining user stories (recall phase 1) namely, user stories 1, 5, 6, 7, 8 are on our low priority as of now and we plan to complete those in our final sprint. 
+
+To be specific, we planned to accomplish the following:
+1. Stable connection for P2P chat
+2. Basic group chat
+3. Store chat messages and retrieve later on
+4. Store chat messages of a closed chat and retrieve when opened.
+5. Revamp UI to make it more visually appealing.
+6. Create UI for group chat.
 
 Like the previous sprint, we divided our whole group in half to work on the back-end and the front-end. 
 
