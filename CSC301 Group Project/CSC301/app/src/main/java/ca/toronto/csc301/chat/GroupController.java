@@ -16,7 +16,7 @@ public class GroupController {
     BluetoothAdapter bluetooth;
 
 
-    private void createGroupChat(){
+    private GroupController(){
         groupChats = new ArrayList<>();
         bluetooth = BluetoothAdapter.getDefaultAdapter();
     }
