@@ -2,6 +2,7 @@ package ca.toronto.csc301.chat;
 
 import android.bluetooth.BluetoothAdapter;
 import android.os.Handler;
+import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,17 +35,23 @@ public class KeepAliveTask extends TimerTask {
         Set<String> macs = stamps.keySet();
         Iterator<String> maci = macs.iterator();
         while(maci.hasNext()){
-            String mac = maci.next();
-            Boolean alive = stamps.get(mac);
-            if(alive == null){
-                continue;
+            try {
+                String mac = maci.next();
+
+                Boolean alive = stamps.get(mac);
+                if (alive == null) {
+                    continue;
+                }
+                if (alive) {
+                    stamps.put(mac, false);
+                } else {
+                    ConnectionsList.getInstance().closeConnection(mac);
+                    maci.remove();
+                    stamps.remove(mac);
+                }
             }
-            if(alive){
-                stamps.put(mac, false);
-            }
-            else{
-                stamps.remove(mac);
-                ConnectionsList.getInstance().closeConnection(mac);
+            catch(Exception ex){
+                Log.e("error", "crashed timertask");
             }
         }
     }
