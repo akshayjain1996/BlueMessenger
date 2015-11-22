@@ -77,8 +77,7 @@ public class AllContactsFrag extends Fragment {
                         int type = e.getType();
                         switch(type) {
                             case 1:
-                                Toast t = Toast.makeText(getContext(), "Recieved a broadcast event", Toast.LENGTH_LONG);
-                                doToastFast(t);
+                                Toast.makeText(getContext(), "Recieved a broadcast event", Toast.LENGTH_LONG).show();
                                 String m = e.getMessage();
                                 if(e.isClientAllowed(bluetooth.getAddress())){
                                     chatActivity.getInstance().recieveMessage(m, e.getSender());
@@ -88,13 +87,11 @@ public class AllContactsFrag extends Fragment {
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 2:
-                                Toast tx = Toast.makeText(getContext(), "Some device asked for a devices update, sending them", Toast.LENGTH_LONG);
-                                doToastFast(tx);
+                                Toast.makeText(getContext(), "Some device asked for a devices update, sending them", Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 3:
-                                Toast tb = Toast.makeText(getContext(), "Recieved a network devices event update", Toast.LENGTH_LONG);
-                                doToastFast(tb);
+                                Toast.makeText(getContext(), "Recieved a network devices event update", Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 4:
@@ -102,10 +99,8 @@ public class AllContactsFrag extends Fragment {
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 6:
-                                final Toast toast = Toast.makeText(getContext(), "Keep alive from " + e.getSenderName(), Toast.LENGTH_SHORT);
-                                doToastFast(toast);
+                                //Toast.makeText(getContext(), "Keep alive from " + e.getSenderName(), Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
-                                updateContactsList();
                                 break;
                         }
 
@@ -144,7 +139,7 @@ public class AllContactsFrag extends Fragment {
         Button button = new Button(getActivity());
         button.setText("Scan for Devices");
         button.setBackgroundColor(getResources().getColor(R.color.lightblue));
-        listView.setBackgroundColor(getResources().getColor(R.color.beige));
+        listView.setBackgroundColor(getResources().getColor(R.color.white));
         button.setTextColor(getResources().getColor(R.color.white));
         listView.addHeaderView(button);
 
@@ -195,19 +190,6 @@ public class AllContactsFrag extends Fragment {
             }
         });
         return view;
-    }
-
-    public void doToastFast(Toast t){
-        final Toast toast = t;
-        toast.show();
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                toast.cancel();
-            }
-        }, 1000);
     }
 
     public void goToChat(View v, String mac){
@@ -272,8 +254,7 @@ public class AllContactsFrag extends Fragment {
             }
             else{
                 if(t.getSocket().isConnected() == false){
-                    t.cancel();
-                    ConnectionsList.getInstance().closeConnection(device);
+                    //ConnectionsList.getInstance().closeConnection(device);
                     //ConnectionsList.getInstance().makeConnectionTo(device);
                 }
                 else {
