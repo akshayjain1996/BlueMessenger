@@ -1,16 +1,21 @@
 package com.example.siddharthgautam.csc301;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +58,15 @@ public class AllContactsFrag extends Fragment {
         Iterator<BluetoothDevice> it = paired.iterator();
         while(it.hasNext()){
             BluetoothDevice dev = it.next();
+            ConnectedThread t = ConnectionsList.getInstance().getConnectedThread(dev);
+            if(t != null){
+                if(t.getSocket().isConnected() == true){
+                    continue;
+                }
+                if(t.getSocket().getRemoteDevice() != null){
+                    continue;
+                }
+            }
             ConnectionsList.makeConnectionTo(dev);
         }
 
@@ -81,6 +95,8 @@ public class AllContactsFrag extends Fragment {
                                 doToastFast(t);
                                 String m = e.getMessage();
                                 if(e.isClientAllowed(bluetooth.getAddress())){
+                                    showNotification("BlueM - Message from " + e.getSenderName(),
+                                            e.getMessage());
                                     chatActivity.getInstance().recieveMessage(m, e.getSender());
                                     //this client can see it
                                 }
@@ -216,6 +232,24 @@ public class AllContactsFrag extends Fragment {
     startActivity(intent);
     }
 
+    public void showNotification(String title, String text) {
+        PendingIntent pi = PendingIntent.getActivity(getActivity(), 0, new Intent(getActivity(),
+                AllContactsFrag.class), 0);
+        Resources r = getResources();
+        Notification notification = new NotificationCompat.Builder(this.getActivity())
+                .setTicker(title)
+                .setSmallIcon(android.R.drawable.ic_menu_report_image)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setContentIntent(pi)
+                .setAutoCancel(true)
+                .build();
+
+        NotificationManager notificationManager = (NotificationManager) getActivity().
+                getSystemService(getActivity().NOTIFICATION_SERVICE);
+        notificationManager.notify(0, notification);
+    }
+
     public static BluetoothDevice getDeviceByName(String name) {
         for (BluetoothDevice device : BluetoothAdapter.getDefaultAdapter().getBondedDevices()) {
             if (device.getName().equals(name)) {
@@ -224,6 +258,8 @@ public class AllContactsFrag extends Fragment {
         }
         return null;
     }
+
+
 
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override//disconnected

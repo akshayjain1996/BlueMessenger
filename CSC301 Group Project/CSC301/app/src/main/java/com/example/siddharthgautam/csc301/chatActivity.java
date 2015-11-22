@@ -122,6 +122,8 @@ public class chatActivity extends AppCompatActivity {
         e.setType(1);
         e.allowClient(mac);
         e.setMessage(message);
+        e.setSenderName(BluetoothAdapter.getDefaultAdapter().getName());
+        e.setSender(BluetoothAdapter.getDefaultAdapter().getAddress());
 
         if(true){//fix after
             //t.sendMessage(message);
@@ -136,27 +138,29 @@ public class chatActivity extends AppCompatActivity {
 
     public void recieveMessage(String message, String senderMac){
         String senderName = ConnectionsList.getInstance().getNameFromMac(senderMac);
-        Toast.makeText(appContext, "Got a message", Toast.LENGTH_LONG).show();
-        stringArrayAdapter.add("Them: " + message);
         //If this chat is not open
-        if(senderMac!=mac){
-            //Creates event and sets details
-            Event e = new Event();
-            e.setType(1);
-            e.setSender(senderMac);
-            e.setMessage(message);
+        if(senderMac.equals(mac) == false){//save messaged to be loaded later if the senders' chat is currently not open
             try {
                 //Opens file and writes to it
-                FileOutputStream out = new FileOutputStream(senderMac+".txt");
-                ObjectOutputStream serializer = new ObjectOutputStream(out);
-                serializer.writeObject(e);
+                FileOutputStream fos = this.openFileOutput(senderMac + ".txt", Context.MODE_APPEND);
+                fos.write(("Them: " + message).getBytes());
+                fos.close();
             }catch(FileNotFoundException ex){
-                System.out.println("File store.data not found");
+                try{
+                    FileOutputStream fos = this.openFileOutput(senderMac + ".txt", Context.MODE_PRIVATE);
+                    fos.write(("Them: " + message).getBytes());
+                    fos.close();
+                    return;
+                }catch(Exception exc){
+                    return;
+                }
+
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
+            return;
         }
-
+        stringArrayAdapter.add("Them: " + message);
         if(stringArrayAdapter.getCount() > MAX_MSGS_ON_SCREEN){
             stringArrayAdapter.remove(stringArrayAdapter.getItem(0));
         }
