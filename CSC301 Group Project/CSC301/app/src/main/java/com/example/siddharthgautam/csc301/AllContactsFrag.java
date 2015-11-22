@@ -5,13 +5,16 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,12 +38,20 @@ public class AllContactsFrag extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_all_contacts_frag, container, false);
+
+        ListView listView = (ListView) view.findViewById(R.id.contact_list);
+        Button button = new Button(getActivity());
+        button.setText("Scan for Devices");
+        button.setBackgroundColor(getResources().getColor(R.color.lightblue));
+        button.setTextColor(getResources().getColor(R.color.white));
+        listView.addHeaderView(button);
 
         bluetooth = BluetoothAdapter.getDefaultAdapter();
         contactsList = (ListView) view;
