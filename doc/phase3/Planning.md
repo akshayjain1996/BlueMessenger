@@ -16,22 +16,6 @@ Like the previous sprint, we divided our whole group in half to work on the back
 
 At first, we were just planning on keeping our UI simple and adding color to enhance appearance. Later on, we decided that having tabs for "All Conversations", "Groups", and "Open Chats" would be more user friendly instead of having a seperate intent for each. We also decided to add a splash screen to the start screen, which gives it a "Facebook look". 
 
-Review and Retrospective: 
 
-The first week of this sprint wasn't very productive as all the group members had plenty of things on their plates. So like the previous sprint, we had to leave the work for the week after. This lack of progress led to a growth of backlog for the second week. 
-The second week was the week we got a lot of stuff done. The UI was changed, and we implemented the group chat (WE NEED TO ADD MORE).
 
-Improvements: 
-
-1. As usual we couldn't get anything done during the first week. We really tried to improve on this from the previous sprint however, we failed badly at it. It would help to ease work load if the first week of the sprint is productive. We would like to really improve on this point. This should be made a major priority for the next and final sprint. 
-
-2. We lacked some organization. Members did work that was the job of another person, and hence some of the members did not have the same amount of commits as other members. At this point, this wasn't a big issue, but we shouldn't have lacked organization considering how deep we are into the project right now. We should improve on communicating with each other.  
-
-3. Meetings. This sprint, we only had a few meetings that involved all the group members. Last sprint, we did a great job of doing Skype meetings however, this did not work for this sprint. We wanted to keep the Skype meetings going however due to the work load our group members had, the meetings were not done as we expected them to be done. This could have been improved if we managed our time well.  
-
-What went well?: 
-
-1. Like the previous sprint, group members were on the look out for each other. We helped each other out a lot whenever we got into tight situations. Some group members were taking initiative to achieve our goals for this sprint. When members were done with their task they tried to help the others with their tasks. This should be repeated in the final sprint and it's a good sign of team work! 
-
-2. Conflicts on GitHub. We were really able to reduce the conflicts this time around. We felt much more comfortable with GitHub for this sprint, and it is because of this reason we weren't caught up with fixing many conflicts. 
  

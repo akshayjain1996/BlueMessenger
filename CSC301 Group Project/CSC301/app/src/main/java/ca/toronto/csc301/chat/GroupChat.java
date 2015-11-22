@@ -53,9 +53,4 @@ public class GroupChat implements Serializable{
         GroupChat temp = (GroupChat) o;
         return temp.getName().equals(name);
     }
-
-    @Override
-    public String toString(){
-        return name;
-    }
 }

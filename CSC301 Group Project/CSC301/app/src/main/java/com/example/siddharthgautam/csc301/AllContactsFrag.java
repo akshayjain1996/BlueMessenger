@@ -139,7 +139,7 @@ public class AllContactsFrag extends Fragment {
         Button button = new Button(getActivity());
         button.setText("Scan for Devices");
         button.setBackgroundColor(getResources().getColor(R.color.lightblue));
-        listView.setBackgroundColor(getResources().getColor(R.color.white));
+        listView.setBackgroundColor(getResources().getColor(R.color.beige));
         button.setTextColor(getResources().getColor(R.color.white));
         listView.addHeaderView(button);
 
