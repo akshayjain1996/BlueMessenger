@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
 
     //Get devices
     public static BluetoothDevice getDeviceByName(String name) {
-        for (BluetoothDevice device : devices) {
+        for (BluetoothDevice device : BluetoothAdapter.getDefaultAdapter().getBondedDevices()) {
             if (device.getName().equals(name)) {
                 return device;
             }
