@@ -119,6 +119,7 @@ public class GroupFrag extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent newGroupChatActivityIntent = new Intent(getActivity(), GroupChatActivity.class);
                 newGroupChatActivityIntent.putExtra("GroupChat", (GroupChat)listView.getItemAtPosition(position));
+                ConnectionsList.getInstance().setGroupChat((GroupChat)listView.getItemAtPosition(position));
                 startActivity(newGroupChatActivityIntent);
             }
         });

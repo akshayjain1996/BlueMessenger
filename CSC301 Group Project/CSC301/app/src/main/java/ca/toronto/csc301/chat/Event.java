@@ -118,4 +118,12 @@ public class Event implements Serializable{
     public void addAllowedClientsFromSet(HashSet<String> members){
         allowedClients.addAll(members);
     }
+
+    public HashSet<String> getAllowedClients() {
+        return allowedClients;
+    }
+
+    public void removeFronAllowedClients(String mac){
+        allowedClients.remove(mac);
+    }
 }
