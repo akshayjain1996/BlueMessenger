@@ -20,6 +20,7 @@ public class Event implements Serializable{
      *  int 2 = request copy of receivers' clients
      *  int 3 = recieving type 2 request, in data value
      *  int 4 = broadcast -- new device in the network (the sender.)
+     *  int 5 = new member added to group chat
      */
     private int type;
     private String message;
@@ -31,6 +32,7 @@ public class Event implements Serializable{
     private HashSet<String> allowedClients = new HashSet<String>();//mac addrs'
     //who has already seen/received this event?
     private HashSet<String> excludedTargets = new HashSet<String>();
+    private GroupChat groupChat;
 
     public static byte[] serialize(Object obj) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -44,6 +46,12 @@ public class Event implements Serializable{
         ObjectInputStream is = new ObjectInputStream(in);
         return is.readObject();
     }
+
+    public void setGroupChat(GroupChat groupChat){
+        this.groupChat = groupChat;
+    }
+
+    public GroupChat getGroupChat(){ return groupChat;}
 
     public void setSenderName(String s){
         this.senderName = s;
