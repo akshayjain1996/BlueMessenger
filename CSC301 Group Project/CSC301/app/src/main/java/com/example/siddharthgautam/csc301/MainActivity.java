@@ -5,37 +5,33 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.bluetooth.*;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import ca.toronto.csc301.chat.ServerThread;
+import ca.toronto.csc301.chat.ConnectionsList;
+import ca.toronto.csc301.chat.Event;
 
 public class MainActivity extends AppCompatActivity implements Serializable{
 
@@ -44,8 +40,6 @@ public class MainActivity extends AppCompatActivity implements Serializable{
     private Set<BluetoothDevice> connectedDevices;
     Button scan, contacts;
     ListView devicesList;
-    private static final UUID uuid = UUID.fromString("a9a8791e-10f3-4223-b0c7-5ade55943a84");
-    private BluetoothServerSocket blueSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +78,8 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             Toast.makeText(getApplicationContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
         }
 
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        this.registerReceiver(receiver, filter);
+        //IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        //this.registerReceiver(receiver, filter);
 
         scan.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -111,13 +105,64 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                 if (deviceName != null) {
                     connectDevice(deviceName);
                 }
-                //connectDevice(deviceName);
             }
         });
-
-        ServerThread serverThread = new ServerThread();
-        serverThread.start();
+        ConnectionsList.getInstance().setHandler(mHandler);
+        ConnectionsList.getInstance().accept();
+        ConnectionsList.getInstance().newDeviceInNetwork(BluetoothAdapter.getDefaultAdapter().getAddress(),
+                BluetoothAdapter.getDefaultAdapter().getName());
+        Toast.makeText(getApplicationContext(),"Connecting to paired devices..." +
+                " asking for all network devices upon connect", Toast.LENGTH_LONG).show();
+        BluetoothAdapter local = BluetoothAdapter.getDefaultAdapter();
+        Set<BluetoothDevice> paired = local.getBondedDevices();
+        Iterator<BluetoothDevice> it = paired.iterator();
+        while(it.hasNext()){
+            BluetoothDevice dev = it.next();
+            ConnectionsList.makeConnectionTo(dev);
+        }
     }
+
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            String address = null;
+            switch (msg.what) {
+                case 1:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    Event e;
+                    try{
+                        e = (Event) Event.deserialize(readBuf);
+                        int type = e.getType();
+                        switch(type) {
+                            case 1:
+                                Toast.makeText(getApplicationContext(), "Recieved a broadcast event", Toast.LENGTH_LONG).show();
+                                String m = e.getMessage();
+                                if(e.isClientAllowed(bluetooth.getAddress())){
+                                    chatActivity.getInstance().recieveMessage(m, e.getSender());
+                                    //this client can see it
+                                }
+                                //code to forward
+                                ConnectionsList.getInstance().sendEvent(e);
+                                break;
+                            case 2:
+                                Toast.makeText(getApplicationContext(), "Some device asked for a devices update, sending them", Toast.LENGTH_LONG).show();
+                                ConnectionsList.getInstance().sendEvent(e);
+                                break;
+                            case 3:
+                                Toast.makeText(getApplicationContext(), "Recieved a network devices event update", Toast.LENGTH_LONG).show();
+                                ConnectionsList.getInstance().sendEvent(e);
+                                break;
+                        }
+
+                    }
+                    catch(Exception ex) {
+
+                    }
+                    break;
+
+            }
+        }
+    };
 
     //Get devices
     public static BluetoothDevice getDeviceByName(String name) {
@@ -244,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         MainActivity.this.startActivity(intent);
 
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
