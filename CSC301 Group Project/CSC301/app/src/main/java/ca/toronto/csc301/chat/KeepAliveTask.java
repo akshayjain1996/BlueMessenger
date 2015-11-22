@@ -29,7 +29,7 @@ public class KeepAliveTask extends TimerTask {
         Event e = new Event();
         e.setSender(BluetoothAdapter.getDefaultAdapter().getAddress());
         e.setSenderName(BluetoothAdapter.getDefaultAdapter().getName());
-        e.setType(5);
+        e.setType(6);
         ConnectionsList.getInstance().sendEvent(e);
         Set<String> macs = stamps.keySet();
         Iterator<String> maci = macs.iterator();
@@ -43,7 +43,7 @@ public class KeepAliveTask extends TimerTask {
                 stamps.put(mac, false);
             }
             else{
-                stamps.put(mac, null);
+                stamps.remove(mac);
                 ConnectionsList.getInstance().closeConnection(mac);
             }
         }
