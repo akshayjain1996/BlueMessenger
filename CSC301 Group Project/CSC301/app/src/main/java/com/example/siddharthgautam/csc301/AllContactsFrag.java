@@ -98,12 +98,19 @@ public class AllContactsFrag extends Fragment {
                                 //Toast.makeText(getContext(), "a new device joined the network", Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
+                            case 5:
+                                //Toast.makeText(getContext(), "Keep alive from " + e.getSenderName(), Toast.LENGTH_LONG).show();
+                                ConnectionsList.getInstance().sendEvent(e);
+                                break;
                         }
 
                     }
                     catch(Exception ex) {
 
                     }
+                    updateContactsList();
+                    break;
+                case 2:
                     updateContactsList();
                     break;
 
