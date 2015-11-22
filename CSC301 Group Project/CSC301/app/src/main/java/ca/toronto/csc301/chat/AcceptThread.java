@@ -31,17 +31,17 @@ public class AcceptThread extends Thread {
             try {
                 socket = mmServerSocket.accept();
             } catch (IOException e) {
-                break;
+                //break;
             }
             // If a connection was accepted
             if (socket != null) {
                 try {// Do work to manage the connection (in a separate thread)
                     ConnectionsList.getInstance().newConnection(socket, socket.getRemoteDevice());
-                    mmServerSocket.close();
-                    break;
+                    //mmServerSocket.close();
+                    //break;
                 }
                 catch (Exception e){
-                    break;
+                    //break;
                 }
             }
         }
