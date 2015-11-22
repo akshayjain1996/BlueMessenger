@@ -32,6 +32,7 @@ import java.lang.reflect.Method;
 
 import ca.toronto.csc301.chat.ConnectionsList;
 import ca.toronto.csc301.chat.Event;
+import ca.toronto.csc301.chat.GroupController;
 
 public class MainActivity extends AppCompatActivity implements Serializable{
 
@@ -154,6 +155,8 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                                 Toast.makeText(getApplicationContext(), "a new device joined the network", Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
+                            case 5:
+                                HandleType5(e);
                         }
 
                     }
@@ -165,6 +168,10 @@ public class MainActivity extends AppCompatActivity implements Serializable{
             }
         }
     };
+
+    public void HandleType5(Event event){
+        GroupController.getInstance().addGroupChat(event.getGroupChat());
+    }
 
     //Get devices
     public static BluetoothDevice getDeviceByName(String name) {
