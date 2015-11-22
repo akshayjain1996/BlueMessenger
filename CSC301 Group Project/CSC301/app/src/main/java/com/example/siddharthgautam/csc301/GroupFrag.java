@@ -19,11 +19,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
@@ -38,7 +40,7 @@ public class GroupFrag extends Fragment {
     private BluetoothAdapter bluetooth;
     private ListView groupList;
     private ArrayList gL = new ArrayList();
-    private ArrayAdapter adapter;
+    private ArrayAdapter<GroupChat> adapter;
     String[] items;
 
     public static GroupFrag newInstance() {
@@ -60,7 +62,7 @@ public class GroupFrag extends Fragment {
         //textView.setText("Group Frag");
         //items = new String[] { "Vegetables","Fruits","Flower Buds","Legumes","Bulbs","Tubers" };
 
-        ListView listView = (ListView) view.findViewById(R.id.group_list);
+        final ListView listView = (ListView) view.findViewById(R.id.group_list);
 
 
         if (adapter == null) {
@@ -83,7 +85,7 @@ public class GroupFrag extends Fragment {
                             // add the input value to the group controller list
                             GroupController controller = GroupController.getInstance();
                             controller.createNewGroupChat(value);
-
+                            listView.setAdapter(new ArrayAdapter<GroupChat>(getContext(), android.R.layout.simple_list_item_1, GroupController.getInstance().getGroupChats()));
                         }
                     });
 
@@ -95,8 +97,15 @@ public class GroupFrag extends Fragment {
                     alert.show();
                 }
             });
-
+            adapter = new ArrayAdapter<GroupChat>(this.getContext(), android.R.layout.simple_list_item_1, GroupController.getInstance().getGroupChats());
         }
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getContext(), ((GroupChat)listView.getItemAtPosition(position)).toString(), Toast.LENGTH_LONG);
+            }
+        });
 
 
         //Button button = new Button(getActivity());

@@ -44,7 +44,7 @@ public class ConnectionsList {
 
     //when another devices sends an update, we don't want ourself to be in our own copy
     private void removeLocal(){
-        networkDevices.put(BluetoothAdapter.getDefaultAdapter().getAddress(), null);
+        networkDevices.remove(BluetoothAdapter.getDefaultAdapter().getAddress());
     }
     //Adds new device that is in the network to network devices
     public void newDeviceInNetwork(String mac, String name){
@@ -118,7 +118,7 @@ public class ConnectionsList {
                 newDeviceInNetwork(e.getSender(), e.getSenderName());
                 forward(e);
                 break;
-            case 5:
+            case 6:
                 KeepAliveTask.getInstance().event(e.getSender());
                 forward(e);
                 break;
@@ -239,8 +239,8 @@ public class ConnectionsList {
             closeConnection(d);
             return;
         }
-        this.macToDevice.put(mac, null);
-        this.networkDevices.put(mac, null);
+        this.macToDevice.remove(mac);
+        this.networkDevices.remove(mac);
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -263,10 +263,10 @@ public class ConnectionsList {
         if(t != null){
             t.cancel();
         }
-        this.connectThreads.put(device, null);
-        this.map.put(device, null);
-        this.macToDevice.put(device.getAddress(), null);
-        this.networkDevices.put(device.getAddress(), null);
+        this.connectThreads.remove(device);
+        this.map.remove(device);
+        this.macToDevice.remove(device.getAddress());
+        this.networkDevices.remove(device.getAddress());
     }
     //Returns the current connection list element(if not, it creates one)
     public static ConnectionsList getInstance() {
@@ -294,7 +294,7 @@ public class ConnectionsList {
         ConnectThread t = ConnectionsList.getInstance().connectThreads.get(device);
         if(t != null){
             t.cancel();
-            ConnectionsList.getInstance().connectThreads.put(device, null);
+            ConnectionsList.getInstance().connectThreads.remove(device);
         }
         final ConnectThread tx = new ConnectThread(device);
         ConnectionsList.getInstance().connectThreads.put(device, tx);
