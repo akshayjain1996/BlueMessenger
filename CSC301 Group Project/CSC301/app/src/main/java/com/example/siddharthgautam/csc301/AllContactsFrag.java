@@ -77,7 +77,8 @@ public class AllContactsFrag extends Fragment {
                         int type = e.getType();
                         switch(type) {
                             case 1:
-                                Toast.makeText(getContext(), "Recieved a broadcast event", Toast.LENGTH_LONG).show();
+                                Toast t = Toast.makeText(getContext(), "Recieved a broadcast event", Toast.LENGTH_LONG);
+                                doToastFast(t);
                                 String m = e.getMessage();
                                 if(e.isClientAllowed(bluetooth.getAddress())){
                                     chatActivity.getInstance().recieveMessage(m, e.getSender());
@@ -87,11 +88,13 @@ public class AllContactsFrag extends Fragment {
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 2:
-                                Toast.makeText(getContext(), "Some device asked for a devices update, sending them", Toast.LENGTH_LONG).show();
+                                Toast tx = Toast.makeText(getContext(), "Some device asked for a devices update, sending them", Toast.LENGTH_LONG);
+                                doToastFast(tx);
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 3:
-                                Toast.makeText(getContext(), "Recieved a network devices event update", Toast.LENGTH_LONG).show();
+                                Toast tb = Toast.makeText(getContext(), "Recieved a network devices event update", Toast.LENGTH_LONG);
+                                doToastFast(tb);
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 4:
@@ -99,8 +102,10 @@ public class AllContactsFrag extends Fragment {
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 6:
-                                //Toast.makeText(getContext(), "Keep alive from " + e.getSenderName(), Toast.LENGTH_LONG).show();
+                                final Toast toast = Toast.makeText(getContext(), "Keep alive from " + e.getSenderName(), Toast.LENGTH_SHORT);
+                                doToastFast(toast);
                                 ConnectionsList.getInstance().sendEvent(e);
+                                updateContactsList();
                                 break;
                         }
 
@@ -192,6 +197,19 @@ public class AllContactsFrag extends Fragment {
         return view;
     }
 
+    public void doToastFast(Toast t){
+        final Toast toast = t;
+        toast.show();
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                toast.cancel();
+            }
+        }, 1000);
+    }
+
     public void goToChat(View v, String mac){
     Intent intent = new Intent(getActivity(), chatActivity.class);
     intent.putExtra("mac", mac);
@@ -254,7 +272,8 @@ public class AllContactsFrag extends Fragment {
             }
             else{
                 if(t.getSocket().isConnected() == false){
-                    //ConnectionsList.getInstance().closeConnection(device);
+                    t.cancel();
+                    ConnectionsList.getInstance().closeConnection(device);
                     //ConnectionsList.getInstance().makeConnectionTo(device);
                 }
                 else {

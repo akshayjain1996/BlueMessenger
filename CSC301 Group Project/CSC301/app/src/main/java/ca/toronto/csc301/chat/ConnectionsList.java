@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Keep;
+import android.util.Log;
 
 import com.example.siddharthgautam.csc301.AllContactsFrag;
 import com.example.siddharthgautam.csc301.MainActivity;
@@ -50,6 +51,7 @@ public class ConnectionsList {
     public void newDeviceInNetwork(String mac, String name){
         networkDevices.put(mac, name);
         removeLocal();
+        updateContacts();
     }
 
     private void forward(Event e){
@@ -237,14 +239,18 @@ public class ConnectionsList {
             closeConnection(d);
             return;
         }
-        this.macToDevice.remove(mac);
+        Log.e("closing", " conection for " + mac);
+        this.macToDevice.put(mac, null);
         this.networkDevices.remove(mac);
+        updateContacts();
+    }
+
+    //make ui update contacts
+    public void updateContacts(){
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                Message m = new Message();
-                m.what = 2;
-                mHandler.handleMessage(m);
+                updateContacts();
             }
         });
     }
@@ -253,6 +259,7 @@ public class ConnectionsList {
         if(device == null){
             return;
         }
+        Log.e("closing", " conection for " + device.getAddress());
         ConnectedThread s = this.map.get(device);
         if(s != null){
             s.cancel();
@@ -261,9 +268,9 @@ public class ConnectionsList {
         if(t != null){
             t.cancel();
         }
-        this.connectThreads.remove(device);
-        this.map.remove(device);
-        this.macToDevice.remove(device.getAddress());
+        this.connectThreads.put(device, null);
+        this.map.put(device, null);
+        this.macToDevice.put(device.getAddress(), null);
         this.networkDevices.remove(device.getAddress());
     }
 
@@ -292,7 +299,7 @@ public class ConnectionsList {
         ConnectThread t = ConnectionsList.getInstance().connectThreads.get(device);
         if(t != null){
             t.cancel();
-            ConnectionsList.getInstance().connectThreads.remove(device);
+            ConnectionsList.getInstance().connectThreads.put(device, null);
         }
         final ConnectThread tx = new ConnectThread(device);
         ConnectionsList.getInstance().connectThreads.put(device, tx);
@@ -302,6 +309,7 @@ public class ConnectionsList {
                 tx.start();
             }
         }).start();
+        Log.e("connection attempt", "tryng to connect to " + device.getName());
     }
 
 }
