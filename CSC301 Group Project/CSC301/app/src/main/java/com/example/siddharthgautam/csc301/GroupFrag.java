@@ -1,8 +1,10 @@
 package com.example.siddharthgautam.csc301;
 
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,8 +17,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import java.util.ArrayList;
@@ -25,6 +30,8 @@ import java.util.Set;
 
 import ca.toronto.csc301.chat.ConnectedThread;
 import ca.toronto.csc301.chat.ConnectionsList;
+import ca.toronto.csc301.chat.GroupChat;
+import ca.toronto.csc301.chat.GroupController;
 
 public class GroupFrag extends Fragment {
 
@@ -54,19 +61,66 @@ public class GroupFrag extends Fragment {
         //items = new String[] { "Vegetables","Fruits","Flower Buds","Legumes","Bulbs","Tubers" };
 
         ListView listView = (ListView) view.findViewById(R.id.group_list);
-        Button button = new Button(getActivity());
-        button.setText("Add a Group");
-        button.setBackgroundColor(getResources().getColor(R.color.lightblue));
-        button.setTextColor(getResources().getColor(R.color.white));
+
 
         if (adapter == null) {
             // the list view is empty, just display the "Add a Group" button
             listView.setEmptyView(view.findViewById(R.id.emptyView));
-            listView.setBackgroundColor(getResources().getColor(R.color.beige));
-        } else {
-            listView.addHeaderView(button);
-            listView.setBackgroundColor(getResources().getColor(R.color.beige));
+            LinearLayout lr = (LinearLayout)view.findViewById(R.id.emptyView);
+            Button button = (Button)lr.findViewById(R.id.Button01);
+            button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View view) {
+                    //Toast.makeText(getContext(), "message", Toast.LENGTH_LONG).show();
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    alert.setTitle("Enter a Group Name");
+                    final EditText input = new EditText(getContext());
+                    alert.setView(input);
+
+                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface d, int button) {
+                            String value = input.getText().toString();
+                            //Toast.makeText(getContext(), value, Toast.LENGTH_LONG).show();
+                            // add the input value to the group controller list
+                            GroupController controller = GroupController.getInstance();
+                            controller.createNewGroupChat(value);
+
+                        }
+                    });
+
+                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface d, int button) {
+                            // Canceled.
+                        }
+                    });
+                    alert.show();
+                }
+            });
+
         }
+
+
+        //Button button = new Button(getActivity());
+        //button.setText("Add a Group");
+        //button.setOnClickListener(new Button.OnClickListener() {
+            //public void createNewGroupChat(View view) {
+             //   Toast.makeText(getContext(), "do something", Toast.LENGTH_LONG).show();
+                //Toast.makeText(GroupFrag.this, "doing something", Toast.LENGTH_SHORT).show();
+                //AlertDialog.Builder alert = new AlertDialog.Builder(this.getContext());
+                //alert.setTitle("Enter a Group Name");
+
+                //GroupController controller = new GroupController();
+
+                //controller.createNewGroupChat();
+           // }
+           // public void onClick(View v) {
+           //     createNewGroupChat(v);
+           // }
+       // });
+       // button.setBackgroundColor(getResources().getColor(R.color.lightblue));
+       // button.setTextColor(getResources().getColor(R.color.white));
+
+       // listView.addHeaderView(button);
+
         //listView.addHeaderView(button);
         //ListView emptyText = (ListView)view.findViewById(R.id.group_list);
         //emptyText.setEmptyView(button);
@@ -136,5 +190,15 @@ public class GroupFrag extends Fragment {
         return view;
     }
     */
+    public void createNewGroupChat() {
+        Toast.makeText(getContext(), "do something", Toast.LENGTH_LONG).show();
+        //Toast.makeText(GroupFrag.this, "doing something", Toast.LENGTH_SHORT).show();
+        //AlertDialog.Builder alert = new AlertDialog.Builder(this.getContext());
+        //alert.setTitle("Enter a Group Name");
+
+        //GroupController controller = new GroupController();
+
+        //controller.createNewGroupChat();
+    }
 
 }

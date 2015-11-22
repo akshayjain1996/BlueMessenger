@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 <ListView xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,3 +12,18 @@
 
 
 </ListView>
+
+<LinearLayout android:id="@+id/emptyView"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
+
+<Button android:id="@+id/Button01"
+    android:layout_width="match_parent"
+    android:layout_weight="1"
+    android:layout_height="wrap_content"
+    android:text="Add a Group"
+    android:background="@color/lightblue"
+    android:textColor="@color/white">
+</Button>
+</LinearLayout>
+</LinearLayout>
