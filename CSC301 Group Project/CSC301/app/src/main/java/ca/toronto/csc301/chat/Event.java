@@ -19,11 +19,13 @@ public class Event implements Serializable{
      *  int 1 = broadcast msg, visibility to only target clients
      *  int 2 = request copy of receivers' clients
      *  int 3 = recieving type 2 request, in data value
+     *  int 4 = broadcast -- new device in the network (the sender.)
      */
     private int type;
     private String message;
     private String receiver;
-    private String sender;
+    private String sender;//sender mac
+    private String senderName;//
     private HashMap<String, String> data = new HashMap<String, String>();
     //who can see the MESSAGE?
     private HashSet<String> allowedClients = new HashSet<String>();//mac addrs'
@@ -41,6 +43,14 @@ public class Event implements Serializable{
         ByteArrayInputStream in = new ByteArrayInputStream(data);
         ObjectInputStream is = new ObjectInputStream(in);
         return is.readObject();
+    }
+
+    public void setSenderName(String s){
+        this.senderName = s;
+    }
+
+    public String getSenderName(){
+        return this.senderName;
     }
 
     public void setData(HashMap<String, String> s)
@@ -94,5 +104,9 @@ public class Event implements Serializable{
     //lets this client see the msg
     public void allowClient(String s){
         allowedClients.add(s);
+    }
+
+    public void addAllowedClientsFromSet(HashSet<String> members){
+        allowedClients.addAll(members);
     }
 }

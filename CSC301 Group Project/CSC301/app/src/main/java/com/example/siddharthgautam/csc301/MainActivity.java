@@ -109,8 +109,6 @@ public class MainActivity extends AppCompatActivity implements Serializable{
         });
         ConnectionsList.getInstance().setHandler(mHandler);
         ConnectionsList.getInstance().accept();
-        ConnectionsList.getInstance().newDeviceInNetwork(BluetoothAdapter.getDefaultAdapter().getAddress(),
-                BluetoothAdapter.getDefaultAdapter().getName());
         Toast.makeText(getApplicationContext(),"Connecting to paired devices..." +
                 " asking for all network devices upon connect", Toast.LENGTH_LONG).show();
         BluetoothAdapter local = BluetoothAdapter.getDefaultAdapter();
@@ -150,6 +148,10 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                                 break;
                             case 3:
                                 Toast.makeText(getApplicationContext(), "Recieved a network devices event update", Toast.LENGTH_LONG).show();
+                                ConnectionsList.getInstance().sendEvent(e);
+                                break;
+                            case 4:
+                                Toast.makeText(getApplicationContext(), "a new device joined the network", Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                         }
