@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -116,7 +117,14 @@ public class GroupFrag extends Fragment {
         //populateListView(view);
         rl.addView(bt);
 
-
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent newGroupChatActivityIntent = new Intent(getActivity(), GroupChatActivity.class);
+                newGroupChatActivityIntent.putExtra("GroupChat", (GroupChat)listView.getItemAtPosition(position));
+                startActivity(newGroupChatActivityIntent);
+            }
+        });
 
         //ArrayList<String> listItems=new ArrayList<String>();
         //listItems.add("hello");
