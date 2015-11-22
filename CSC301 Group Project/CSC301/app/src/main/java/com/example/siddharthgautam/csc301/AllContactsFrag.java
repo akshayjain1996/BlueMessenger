@@ -44,17 +44,30 @@ public class AllContactsFrag extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        //View view = inflater.inflate(R.layout.activity_all_contacts_frag, container, false);
         View view = inflater.inflate(R.layout.activity_all_contacts_frag, container, false);
 
         ListView listView = (ListView) view.findViewById(R.id.contact_list);
+
+        if (adapter == null) {
+            // listview is empty, so add a button
+            listView.setEmptyView(view.findViewById(R.id.emptyView));
+        }
+            // listview has data, so have a button as a header and hide empty button
+            //listView.setVisibility(View.GONE);
+
+            // add the listview header button
         Button button = new Button(getActivity());
         button.setText("Scan for Devices");
         button.setBackgroundColor(getResources().getColor(R.color.lightblue));
         button.setTextColor(getResources().getColor(R.color.white));
         listView.addHeaderView(button);
 
+
+
         bluetooth = BluetoothAdapter.getDefaultAdapter();
-        contactsList = (ListView) view;
+        //contactsList = (ListView) view;
+        contactsList = listView;
         Set<BluetoothDevice> d = bluetooth.getBondedDevices();
         Iterator<BluetoothDevice> i = d.iterator();
 
