@@ -87,7 +87,7 @@ public class ConnectionsList {
 
     public void sendEvent(Event e){
         //check if sender is in my network list, if not add them just in case
-        if(networkDevices.containsKey(e.getSender()) == false){
+        if(e.getSender() != null && e.getSenderName() != null){
             newDeviceInNetwork(e.getSender(), e.getSenderName());
         }
         int type = e.getType();
