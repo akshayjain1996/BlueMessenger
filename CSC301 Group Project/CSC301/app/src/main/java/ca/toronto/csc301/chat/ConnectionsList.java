@@ -20,6 +20,7 @@ import java.util.Set;
 public class ConnectionsList {
     HashMap<BluetoothDevice,ConnectedThread> map = new HashMap<BluetoothDevice,ConnectedThread>();
     HashMap<String, BluetoothDevice> macToDevice = new HashMap<String, BluetoothDevice>();
+    private boolean broadcasted = false;//when you connect to the network, broadcast that youre in it.
     //mac -> name
     HashMap<String, String> networkDevices = new HashMap<String, String>();
     private Handler mHandler;
@@ -34,32 +35,46 @@ public class ConnectionsList {
         instance = this;;
     }
 
+    //when another devices sends an update, we don't want ourself to be in our own copy
+    private void removeLocal(){
+        networkDevices.put(BluetoothAdapter.getDefaultAdapter().getAddress(), null);
+    }
+
     public void newDeviceInNetwork(String mac, String name){
         networkDevices.put(mac, name);
+        removeLocal();
+    }
+
+    private void forward(Event e){
+        Set<String> excludedMacs = e.getExcludedTargets();
+        Set<BluetoothDevice> keys = map.keySet();
+        Iterator<BluetoothDevice> i = keys.iterator();
+        //exclude the ones I can send to
+        while(i.hasNext()){
+            e.addExcludedTarget(i.next().getAddress());
+        }
+        //exclude myself
+        e.addExcludedTarget(BluetoothAdapter.getDefaultAdapter().getAddress());
+        //send to the ones i can send to, then everyone else will do the same..
+        Iterator<BluetoothDevice> it = keys.iterator();
+        while(it.hasNext()){
+            BluetoothDevice d = it.next();
+            if(excludedMacs.contains(d.getAddress()) == false) {
+                getConnectedThread(d).sendEvent(e);
+            }
+        }
     }
 
     public void sendEvent(Event e){
+        //check if sender is in my network list, if not add them just in case
+        if(networkDevices.containsKey(e.getSender()) == false){
+            newDeviceInNetwork(e.getSender(), e.getSenderName());
+        }
         int type = e.getType();
         //this is meant to be a "process event" function - need to fix wording
         switch(type){
             case 1:
-                Set<String> excludedMacs = e.getExcludedTargets();
-                Set<BluetoothDevice> keys = map.keySet();
-                Iterator<BluetoothDevice> i = keys.iterator();
-                //exclude the ones I can send to
-                while(i.hasNext()){
-                    e.addExcludedTarget(i.next().getAddress());
-                }
-                //exclude myself
-                e.addExcludedTarget(BluetoothAdapter.getDefaultAdapter().getAddress());
-                //send to the ones i can send to, then everyone else will do the same..
-                Iterator<BluetoothDevice> it = keys.iterator();
-                while(it.hasNext()){
-                    BluetoothDevice d = it.next();
-                    if(excludedMacs.contains(d.getAddress()) == false) {
-                        getConnectedThread(d).sendEvent(e);
-                    }
-                }
+                forward(e);
                 break;
             case 2://asking for a network devices update
                 BluetoothDevice remote = getDeviceFromMac(e.getSender());
@@ -77,6 +92,12 @@ public class ConnectionsList {
                     String mac = iter.next();
                     newDeviceInNetwork(mac, devices.get(mac));
                 }
+                break;
+            case 4:
+                //new device in the network, update my own local copy
+                newDeviceInNetwork(e.getSender(), e.getSenderName());
+                forward(e);
+                break;
         }
     }
 
@@ -93,6 +114,19 @@ public class ConnectionsList {
             return "";
         }
         return networkDevices.get(mac);
+    }
+
+    public String getMacFromName(String name){
+        Set<String> keys = networkDevices.keySet();
+        Iterator<String> key_it = keys.iterator();
+        while(key_it.hasNext()){
+            String mac = key_it.next();
+            String n = networkDevices.get(mac);
+            if(n.equals(name)){
+                return mac;
+            }
+        }
+        return "";
     }
 
     public void newConnection(BluetoothSocket s, BluetoothDevice d){
@@ -115,6 +149,15 @@ public class ConnectionsList {
             e.setData(networkDevices);
             e.setSender(BluetoothAdapter.getDefaultAdapter().getAddress());
             t.sendEvent(e);
+            //broadcast that im in the network
+            if(broadcasted == false){
+                broadcasted = true;
+                Event ex = new Event();
+                ex.setType(4);
+                ex.setSender(BluetoothAdapter.getDefaultAdapter().getAddress());
+                ex.setSenderName(BluetoothAdapter.getDefaultAdapter().getName());
+                t.sendEvent(ex);
+            }
         }
         else{ //In case connection fails or is bad remake it
             if(map.get(d).getSocket().isConnected() == false){
@@ -129,7 +172,11 @@ public class ConnectionsList {
         Set<String> macs = networkDevices.keySet();
         Iterator<String> maci = macs.iterator();
         while(maci.hasNext()){
-            names.add(networkDevices.get(maci.next()));
+            String n = networkDevices.get(maci.next());
+            if(n == null){
+                continue;
+            }
+            names.add(n);
         }
         return names;
     }
