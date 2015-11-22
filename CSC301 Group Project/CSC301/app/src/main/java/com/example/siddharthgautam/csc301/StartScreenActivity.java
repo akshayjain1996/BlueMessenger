@@ -71,6 +71,7 @@ public class StartScreenActivity extends Activity {
             public void run() {
                 Intent mainIntent = new Intent(StartScreenActivity.this, DisplayScreenActivity.class);
                 StartScreenActivity.this.startActivity(mainIntent);
+                finish();
                 //StartScreenActivity.this.finish();
             }
         }, waitTime);

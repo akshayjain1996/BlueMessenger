@@ -28,6 +28,7 @@ public class OpenChatFrag extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_open_chat_frag, container, false);
         TextView textView = (TextView) view;
+        textView.setBackgroundColor(getResources().getColor(R.color.beige));
         textView.setText("Open Chat Frag");
         return view;
     }

@@ -121,7 +121,6 @@ public class GroupFrag extends Fragment {
 
        // listView.addHeaderView(button);
 
-
         //listView.addHeaderView(button);
         //ListView emptyText = (ListView)view.findViewById(R.id.group_list);
         //emptyText.setEmptyView(button);
