@@ -13,10 +13,12 @@ public class GroupController {
 
     private static GroupController instance;
     List<GroupChat> groupChats;
+    BluetoothAdapter bluetooth;
 
 
     private void createGroupChat(){
         groupChats = new ArrayList<>();
+        bluetooth = BluetoothAdapter.getDefaultAdapter();
     }
 
     public static GroupController getInstance(){
@@ -28,7 +30,7 @@ public class GroupController {
     }
 
     public GroupChat createNewGroupChat(String name){
-        BluetoothAdapter bluetooth = BluetoothAdapter.getDefaultAdapter();
+
         GroupChat groupChat = new GroupChat(name, bluetooth.getAddress());
         groupChats.add(groupChat);
         return groupChat;
@@ -43,6 +45,30 @@ public class GroupController {
             }
         }
         return null;
+    }
+
+    public void addToGroupChat(GroupChat groupChat, String member){
+        groupChat.addMember(member);
+        Event event = new Event();
+        event.addAllowedClientsFromSet(groupChat.getMembersExceptSelf());
+        event.addExcludedTarget(bluetooth.getAddress());
+        event.setType(5);
+        event.setGroupChat(groupChat);
+        ConnectionsList.getInstance().sendEvent(event);
+
+
+    }
+
+    public void addGroupChat(GroupChat groupChat){
+        Iterator<GroupChat> groupChatIterator = groupChats.iterator();
+        while(groupChatIterator.hasNext()){
+            GroupChat chat = groupChatIterator.next();
+            if(chat.equals(groupChat)){
+                chat.setMembers(groupChat.getmembers());
+                return;
+            }
+        }
+        groupChats.add(groupChat);
     }
 
     public List<GroupChat> getGroupChats(){
