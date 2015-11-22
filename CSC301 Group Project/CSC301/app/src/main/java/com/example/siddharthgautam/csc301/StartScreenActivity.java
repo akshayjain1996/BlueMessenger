@@ -1,5 +1,6 @@
 package com.example.siddharthgautam.csc301;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
@@ -10,7 +11,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.Set;
-
+/*
 public class StartScreenActivity extends AppCompatActivity {
 
     private Button connectButton;
@@ -54,5 +55,25 @@ public class StartScreenActivity extends AppCompatActivity {
         Intent intent = new Intent(StartScreenActivity.this, MainActivity.class);
         StartScreenActivity.this.startActivity(intent);
     }
+*/
 
+public class StartScreenActivity extends Activity {
+
+    private int waitTime = 4000;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_start_screen);
+
+        new android.os.Handler().postDelayed(new Runnable(){
+            @Override
+            public void run() {
+                Intent mainIntent = new Intent(StartScreenActivity.this, DisplayScreenActivity.class);
+                StartScreenActivity.this.startActivity(mainIntent);
+                //StartScreenActivity.this.finish();
+            }
+        }, waitTime);
+    }
 }
+
