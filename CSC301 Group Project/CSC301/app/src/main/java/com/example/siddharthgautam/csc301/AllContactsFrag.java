@@ -29,11 +29,13 @@ import android.widget.Toast;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import ca.toronto.csc301.chat.ConnectedThread;
 import ca.toronto.csc301.chat.ConnectionsList;
 import ca.toronto.csc301.chat.Event;
+import ca.toronto.csc301.chat.GroupController;
 
 public class AllContactsFrag extends Fragment {
 
@@ -114,6 +116,9 @@ public class AllContactsFrag extends Fragment {
                                 //Toast.makeText(getContext(), "a new device joined the network", Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
+                            case 5:
+                                HandleType5(e);
+                                break;
                             case 6:
                                 //Toast.makeText(getContext(), "Keep alive from " + e.getSenderName(), Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
@@ -133,6 +138,21 @@ public class AllContactsFrag extends Fragment {
             }
         }
     };
+
+    public void HandleType5(Event event){
+        Toast.makeText(getActivity(), "you have been added to a grp chat", Toast.LENGTH_LONG).show();
+        GroupController.getInstance().addGroupChat(event.getGroupChat());
+        event.removeFronAllowedClients(bluetooth.getAddress());
+        HashSet<String> allowedClients = event.getAllowedClients();
+        for(String client : allowedClients){
+            if(ConnectionsList.getInstance().isDeviceInNetwork(client)){
+                event.removeFronAllowedClients(client);
+            } else {
+                allowedClients.remove(client);
+            }
+        }
+        ConnectionsList.getInstance().sendEvent(event);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
