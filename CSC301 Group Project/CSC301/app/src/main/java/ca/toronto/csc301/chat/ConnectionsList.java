@@ -1,10 +1,13 @@
 package ca.toronto.csc301.chat;
-
+import java.util.Timer;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.Keep;
 
+import com.example.siddharthgautam.csc301.AllContactsFrag;
 import com.example.siddharthgautam.csc301.MainActivity;
 
 import java.util.ArrayList;
@@ -33,7 +36,10 @@ public class ConnectionsList {
     }
 
     private ConnectionsList(){
-        instance = this;;
+        instance = this;
+        Timer timer = new Timer();
+        java.util.TimerTask t = KeepAliveTask.getInstance();
+        timer.scheduleAtFixedRate(t, 5000, 5000);
     }
 
     //when another devices sends an update, we don't want ourself to be in our own copy
@@ -110,6 +116,10 @@ public class ConnectionsList {
             case 4:
                 //new device in the network, update my own local copy
                 newDeviceInNetwork(e.getSender(), e.getSenderName());
+                forward(e);
+                break;
+            case 5:
+                KeepAliveTask.getInstance().event(e.getSender());
                 forward(e);
                 break;
         }
@@ -219,6 +229,24 @@ public class ConnectionsList {
 
     public ConnectedThread getConnectedThread(BluetoothDevice d){
         return this.map.get(d);
+    }
+
+    public void closeConnection(String mac){
+        BluetoothDevice d = getDeviceFromMac(mac);
+        if(d!=null){
+            closeConnection(d);
+            return;
+        }
+        this.macToDevice.put(mac, null);
+        this.networkDevices.put(mac, null);
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                Message m = new Message();
+                m.what = 2;
+                mHandler.handleMessage(m);
+            }
+        });
     }
 
     public void closeConnection(BluetoothDevice device){
