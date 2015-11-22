@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.RelativeLayout;
@@ -50,6 +52,7 @@ public class AllContactsFrag extends Fragment {
         Button button = new Button(getActivity());
         button.setText("Scan for Devices");
         button.setBackgroundColor(getResources().getColor(R.color.lightblue));
+        listView.setBackgroundColor(getResources().getColor(R.color.beige));
         button.setTextColor(getResources().getColor(R.color.white));
         listView.addHeaderView(button);
 
@@ -79,6 +82,7 @@ public class AllContactsFrag extends Fragment {
         adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, cL);
         contactsList.setAdapter(adapter);
 
+     //   button.setOnClickListener();
 
         contactsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

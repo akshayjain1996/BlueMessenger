@@ -62,10 +62,11 @@ public class GroupFrag extends Fragment {
         if (adapter == null) {
             // the list view is empty, just display the "Add a Group" button
             listView.setEmptyView(view.findViewById(R.id.emptyView));
+            listView.setBackgroundColor(getResources().getColor(R.color.beige));
         } else {
             listView.addHeaderView(button);
+            listView.setBackgroundColor(getResources().getColor(R.color.beige));
         }
-
         //listView.addHeaderView(button);
         //ListView emptyText = (ListView)view.findViewById(R.id.group_list);
         //emptyText.setEmptyView(button);
