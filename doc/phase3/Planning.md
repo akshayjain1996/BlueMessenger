@@ -7,10 +7,15 @@ Our "Scrum Master" was a normal member of the team, except with a few added resp
 Last sprint, we planed and managed to get our P2P chat working. So for this sprint, we were trying to implement our original MVP which was to implement the group chat feature of our application. Also, we wanted to enhance the appearance of our UI and make imporvements to what seemed to be a very plain looking UI from the previous phase. 
 
 Like the previous sprint, we divided our whole group in half to work on the back-end and the front-end. 
+
 	* Front-end: improving the UI, fixing small bugs with the previous UI, improving appearence 
 	- Sneh, Taras, Alex, Siddharth
 
 	* Back-end: implementing the group chat 
-	- Akshay, Priyen 
+	- Akshay, Priyen
+
+At first, we were just planning on keeping our UI simple and adding color to enhance appearance. Later on, we decided that having tabs for "All Conversations", "Groups", and "Open Chats" would be more user friendly instead of having a seperate intent for each. We also decided to add a splash screen to the start screen, which gives it a "Facebook look". 
+
+
 
  
