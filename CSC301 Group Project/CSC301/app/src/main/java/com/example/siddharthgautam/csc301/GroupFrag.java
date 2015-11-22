@@ -81,7 +81,7 @@ public class GroupFrag extends Fragment {
                             String value = input.getText().toString();
                             //Toast.makeText(getContext(), value, Toast.LENGTH_LONG).show();
                             // add the input value to the group controller list
-                            GroupController controller = new GroupController();
+                            GroupController controller = GroupController.getInstance();
                             controller.createNewGroupChat(value);
 
                         }

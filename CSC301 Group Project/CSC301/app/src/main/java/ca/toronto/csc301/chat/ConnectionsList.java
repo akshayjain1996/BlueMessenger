@@ -20,6 +20,7 @@ import java.util.Set;
 public class ConnectionsList {
     HashMap<BluetoothDevice,ConnectedThread> map = new HashMap<BluetoothDevice,ConnectedThread>();
     HashMap<String, BluetoothDevice> macToDevice = new HashMap<String, BluetoothDevice>();
+    HashMap<BluetoothDevice, ConnectThread> connectThreads = new HashMap<BluetoothDevice, ConnectThread>();
     private boolean broadcasted = false;//when you connect to the network, broadcast that youre in it.
     //mac -> name
     HashMap<String, String> networkDevices = new HashMap<String, String>();
@@ -51,7 +52,17 @@ public class ConnectionsList {
         Iterator<BluetoothDevice> i = keys.iterator();
         //exclude the ones I can send to
         while(i.hasNext()){
-            e.addExcludedTarget(i.next().getAddress());
+            BluetoothDevice d = i.next();
+            ConnectedThread t = map.get(d);
+            if(t == null){
+                continue;
+            }
+            if(t.getSocket().isConnected() == false){
+                closeConnection(d);
+                //makeConnectionTo(d);
+                continue;
+            }
+            e.addExcludedTarget(d.getAddress());
         }
         //exclude myself
         e.addExcludedTarget(BluetoothAdapter.getDefaultAdapter().getAddress());
@@ -60,7 +71,10 @@ public class ConnectionsList {
         while(it.hasNext()){
             BluetoothDevice d = it.next();
             if(excludedMacs.contains(d.getAddress()) == false) {
-                getConnectedThread(d).sendEvent(e);
+                ConnectedThread t = getConnectedThread(d);
+                if(t!=null){
+                    t.sendEvent(e);
+                }
             }
         }
     }
@@ -117,16 +131,50 @@ public class ConnectionsList {
     }
 
     public String getMacFromName(String name){
+        if(name == null){
+            return "";
+        }
         Set<String> keys = networkDevices.keySet();
         Iterator<String> key_it = keys.iterator();
         while(key_it.hasNext()){
             String mac = key_it.next();
             String n = networkDevices.get(mac);
+            if(n == null){
+                closeConnection(getDeviceFromMac(mac));
+                continue;
+            }
             if(n.equals(name)){
                 return mac;
             }
         }
-        return "";
+        return "Unknown";
+    }
+
+    public boolean onConnected(BluetoothDevice d){
+        ConnectedThread t = getConnectedThread(d);
+        if(t == null){
+            return false;
+        }
+        this.networkDevices.put(t.getSocket().getRemoteDevice().getAddress(),
+                t.getSocket().getRemoteDevice().getName());
+
+        //send an event asking for their devices.
+        Event e = new Event();
+        e.setType(2);
+        e.setData(networkDevices);
+        e.setSender(BluetoothAdapter.getDefaultAdapter().getAddress());
+        e.setSenderName(BluetoothAdapter.getDefaultAdapter().getName());
+        t.sendEvent(e);
+        //broadcast that im in the network
+        //if(broadcasted == false){//temp
+            broadcasted = true;
+            Event ex = new Event();
+            ex.setType(4);
+            ex.setSender(BluetoothAdapter.getDefaultAdapter().getAddress());
+            ex.setSenderName(BluetoothAdapter.getDefaultAdapter().getName());
+            t.sendEvent(ex);
+        //}
+        return true;
     }
 
     public void newConnection(BluetoothSocket s, BluetoothDevice d){
@@ -139,25 +187,13 @@ public class ConnectionsList {
                     t.start();
                 }
             }).start();
-            this.networkDevices.put(t.getSocket().getRemoteDevice().getAddress(),
-                    t.getSocket().getRemoteDevice().getName());
-            this.map.put(d, t);
-            this.macToDevice.put(d.getAddress(), d);
-            //send an event asking for their devices.
-            Event e = new Event();
-            e.setType(2);
-            e.setData(networkDevices);
-            e.setSender(BluetoothAdapter.getDefaultAdapter().getAddress());
-            t.sendEvent(e);
-            //broadcast that im in the network
-            if(broadcasted == false){
-                broadcasted = true;
-                Event ex = new Event();
-                ex.setType(4);
-                ex.setSender(BluetoothAdapter.getDefaultAdapter().getAddress());
-                ex.setSenderName(BluetoothAdapter.getDefaultAdapter().getName());
-                t.sendEvent(ex);
-            }
+            map.put(d, t);
+            macToDevice.put(d.getAddress(), d);
+            //if(t.getSocket().isConnected()){
+            //    if(t.getSocket().getRemoteDevice() != null){
+                    onConnected(d);
+            //    }
+            //}
         }
         else{ //In case connection fails or is bad remake it
             if(map.get(d).getSocket().isConnected() == false){
@@ -186,11 +222,21 @@ public class ConnectionsList {
     }
 
     public void closeConnection(BluetoothDevice device){
+        if(device == null){
+            return;
+        }
         ConnectedThread s = this.map.get(device);
-        s.cancel();
+        if(s != null){
+            s.cancel();
+        }
+        ConnectThread t = this.connectThreads.get(device);
+        if(t != null){
+            t.cancel();
+        }
+        this.connectThreads.put(device, null);
         this.map.put(device, null);
         this.macToDevice.put(device.getAddress(), null);
-        this.networkDevices.put(device.getName(), null);
+        this.networkDevices.put(device.getAddress(), null);
     }
 
     public static ConnectionsList getInstance() {
@@ -215,11 +261,17 @@ public class ConnectionsList {
     }
 
     public static void makeConnectionTo(final BluetoothDevice device){
+        ConnectThread t = ConnectionsList.getInstance().connectThreads.get(device);
+        if(t != null){
+            t.cancel();
+            ConnectionsList.getInstance().connectThreads.put(device, null);
+        }
+        final ConnectThread tx = new ConnectThread(device);
+        ConnectionsList.getInstance().connectThreads.put(device, tx);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ConnectThread t = new ConnectThread(device);
-                t.start();
+                tx.start();
             }
         }).start();
     }
