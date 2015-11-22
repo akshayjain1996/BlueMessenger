@@ -41,6 +41,7 @@ public class ConnectThread extends Thread {
             try {
                 mmSocket.close();
             } catch (IOException closeException) { }
+            //ConnectionsList.getInstance().makeConnectionTo(mmDevice);
             return;
         }
 
