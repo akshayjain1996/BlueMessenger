@@ -29,7 +29,7 @@ import ca.toronto.csc301.chat.GroupChat;
 
 public class GroupChatActivity extends AppCompatActivity {
 
-    public static int MAX_MSGS_ON_SCREEN = 5;
+    public static int MAX_MSGS_ON_SCREEN = 100;
     static GroupChatActivity instance;
     private static final UUID uuid = UUID.fromString("63183176-0f7c-4673-b120-ac4116843e65");
     private Button sendButton;

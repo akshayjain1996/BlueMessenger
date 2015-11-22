@@ -21,6 +21,7 @@ public class Event implements Serializable{
      *  int 3 = recieving type 2 request, in data value
      *  int 4 = broadcast -- new device in the network (the sender.)
      *  int 5 = new member added to group chat
+     *  int 6 = keep alive
      */
     private int type;
     private String message;
