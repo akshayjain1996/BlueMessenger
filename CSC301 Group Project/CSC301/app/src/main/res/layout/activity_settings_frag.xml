@@ -34,7 +34,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add User To Favourits"
+            android:text="Add User To Favourites"
             android:id="@+id/setting_favourits"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"

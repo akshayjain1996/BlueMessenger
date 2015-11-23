@@ -25,26 +25,26 @@ The order of tasks that were to be completed and the people who worked on them a
 
 Some issue on github based on Sprint backlog:
 
-* https://github.com/csc301-fall-2015/project-team3-L0101/issues/74 
-* https://github.com/csc301-fall-2015/project-team3-L0101/issues/49 
-* https://github.com/csc301-fall-2015/project-team3-L0101/issues/70 
-* https://github.com/csc301-fall-2015/project-team3-L0101/issues/108 
-* https://github.com/csc301-fall-2015/project-team3-L0101/issues/69
-* https://github.com/csc301-fall-2015/project-team3-L0101/issues/76 
-* ttps://github.com/csc301-fall-2015/project-team3-L0101/issues/84 
-* https://github.com/csc301-fall-2015/project-team3-L0101/issues/87 
-* https://github.com/csc301-fall-2015/project-team3-L0101/issues/94 
-* https://github.com/csc301-fall-2015/project-team3-L0101/issues/113 
+* https://github.com/csc301-fall-2015/project-team3-L0101/issues/74 - unstable connections
+* https://github.com/csc301-fall-2015/project-team3-L0101/issues/49 - chat retrieval
+* https://github.com/csc301-fall-2015/project-team3-L0101/issues/70 - group chat UI
+* https://github.com/csc301-fall-2015/project-team3-L0101/issues/108 - detecting disconnects
+* https://github.com/csc301-fall-2015/project-team3-L0101/issues/69 - GUI upgrades
+* https://github.com/csc301-fall-2015/project-team3-L0101/issues/76 - settings page
+* https://github.com/csc301-fall-2015/project-team3-L0101/issues/84 - choose location for downloaded files
+* https://github.com/csc301-fall-2015/project-team3-L0101/issues/87 - message storage for when users aren't 
+* https://github.com/csc301-fall-2015/project-team3-L0101/issues/94 - floating action button in fragments
+* https://github.com/csc301-fall-2015/project-team3-L0101/issues/113 - report docs
 
 
 Meeting notes:
 
-* 4th November 2015(In-Person): Decided the tasks to be added to the sprint backlog. Discussed about various algorithms that could be used to implement group chat and to prevent cycle. We eventually concluded that we will fix problems with the group chat algorithm during the testing phase, as it would give us the best possible idea as to what could go wrong.
+* 4th November 2015(In-Person): Decided the tasks to be added to the sprint backlog. Discussed about various algorithms that could be used to implement group chat and to prevent cycle. We eventually concluded that we will fix problems with the group chat algorithm during the testing phase, as it would give us the best possible idea as to what could go wrong. No work done since last phase.
 
-* 11th November 2015(Facebook):Status meeting. We discussed on the approach that will be used to work on this phase and that this time the team would not be divided, giving everyone to opportunity to work on any issue that was remaining.  
+* 11th November 2015(Facebook): Status meeting. We discussed on the approach that will be used to work on this phase and that this time the team would not be divided, giving everyone to opportunity to work on any issue that was remaining. Basic work on group chat data structure began.
 
-* 16th November 2015(Facebook):Progress meeting to discuss how work is moving and to fix any problems that people were having during the coding process.
+* 16th November 2015(Facebook): Progress meeting to discuss how work is moving and to fix any problems that people were having during the coding process. Basic structure not yet implemented, but UI idea for group chat decided.
 
-* 22nd November 2015(In-Person):This meeting was primarily held to test group chat using multiple devices and fix any issues on the spot.
+* 22nd November 2015(In-Person): This meeting was primarily held to test group chat using multiple devices and fix any issues on the spot. Group chat mostly finished; UI issues resolved; work on file transfer began.
 
-* 22nd November 2015(Facebook):This meeting was held to make sure that everything is fine with the report. Group members read through the google doc and added data to it.
+* 22nd November 2015(Facebook): This meeting was held to make sure that everything is fine with the report. Group members read through the google doc and added data to it.

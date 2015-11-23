@@ -25,6 +25,7 @@ public class Event implements Serializable{
      *  int 7 = recieving a group chat message
      */
     private int type;
+    private byte[] fileBytes = null;
     private String message;
     private String receiver;
     private String sender;//sender mac
@@ -47,6 +48,14 @@ public class Event implements Serializable{
         ByteArrayInputStream in = new ByteArrayInputStream(data);
         ObjectInputStream is = new ObjectInputStream(in);
         return is.readObject();
+    }
+
+    public void setFileBytes(byte[] bytes){
+        this.fileBytes = bytes;
+    }
+
+    public byte[] getFileBytes(){
+        return this.fileBytes;
     }
 
     public void setGroupChat(GroupChat groupChat){
