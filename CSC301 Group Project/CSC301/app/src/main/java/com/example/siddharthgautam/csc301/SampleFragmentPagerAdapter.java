@@ -9,8 +9,8 @@ import android.support.v4.app.FragmentPagerAdapter;
  * Created by akshay on 20/11/15.
  */
 public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
-    final int PAGE_COUNT = 3;
-    private String tabTitles[] = new String[] { "All Contacts", "Groups", "Open chats" };
+    final int PAGE_COUNT = 4;
+    private String tabTitles[] = new String[] { "All Contacts", "Groups", "Favourits" , "Settings"};
     private Context context;
 
     public SampleFragmentPagerAdapter(FragmentManager fm, Context context) {
@@ -29,6 +29,7 @@ public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
             case 0: return AllContactsFrag.newInstance();
             case 1: return GroupFrag.newInstance();
             case 2: return OpenChatFrag.newInstance();
+            case 3: return SettingsFrag.newInstance();
         }
         return AllContactsFrag.newInstance();
     }
