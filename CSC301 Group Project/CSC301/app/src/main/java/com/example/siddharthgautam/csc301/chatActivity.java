@@ -56,7 +56,7 @@ public class chatActivity extends AppCompatActivity {
     private ArrayAdapter<String> stringArrayAdapter;
     private ArrayList<String> stringList;
     private BluetoothDevice contactDevice;
-    private String mac;
+    private String mac, persistMac;
     private Context appContext;
     private Button sendFileButton;
     //private final Handler mHandler;
@@ -66,6 +66,7 @@ public class chatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Bundle b = getIntent().getExtras();
         mac = b.getString("mac");
+        persistMac = mac;
         //setTitle("Chat: " + mac);
         setTitle("Chat: " + ConnectionsList.getInstance().getNameFromMac(mac));
         setContentView(R.layout.activity_chat2);
@@ -155,13 +156,12 @@ public class chatActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onStart() {
         //// TODO: 10/31/2015 replace "Test.txt" with unique identifier for chat.
 
         loadMessages(appContext.getFilesDir().getAbsoluteFile(), mac);
-
+        this.mac = persistMac;
         super.onStart();
     }
 
@@ -169,6 +169,7 @@ public class chatActivity extends AppCompatActivity {
     protected void onStop() {
         //// TODO: 10/31/2015 replace "Test.txt" with unique identifier for chat.
         saveMessages(getApplicationContext().getFilesDir().getAbsoluteFile(), mac);
+        this.mac = "";
         super.onStop();
     }
 
@@ -221,7 +222,7 @@ public class chatActivity extends AppCompatActivity {
             File old_file = ConnectionsList.getInstance().byteToFile(fileBytes);
             String[] d = old_file.getAbsolutePath().split("/");
             String name = d[d.length - 1];
-            File finalFile = new File(Environment.getExternalStorageDirectory(), name);
+            File finalFile = new File(Environment.getExternalStorageDirectory(), "Download/" + name);
             if(finalFile.exists()){
                 finalFile.delete();
             }
@@ -239,7 +240,7 @@ public class chatActivity extends AppCompatActivity {
             }
         }
         else{
-            //Toast.makeText(appContext, " got null file bytes", Toast.LENGTH_SHORT).show();
+            Toast.makeText(appContext, " got null file bytes", Toast.LENGTH_SHORT).show();
         }
         String senderName = ConnectionsList.getInstance().getNameFromMac(senderMac);
         //If this chat is not open
@@ -247,12 +248,12 @@ public class chatActivity extends AppCompatActivity {
             try {
                 //Opens file and writes to it
                 FileOutputStream fos = this.openFileOutput(senderMac + ".txt", Context.MODE_APPEND);
-                fos.write(("Them: " + message).getBytes());
+                fos.write(("Them: " + message + "\n").getBytes());
                 fos.close();
             }catch(FileNotFoundException ex){
                 try{
                     FileOutputStream fos = this.openFileOutput(senderMac + ".txt", Context.MODE_PRIVATE);
-                    fos.write(("Them: " + message).getBytes());
+                    fos.write(("Them: " + message + "\n").getBytes());
                     fos.close();
                     return;
                 }catch(Exception exc){
@@ -262,6 +263,7 @@ public class chatActivity extends AppCompatActivity {
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
+            Toast.makeText(appContext, "SAVED A MESSAGE! Saved " + message + " to" + senderMac+".txt", Toast.LENGTH_LONG);
             return;
         }
         stringArrayAdapter.add("Them: " + message);

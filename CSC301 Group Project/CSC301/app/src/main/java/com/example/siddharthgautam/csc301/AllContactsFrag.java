@@ -99,12 +99,13 @@ public class AllContactsFrag extends Fragment {
                                 Toast.makeText(getContext(), "Recieved a broadcast event", Toast.LENGTH_LONG).show();
 
                                 String m = e.getMessage();
-                                if(e.isClientAllowed(bluetooth.getAddress())){
+                                if(e.isClientAllowed(bluetooth.getAddress())) {
                                     showNotification("BlueM - Message from " + e.getSenderName(),
                                             e.getMessage());
-                                    chatActivity.getInstance().recieveMessage(m, e.getSender(), e);
-                                    //this client can see it
                                 }
+                                chatActivity.getInstance().recieveMessage(m, e.getSender(), e);
+                                    //this client can see it
+                                //}
                                 //code to forward
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
