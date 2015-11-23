@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.hardware.camera2.params.BlackLevelPattern;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -135,45 +136,30 @@ public class GroupChatActivity extends AppCompatActivity {
         stringArrayAdapter.notifyDataSetChanged();
 
         Event e = new Event();
-        e.setType(1);
+        e.setType(7);
+        e.setSender(BluetoothAdapter.getDefaultAdapter().getAddress());
+        e.setSenderName(BluetoothAdapter.getDefaultAdapter().getName());
         e.addAllowedClientsFromSet(groupChat.getmembers());
-        BluetoothAdapter bluetooth = BluetoothAdapter.getDefaultAdapter();
-        e.addExcludedTarget(bluetooth.getAddress());
-
+        e.setGroupChat(groupChat);
         e.setMessage(message);
 
         if(true){//fix after
             //t.sendMessage(message);
             ConnectionsList.getInstance().sendEvent(e);
-            Toast.makeText(appContext, "Broadcast a msg", Toast.LENGTH_LONG).show();
+            Toast.makeText(appContext, "Broadcast a group msg", Toast.LENGTH_LONG).show();
         }
         else{
             Toast.makeText(appContext, "No connection available right now", Toast.LENGTH_LONG).show();
         }
     }
-    public void recieveMessage(String message, String senderMac){
+    public void recieveMessage(String message, String senderMac, String groupName){
         String senderName = ConnectionsList.getInstance().getNameFromMac(senderMac);
-        Toast.makeText(appContext, "Got a message", Toast.LENGTH_LONG).show();
-        stringArrayAdapter.add("Them: " + message);
-        //If this chat is not open
-
-        if(!(groupChat.checkMemberByMAC(senderMac))){
-            //Creates event and sets details
-            Event e = new Event();
-            e.setType(1);
-            e.setSender(senderMac);
-            e.setMessage(message);
-            try {
-                //Opens file and writes to it
-                FileOutputStream out = new FileOutputStream(senderMac+".txt");
-                ObjectOutputStream serializer = new ObjectOutputStream(out);
-                serializer.writeObject(e);
-            }catch(FileNotFoundException ex){
-                System.out.println("File store.data not found");
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+        Toast.makeText(appContext, "Got a group msg", Toast.LENGTH_LONG).show();
+        if(groupChat.getName().equals(groupName) == false){//the sending group chat isnt open rightnow
+            return;
         }
+        stringArrayAdapter.add(senderName + ": " + message);
+        //If this chat is not open
 
         if(stringArrayAdapter.getCount() > MAX_MSGS_ON_SCREEN){
             stringArrayAdapter.remove(stringArrayAdapter.getItem(0));

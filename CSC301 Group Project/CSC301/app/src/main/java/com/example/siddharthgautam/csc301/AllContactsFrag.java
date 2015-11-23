@@ -35,6 +35,7 @@ import java.util.Set;
 import ca.toronto.csc301.chat.ConnectedThread;
 import ca.toronto.csc301.chat.ConnectionsList;
 import ca.toronto.csc301.chat.Event;
+import ca.toronto.csc301.chat.GroupChat;
 import ca.toronto.csc301.chat.GroupController;
 
 public class AllContactsFrag extends Fragment {
@@ -121,6 +122,14 @@ public class AllContactsFrag extends Fragment {
                                 break;
                             case 6:
                                 //Toast.makeText(getContext(), "Keep alive from " + e.getSenderName(), Toast.LENGTH_LONG).show();
+                                ConnectionsList.getInstance().sendEvent(e);
+                                break;
+                            case 7:
+                                GroupChat g = e.getGroupChat();
+                                if(g.checkMemberByMAC(BluetoothAdapter.getDefaultAdapter().getAddress())){
+                                    GroupChatActivity.getInstance().recieveMessage(e.getMessage(),
+                                            e.getSender(), g.getName());
+                                }
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                         }
