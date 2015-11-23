@@ -127,6 +127,9 @@ public class ConnectionsList {
                 KeepAliveTask.getInstance().event(e.getSender());
                 forward(e);
                 break;
+            case 7:
+                forward(e);
+                break;
         }
     }
 
