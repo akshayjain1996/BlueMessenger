@@ -38,8 +38,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:layout_weight="100"
+                android:layout_weight="60.62"
                 android:id="@+id/messageTextView" />
+
+            <Button
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:text="Send file"
+                android:id="@+id/sendFile" />
 
             <Button
                 android:layout_width="wrap_content"
