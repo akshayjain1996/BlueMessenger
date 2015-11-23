@@ -102,7 +102,7 @@ public class AllContactsFrag extends Fragment {
                                 if(e.isClientAllowed(bluetooth.getAddress())){
                                     showNotification("BlueM - Message from " + e.getSenderName(),
                                             e.getMessage());
-                                    chatActivity.getInstance().recieveMessage(m, e.getSender());
+                                    chatActivity.getInstance().recieveMessage(m, e.getSender(), e);
                                     //this client can see it
                                 }
                                 //code to forward
