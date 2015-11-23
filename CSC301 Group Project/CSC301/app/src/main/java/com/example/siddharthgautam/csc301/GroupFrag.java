@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -49,6 +51,9 @@ public class GroupFrag extends Fragment {
     Button addButton;
     ListView listView;
     ListView lv;
+    private Thread refreshThread;
+    private Handler refreshHandler;
+
 
     public static GroupFrag newInstance() {
         GroupFrag fragment = new GroupFrag();
@@ -60,8 +65,8 @@ public class GroupFrag extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    @Override
 
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_group_frag, container, false);
@@ -150,19 +155,44 @@ public class GroupFrag extends Fragment {
 
         //populateListView(view);
         refreshView(view);
+
+        refreshHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg){
+                refreshView(GroupFrag.this.getView());
+            }
+        };
+
+
+        refreshThread = new Thread(){
+            @Override
+            public void run(){
+                try {
+                    sleep(10000, 0);
+                } catch (InterruptedException e) {
+                    //e.printStackTrace();
+                } finally {
+                    refreshHandler.sendMessage(new Message());
+                }
+                this.run();
+            }
+        };
+        refreshThread.start();
+
         return view;
     }
 
     public void refreshView(View view) {
         GroupController controller = GroupController.getInstance();
         List<GroupChat> data = controller.getGroupChats();
-        Toast.makeText(getContext(), String.valueOf(data.size()), Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Refreshing group chats...", Toast.LENGTH_LONG).show();
         //LinearLayout rl = (LinearLayout) view.findViewById(R.id.myID);
 
-        adapter = new ArrayAdapter<GroupChat>(getContext(), android.R.layout.simple_list_item_1, GroupController.getInstance().getGroupChats());
+        adapter = new ArrayAdapter<GroupChat>(getActivity(), android.R.layout.simple_list_item_1, GroupController.getInstance().getGroupChats());
         //adapter.add("hello");
         //adapter.add("goodbye");
-        lv.setAdapter(adapter);
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         //rl.addView(lv);
     }
 
