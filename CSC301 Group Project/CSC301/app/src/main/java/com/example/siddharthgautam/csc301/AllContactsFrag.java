@@ -321,6 +321,9 @@ public class AllContactsFrag extends Fragment {
                     device_name = "✓ " + device_name;
                 }
             }
+            if(ConnectionsList.getInstance().isDeviceInNetwork(device.getAddress())){//some other client has this client connected
+                device_name = "✓ " + device_name;
+            }
             cL.add(device_name);
         }
         // now add from network devices
