@@ -48,3 +48,5 @@ Meeting notes:
 * 22nd November 2015 (In-Person): This meeting was primarily held to test group chat using multiple devices and fix any issues on the spot. Group chat mostly finished; UI issues resolved; work on file transfer began.
 
 * 22nd November 2015 (Facebook): This meeting was held to make sure that everything is fine with the report. Group members read through the google document and contributed to it.
+
+***THE BURNDOWN CHARTS ARE UNDER THE CHARTS FOLDER***
