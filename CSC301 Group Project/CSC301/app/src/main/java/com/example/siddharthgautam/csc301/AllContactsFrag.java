@@ -35,6 +35,7 @@ import java.util.Set;
 import ca.toronto.csc301.chat.ConnectedThread;
 import ca.toronto.csc301.chat.ConnectionsList;
 import ca.toronto.csc301.chat.Event;
+import ca.toronto.csc301.chat.GroupChat;
 import ca.toronto.csc301.chat.GroupController;
 
 public class AllContactsFrag extends Fragment {
@@ -123,6 +124,14 @@ public class AllContactsFrag extends Fragment {
                                 //Toast.makeText(getContext(), "Keep alive from " + e.getSenderName(), Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
+                            case 7:
+                                GroupChat g = e.getGroupChat();
+                                if(g.checkMemberByMAC(BluetoothAdapter.getDefaultAdapter().getAddress())){
+                                    GroupChatActivity.getInstance().recieveMessage(e.getMessage(),
+                                            e.getSender(), g.getName());
+                                }
+                                ConnectionsList.getInstance().sendEvent(e);
+                                break;
                         }
 
                     }
@@ -142,7 +151,7 @@ public class AllContactsFrag extends Fragment {
     public void HandleType5(Event event){
         Toast.makeText(getActivity(), "you have been added to a grp chat", Toast.LENGTH_LONG).show();
         GroupController.getInstance().addGroupChat(event.getGroupChat());
-        event.removeFronAllowedClients(bluetooth.getAddress());
+        /**event.removeFronAllowedClients(bluetooth.getAddress());
         HashSet<String> allowedClients = event.getAllowedClients();
         for(String client : allowedClients){
             if(ConnectionsList.getInstance().isDeviceInNetwork(client)){
@@ -150,7 +159,7 @@ public class AllContactsFrag extends Fragment {
             } else {
                 allowedClients.remove(client);
             }
-        }
+        }**/
         ConnectionsList.getInstance().sendEvent(event);
     }
 
