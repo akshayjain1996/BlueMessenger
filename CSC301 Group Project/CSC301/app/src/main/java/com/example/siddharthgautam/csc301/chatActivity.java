@@ -44,6 +44,7 @@ public class chatActivity extends AppCompatActivity {
     private BluetoothDevice contactDevice;
     private String mac;
     private Context appContext;
+    private Button sendFileButton;
     //private final Handler mHandler;
 
     @Override
@@ -65,6 +66,14 @@ public class chatActivity extends AppCompatActivity {
         messageView.setAdapter(stringArrayAdapter);
         appContext = getApplicationContext();
         instance = this;
+
+        sendFileButton = (Button) findViewById(R.id.sendFile);
+        sendFileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //FILL THIS IN
+            }
+        });
     }
 
     public static chatActivity getInstance() {
