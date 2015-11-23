@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Keep;
-import android.util.Log;
 
 import com.example.siddharthgautam.csc301.AllContactsFrag;
 import com.example.siddharthgautam.csc301.MainActivity;
@@ -22,6 +21,8 @@ import java.util.Set;
  * Created by akshay on 31/10/15.
  */
 public class ConnectionsList {
+
+    GroupChat groupChat;
     HashMap<BluetoothDevice,ConnectedThread> map = new HashMap<BluetoothDevice,ConnectedThread>();
     HashMap<String, BluetoothDevice> macToDevice = new HashMap<String, BluetoothDevice>();
     HashMap<BluetoothDevice, ConnectThread> connectThreads = new HashMap<BluetoothDevice, ConnectThread>();
@@ -47,13 +48,12 @@ public class ConnectionsList {
     private void removeLocal(){
         networkDevices.remove(BluetoothAdapter.getDefaultAdapter().getAddress());
     }
-
+    //Adds new device that is in the network to network devices
     public void newDeviceInNetwork(String mac, String name){
         networkDevices.put(mac, name);
         removeLocal();
-        updateContacts();
     }
-
+    //Algorithm to forward messages
     private void forward(Event e){
         Set<String> excludedMacs = e.getExcludedTargets();
         Set<BluetoothDevice> keys = map.keySet();
@@ -86,7 +86,7 @@ public class ConnectionsList {
             }
         }
     }
-
+    // Takes care of seding the event instance
     public void sendEvent(Event e){
         //check if sender is in my network list, if not add them just in case
         if(e.getSender() != null && e.getSenderName() != null){
@@ -120,6 +120,9 @@ public class ConnectionsList {
                 newDeviceInNetwork(e.getSender(), e.getSenderName());
                 forward(e);
                 break;
+            case 5:
+                forward(e);
+                break;
             case 6:
                 KeepAliveTask.getInstance().event(e.getSender());
                 forward(e);
@@ -141,7 +144,7 @@ public class ConnectionsList {
         }
         return networkDevices.get(mac);
     }
-
+    //Returns corresponding Mac address when given a name.
     public String getMacFromName(String name){
         if(name == null){
             return "";
@@ -161,7 +164,8 @@ public class ConnectionsList {
         }
         return "Unknown";
     }
-
+    //When connected with a device, stores connected device in network
+    // And broadcasts.
     public boolean onConnected(BluetoothDevice d){
         ConnectedThread t = getConnectedThread(d);
         if(t == null){
@@ -188,7 +192,7 @@ public class ConnectionsList {
         //}
         return true;
     }
-
+    //Creates new connection
     public void newConnection(BluetoothSocket s, BluetoothDevice d){
 
         if(map.get(d) == null){
@@ -214,7 +218,7 @@ public class ConnectionsList {
             }
         }
     }
-
+    //Returns names of all the devices connected to the current device.
     public Set<String> getNamesOfConnectedDevices(){
         Set<String> names = new HashSet<String>();
         Set<String> macs = networkDevices.keySet();
@@ -233,33 +237,29 @@ public class ConnectionsList {
         return this.map.get(d);
     }
 
+    //Closes connection between this device and a connected device given the mac address.
     public void closeConnection(String mac){
         BluetoothDevice d = getDeviceFromMac(mac);
         if(d!=null){
             closeConnection(d);
             return;
         }
-        Log.e("closing", " conection for " + mac);
-        this.macToDevice.put(mac, null);
+        this.macToDevice.remove(mac);
         this.networkDevices.remove(mac);
-        updateContacts();
-    }
-
-    //make ui update contacts
-    public void updateContacts(){
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                updateContacts();
+                Message m = new Message();
+                m.what = 2;
+                mHandler.handleMessage(m);
             }
         });
     }
-
+    //Closes connection with a bluetooth device.
     public void closeConnection(BluetoothDevice device){
         if(device == null){
             return;
         }
-        Log.e("closing", " conection for " + device.getAddress());
         ConnectedThread s = this.map.get(device);
         if(s != null){
             s.cancel();
@@ -268,12 +268,12 @@ public class ConnectionsList {
         if(t != null){
             t.cancel();
         }
-        this.connectThreads.put(device, null);
-        this.map.put(device, null);
-        this.macToDevice.put(device.getAddress(), null);
+        this.connectThreads.remove(device);
+        this.map.remove(device);
+        this.macToDevice.remove(device.getAddress());
         this.networkDevices.remove(device.getAddress());
     }
-
+    //Returns the current connection list element(if not, it creates one)
     public static ConnectionsList getInstance() {
         if(instance != null) {
             return instance;
@@ -283,7 +283,7 @@ public class ConnectionsList {
             return  instance;
         }
     }
-
+    //Accepts connection
     public static void accept(){
         new Thread(new Runnable() {
 
@@ -294,12 +294,12 @@ public class ConnectionsList {
             }
         }).start();
     }
-
+    //Connects
     public static void makeConnectionTo(final BluetoothDevice device){
         ConnectThread t = ConnectionsList.getInstance().connectThreads.get(device);
         if(t != null){
             t.cancel();
-            ConnectionsList.getInstance().connectThreads.put(device, null);
+            ConnectionsList.getInstance().connectThreads.remove(device);
         }
         final ConnectThread tx = new ConnectThread(device);
         ConnectionsList.getInstance().connectThreads.put(device, tx);
@@ -309,7 +309,19 @@ public class ConnectionsList {
                 tx.start();
             }
         }).start();
-        Log.e("connection attempt", "tryng to connect to " + device.getName());
     }
+
+    public Set<String> getConnectedMacs(){
+        return macToDevice.keySet();
+    }
+
+    public GroupChat getGroupChat() {
+        return groupChat;
+    }
+
+    public void setGroupChat(GroupChat groupChat) {
+        this.groupChat = groupChat;
+    }
+
 
 }

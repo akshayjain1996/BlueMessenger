@@ -29,11 +29,13 @@ import android.widget.Toast;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import ca.toronto.csc301.chat.ConnectedThread;
 import ca.toronto.csc301.chat.ConnectionsList;
 import ca.toronto.csc301.chat.Event;
+import ca.toronto.csc301.chat.GroupController;
 
 public class AllContactsFrag extends Fragment {
 
@@ -91,8 +93,7 @@ public class AllContactsFrag extends Fragment {
                         int type = e.getType();
                         switch(type) {
                             case 1:
-                                Toast t = Toast.makeText(getContext(), "Recieved a broadcast event", Toast.LENGTH_LONG);
-                                doToastFast(t);
+                                Toast.makeText(getContext(), "Recieved a broadcast event", Toast.LENGTH_LONG).show();
                                 String m = e.getMessage();
                                 if(e.isClientAllowed(bluetooth.getAddress())){
                                     showNotification("BlueM - Message from " + e.getSenderName(),
@@ -104,24 +105,23 @@ public class AllContactsFrag extends Fragment {
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 2:
-                                Toast tx = Toast.makeText(getContext(), "Some device asked for a devices update, sending them", Toast.LENGTH_LONG);
-                                doToastFast(tx);
+                                Toast.makeText(getContext(), "Some device asked for a devices update, sending them", Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 3:
-                                Toast tb = Toast.makeText(getContext(), "Recieved a network devices event update", Toast.LENGTH_LONG);
-                                doToastFast(tb);
+                                Toast.makeText(getContext(), "Recieved a network devices event update", Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 4:
                                 //Toast.makeText(getContext(), "a new device joined the network", Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
+                            case 5:
+                                HandleType5(e);
+                                break;
                             case 6:
-                                final Toast toast = Toast.makeText(getContext(), "Keep alive from " + e.getSenderName(), Toast.LENGTH_SHORT);
-                                doToastFast(toast);
+                                //Toast.makeText(getContext(), "Keep alive from " + e.getSenderName(), Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
-                                updateContactsList();
                                 break;
                         }
 
@@ -138,6 +138,21 @@ public class AllContactsFrag extends Fragment {
             }
         }
     };
+
+    public void HandleType5(Event event){
+        Toast.makeText(getActivity(), "you have been added to a grp chat", Toast.LENGTH_LONG).show();
+        GroupController.getInstance().addGroupChat(event.getGroupChat());
+        event.removeFronAllowedClients(bluetooth.getAddress());
+        HashSet<String> allowedClients = event.getAllowedClients();
+        for(String client : allowedClients){
+            if(ConnectionsList.getInstance().isDeviceInNetwork(client)){
+                event.removeFronAllowedClients(client);
+            } else {
+                allowedClients.remove(client);
+            }
+        }
+        ConnectionsList.getInstance().sendEvent(event);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -160,7 +175,7 @@ public class AllContactsFrag extends Fragment {
         Button button = new Button(getActivity());
         button.setText("Scan for Devices");
         button.setBackgroundColor(getResources().getColor(R.color.lightblue));
-        listView.setBackgroundColor(getResources().getColor(R.color.beige));
+        listView.setBackgroundColor(getResources().getColor(R.color.white));
         button.setTextColor(getResources().getColor(R.color.white));
         listView.addHeaderView(button);
 
@@ -211,19 +226,6 @@ public class AllContactsFrag extends Fragment {
             }
         });
         return view;
-    }
-
-    public void doToastFast(Toast t){
-        final Toast toast = t;
-        toast.show();
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                toast.cancel();
-            }
-        }, 1000);
     }
 
     public void goToChat(View v, String mac){
@@ -308,8 +310,7 @@ public class AllContactsFrag extends Fragment {
             }
             else{
                 if(t.getSocket().isConnected() == false){
-                    t.cancel();
-                    ConnectionsList.getInstance().closeConnection(device);
+                    //ConnectionsList.getInstance().closeConnection(device);
                     //ConnectionsList.getInstance().makeConnectionTo(device);
                 }
                 else {

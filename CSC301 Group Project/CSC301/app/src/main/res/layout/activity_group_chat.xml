@@ -25,8 +25,7 @@
         <ListView
             android:id="@+id/group_message_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="100"
+            android:layout_height="405dp"
             android:transcriptMode="alwaysScroll" />
 
         <LinearLayout
@@ -48,6 +47,13 @@
                 android:id="@+id/group_send" />
 
         </LinearLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add User"
+            android:id="@+id/addToGroupChat"
+            android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
 
