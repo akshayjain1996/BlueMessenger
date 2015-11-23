@@ -64,5 +64,7 @@ What we should repeat:
 
 1. Like the previous sprint, group members were on the look out for each other. We helped each other out a lot whenever we got into tight situations. Some group members were taking initiative to achieve our goals for this sprint. When members were done with their task they tried to help the others with their tasks. This should be repeated in the final sprint and it's a good sign of team work! 
 
-2. Conflicts on GitHub. We were really able to reduce the conflicts this time around. We felt much more comfortable with GitHub for this sprint, and it is because of this reason we weren't caught up with fixing many conflicts.  
+2. Conflicts on GitHub. We were really able to reduce the conflicts this time around. We felt much more comfortable with GitHub for this sprint, and it is because of this reason we weren't caught up with fixing many conflicts.
+
+3. We completed our responisbilities based on our ability. We did not touch work that wasn't suitable for us (ability wise). This created much less confusion and we were able to work efficiently.
  
