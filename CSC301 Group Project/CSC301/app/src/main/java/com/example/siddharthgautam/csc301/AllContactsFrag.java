@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import ca.toronto.csc301.chat.BlockedUsers;
 import ca.toronto.csc301.chat.ConnectedThread;
 import ca.toronto.csc301.chat.ConnectionsList;
 import ca.toronto.csc301.chat.Event;
@@ -95,6 +97,9 @@ public class AllContactsFrag extends Fragment {
                         switch(type) {
                             case 1:
                                 Toast.makeText(getContext(), "Recieved a broadcast event", Toast.LENGTH_LONG).show();
+                                if(BlockedUsers.getInstance().checkBlacklist(e.getSender())){
+                                    break;
+                                }
                                 String m = e.getMessage();
                                 if(e.isClientAllowed(bluetooth.getAddress())){
                                     showNotification("BlueM - Message from " + e.getSenderName(),

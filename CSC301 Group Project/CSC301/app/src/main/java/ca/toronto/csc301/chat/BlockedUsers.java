@@ -15,7 +15,7 @@ public class BlockedUsers {
         blockedUsersMAC = new HashSet<>();
     }
 
-    static BlockedUsers getInstance(){
+    public static BlockedUsers getInstance(){
         if(getInstance() == null){
             instance = new BlockedUsers();
         }
@@ -28,5 +28,9 @@ public class BlockedUsers {
 
     public Set<String> getBlockedUsersMAC(){
         return blockedUsersMAC;
+    }
+
+    public boolean checkBlacklist(String mac){
+        return blockedUsersMAC.contains(mac);
     }
 }
