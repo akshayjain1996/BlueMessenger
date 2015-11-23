@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                                 Toast.makeText(getApplicationContext(), "Recieved a broadcast event", Toast.LENGTH_LONG).show();
                                 String m = e.getMessage();
                                 if(e.isClientAllowed(bluetooth.getAddress())){
-                                    chatActivity.getInstance().recieveMessage(m, e.getSender());
+                                    chatActivity.getInstance().recieveMessage(m, e.getSender(), e);
                                     //this client can see it
                                 }
                                 //code to forward

@@ -1,11 +1,18 @@
 package com.example.siddharthgautam.csc301;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -13,11 +20,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.devpaul.filepickerlibrary.FilePickerActivity;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -71,9 +85,64 @@ public class chatActivity extends AppCompatActivity {
         sendFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //FILL THIS IN
+                Intent filePickerIntent = new Intent(getInstance(), FilePickerActivity.class);
+                filePickerIntent.putExtra(FilePickerActivity.REQUEST_CODE, FilePickerActivity.REQUEST_FILE);
+                startActivityForResult(filePickerIntent, FilePickerActivity.REQUEST_FILE);
             }
         });
+    }
+
+    @Override
+    /**
+     * Credit: https://github.com/DeveloperPaul123/FilePickerLibrary
+     */
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(requestCode == FilePickerActivity.REQUEST_FILE
+                && resultCode == RESULT_OK) {
+
+            String filePath = data.
+                    getStringExtra(FilePickerActivity.FILE_EXTRA_DATA_PATH);
+            if(filePath != null) {
+                Toast.makeText(getInstance().appContext, "You selected file " + filePath, Toast.LENGTH_SHORT).show();
+                File f = new File(filePath);
+                //byte[] bytes = ConnectionsList.getInstance().fileToByte(f);
+                InputStream is = null;
+                try {
+                    is = new BufferedInputStream(new FileInputStream(
+                            filePath));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+
+                try {
+                    while (is.available() > 0) {
+                        bos.write(is.read());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+                byte[] bytes = bos.toByteArray();
+                Event e = new Event();
+                e.setSender(BluetoothAdapter.getDefaultAdapter().getAddress());
+                e.setSenderName(BluetoothAdapter.getDefaultAdapter().getName());
+                e.setType(1);
+                e.setFileBytes(bytes);
+                e.allowClient(mac);
+                e.setMessage("sending file " + filePath);
+                ConnectionsList.getInstance().sendEvent(e);
+                stringArrayAdapter.add("You: sending file " + filePath); //Todo: replace with message
+                stringArrayAdapter.notifyDataSetChanged();
+                saveMessages(appContext.getFilesDir().getAbsoluteFile(), mac);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public static chatActivity getInstance() {
@@ -145,7 +214,33 @@ public class chatActivity extends AppCompatActivity {
         saveMessages(appContext.getFilesDir().getAbsoluteFile(), mac);
     }
 
-    public void recieveMessage(String message, String senderMac){
+    public void recieveMessage(String message, String senderMac, Event e){
+        //Toast.makeText(appContext, " got msg", Toast.LENGTH_SHORT).show();
+        byte[] fileBytes = e.getFileBytes();
+        if(fileBytes != null){
+            File old_file = ConnectionsList.getInstance().byteToFile(fileBytes);
+            String[] d = old_file.getAbsolutePath().split("/");
+            String name = d[d.length - 1];
+            File finalFile = new File(Environment.getExternalStorageDirectory(), name);
+            if(finalFile.exists()){
+                finalFile.delete();
+            }
+            try {
+                FileOutputStream fos=new FileOutputStream(finalFile.getPath());
+
+                fos.write(fileBytes);
+                fos.close();
+
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            if(finalFile != null) {
+                message = message + ". File has been saved to " + finalFile.getAbsolutePath();
+            }
+        }
+        else{
+            //Toast.makeText(appContext, " got null file bytes", Toast.LENGTH_SHORT).show();
+        }
         String senderName = ConnectionsList.getInstance().getNameFromMac(senderMac);
         //If this chat is not open
         if(senderMac.equals(mac) == false){//save messaged to be loaded later if the senders' chat is currently not open
