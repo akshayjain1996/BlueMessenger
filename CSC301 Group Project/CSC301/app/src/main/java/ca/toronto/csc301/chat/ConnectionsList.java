@@ -1,4 +1,10 @@
 package ca.toronto.csc301.chat;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Timer;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -258,6 +264,38 @@ public class ConnectionsList {
             }
         });
     }
+
+    public static byte[] fileToByte(File f){
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try{
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeObject(f);
+            bos.close();
+            oos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        byte[] bytes = bos.toByteArray();
+        return bytes;
+    }
+
+    public static File byteToFile(byte[] bytes){
+        File f = null;
+        ObjectInputStream ois;
+        try{
+            ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+            ois = new ObjectInputStream(bis);
+            f = (File) ois.readObject();
+            bis.close();
+            ois.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return f;
+    }
+
     //Closes connection with a bluetooth device.
     public void closeConnection(BluetoothDevice device){
         if(device == null){
