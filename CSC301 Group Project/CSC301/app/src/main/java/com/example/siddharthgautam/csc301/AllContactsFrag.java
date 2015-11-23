@@ -1,16 +1,21 @@
 package com.example.siddharthgautam.csc301;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,11 +29,16 @@ import android.widget.Toast;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import ca.toronto.csc301.chat.BlockedUsers;
 import ca.toronto.csc301.chat.ConnectedThread;
 import ca.toronto.csc301.chat.ConnectionsList;
 import ca.toronto.csc301.chat.Event;
+import ca.toronto.csc301.chat.GroupChat;
+import ca.toronto.csc301.chat.GroupController;
 
 public class AllContactsFrag extends Fragment {
 
@@ -53,6 +63,15 @@ public class AllContactsFrag extends Fragment {
         Iterator<BluetoothDevice> it = paired.iterator();
         while(it.hasNext()){
             BluetoothDevice dev = it.next();
+            ConnectedThread t = ConnectionsList.getInstance().getConnectedThread(dev);
+            if(t != null){
+                if(t.getSocket().isConnected() == true){
+                    continue;
+                }
+                if(t.getSocket().getRemoteDevice() != null){
+                    continue;
+                }
+            }
             ConnectionsList.makeConnectionTo(dev);
         }
 
@@ -77,10 +96,12 @@ public class AllContactsFrag extends Fragment {
                         int type = e.getType();
                         switch(type) {
                             case 1:
-                                Toast t = Toast.makeText(getContext(), "Recieved a broadcast event", Toast.LENGTH_LONG);
-                                doToastFast(t);
+                                Toast.makeText(getContext(), "Recieved a broadcast event", Toast.LENGTH_LONG).show();
+
                                 String m = e.getMessage();
                                 if(e.isClientAllowed(bluetooth.getAddress())){
+                                    showNotification("BlueM - Message from " + e.getSenderName(),
+                                            e.getMessage());
                                     chatActivity.getInstance().recieveMessage(m, e.getSender());
                                     //this client can see it
                                 }
@@ -88,24 +109,35 @@ public class AllContactsFrag extends Fragment {
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 2:
-                                Toast tx = Toast.makeText(getContext(), "Some device asked for a devices update, sending them", Toast.LENGTH_LONG);
-                                doToastFast(tx);
+                                Toast.makeText(getContext(), "Some device asked for a devices update, sending them", Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 3:
-                                Toast tb = Toast.makeText(getContext(), "Recieved a network devices event update", Toast.LENGTH_LONG);
-                                doToastFast(tb);
+                                Toast.makeText(getContext(), "Recieved a network devices event update", Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 4:
                                 //Toast.makeText(getContext(), "a new device joined the network", Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
+                            case 5:
+                                if(e.getGroupChat().checkMemberByMAC(BluetoothAdapter.getDefaultAdapter().getAddress())) {
+                                    HandleType5(e);
+                                } else{
+                                    ConnectionsList.getInstance().sendEvent(e);
+                                }
+                                break;
                             case 6:
-                                final Toast toast = Toast.makeText(getContext(), "Keep alive from " + e.getSenderName(), Toast.LENGTH_SHORT);
-                                doToastFast(toast);
+                                //Toast.makeText(getContext(), "Keep alive from " + e.getSenderName(), Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
-                                updateContactsList();
+                                break;
+                            case 7:
+                                GroupChat g = e.getGroupChat();
+                                if(g.checkMemberByMAC(BluetoothAdapter.getDefaultAdapter().getAddress())){
+                                    GroupChatActivity.getInstance().recieveMessage(e.getMessage(),
+                                            e.getSender(), g.getName());
+                                }
+                                ConnectionsList.getInstance().sendEvent(e);
                                 break;
                         }
 
@@ -122,6 +154,12 @@ public class AllContactsFrag extends Fragment {
             }
         }
     };
+
+    public void HandleType5(Event event){
+        Toast.makeText(getActivity(), "you have been added to a grp chat", Toast.LENGTH_LONG).show();
+        GroupController.getInstance().addGroupChat(event.getGroupChat());
+        ConnectionsList.getInstance().sendEvent(event);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -144,7 +182,7 @@ public class AllContactsFrag extends Fragment {
         Button button = new Button(getActivity());
         button.setText("Scan for Devices");
         button.setBackgroundColor(getResources().getColor(R.color.lightblue));
-        listView.setBackgroundColor(getResources().getColor(R.color.beige));
+        listView.setBackgroundColor(getResources().getColor(R.color.white));
         button.setTextColor(getResources().getColor(R.color.white));
         listView.addHeaderView(button);
 
@@ -197,23 +235,28 @@ public class AllContactsFrag extends Fragment {
         return view;
     }
 
-    public void doToastFast(Toast t){
-        final Toast toast = t;
-        toast.show();
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                toast.cancel();
-            }
-        }, 1000);
-    }
-
     public void goToChat(View v, String mac){
     Intent intent = new Intent(getActivity(), chatActivity.class);
     intent.putExtra("mac", mac);
     startActivity(intent);
+    }
+
+    public void showNotification(String title, String text) {
+        PendingIntent pi = PendingIntent.getActivity(getActivity(), 0, new Intent(getActivity(),
+                AllContactsFrag.class), 0);
+        Resources r = getResources();
+        Notification notification = new NotificationCompat.Builder(this.getActivity())
+                .setTicker(title)
+                .setSmallIcon(android.R.drawable.ic_menu_report_image)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setContentIntent(pi)
+                .setAutoCancel(true)
+                .build();
+
+        NotificationManager notificationManager = (NotificationManager) getActivity().
+                getSystemService(getActivity().NOTIFICATION_SERVICE);
+        notificationManager.notify(0, notification);
     }
 
     public static BluetoothDevice getDeviceByName(String name) {
@@ -224,6 +267,8 @@ public class AllContactsFrag extends Fragment {
         }
         return null;
     }
+
+
 
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override//disconnected
@@ -272,13 +317,15 @@ public class AllContactsFrag extends Fragment {
             }
             else{
                 if(t.getSocket().isConnected() == false){
-                    t.cancel();
-                    ConnectionsList.getInstance().closeConnection(device);
+                    //ConnectionsList.getInstance().closeConnection(device);
                     //ConnectionsList.getInstance().makeConnectionTo(device);
                 }
                 else {
                     device_name = "✓ " + device_name;
                 }
+            }
+            if(device_name.contains("✓") == false && ConnectionsList.getInstance().isDeviceInNetwork(device.getAddress())){//some other client has this client connected
+                device_name = "✓ " + device_name;
             }
             cL.add(device_name);
         }

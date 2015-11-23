@@ -1,11 +1,15 @@
 package com.example.siddharthgautam.csc301;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -14,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -26,6 +31,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import ca.toronto.csc301.chat.ConnectedThread;
@@ -38,8 +44,16 @@ public class GroupFrag extends Fragment {
     private BluetoothAdapter bluetooth;
     private ListView groupList;
     private ArrayList gL = new ArrayList();
-    private ArrayAdapter adapter;
+    private ArrayAdapter<GroupChat> adapter;
     String[] items;
+    ArrayList<String> listItems=new ArrayList<String>();
+    EditText editText;
+    Button addButton;
+    ListView listView;
+    ListView lv;
+    private Thread refreshThread;
+    private Handler refreshHandler;
+
 
     public static GroupFrag newInstance() {
         GroupFrag fragment = new GroupFrag();
@@ -51,154 +65,136 @@ public class GroupFrag extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    @Override
 
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_group_frag, container, false);
-        //TextView textView = (TextView) view;
-        //textView.setText("Group Frag");
-        //items = new String[] { "Vegetables","Fruits","Flower Buds","Legumes","Bulbs","Tubers" };
 
-        ListView listView = (ListView) view.findViewById(R.id.group_list);
+        listView = (ListView) view.findViewById(R.id.group_list);
 
+        lv = (ListView)view.findViewById(R.id.group_list);
 
-        if (adapter == null) {
-            // the list view is empty, just display the "Add a Group" button
-            listView.setEmptyView(view.findViewById(R.id.emptyView));
-            LinearLayout lr = (LinearLayout)view.findViewById(R.id.emptyView);
-            Button button = (Button)lr.findViewById(R.id.Button01);
-            button.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View view) {
-                    //Toast.makeText(getContext(), "message", Toast.LENGTH_LONG).show();
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                    alert.setTitle("Enter a Group Name");
-                    final EditText input = new EditText(getContext());
-                    alert.setView(input);
+        //listItems = new ArrayList<String>();
+        //if (adapter == null) {
+        //LinearLayout rl = (LinearLayout) view.findViewById(R.id.myID);
+        Button bt = (Button)view.findViewById(R.id.Button01);
+        final Button refresh = (Button) view.findViewById(R.id.grp_frag_refresh);
 
-                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface d, int button) {
-                            String value = input.getText().toString();
-                            //Toast.makeText(getContext(), value, Toast.LENGTH_LONG).show();
-                            // add the input value to the group controller list
-                            GroupController controller = GroupController.getInstance();
-                            controller.createNewGroupChat(value);
+        bt.setText("Add a Group");
+        bt.setBackgroundColor(getResources().getColor(R.color.lightblue));
+        bt.setTextColor(getResources().getColor(R.color.white));
 
-                        }
-                    });
+        refresh.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
 
-                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface d, int button) {
-                            // Canceled.
-                        }
-                    });
-                    alert.show();
-                }
-            });
-
-        }
-
-
-        //Button button = new Button(getActivity());
-        //button.setText("Add a Group");
-        //button.setOnClickListener(new Button.OnClickListener() {
-            //public void createNewGroupChat(View view) {
-             //   Toast.makeText(getContext(), "do something", Toast.LENGTH_LONG).show();
-                //Toast.makeText(GroupFrag.this, "doing something", Toast.LENGTH_SHORT).show();
-                //AlertDialog.Builder alert = new AlertDialog.Builder(this.getContext());
-                //alert.setTitle("Enter a Group Name");
-
-                //GroupController controller = new GroupController();
-
-                //controller.createNewGroupChat();
-           // }
-           // public void onClick(View v) {
-           //     createNewGroupChat(v);
-           // }
-       // });
-       // button.setBackgroundColor(getResources().getColor(R.color.lightblue));
-       // button.setTextColor(getResources().getColor(R.color.white));
-
-       // listView.addHeaderView(button);
-
-        //listView.addHeaderView(button);
-        //ListView emptyText = (ListView)view.findViewById(R.id.group_list);
-        //emptyText.setEmptyView(button);
-        //listView.setEmptyView(button);
-
-
-        return view;
-    }
-
-    /*
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_all_contacts_frag, container, false);
-
-        ListView listView = (ListView) view.findViewById(R.id.contact_list);
-        Button button = new Button(getActivity());
-        button.setText("Scan for Devices");
-        button.setBackgroundColor(getResources().getColor(R.color.lightblue));
-        button.setTextColor(getResources().getColor(R.color.white));
-        listView.addHeaderView(button);
-
-        bluetooth = BluetoothAdapter.getDefaultAdapter();
-        contactsList = (ListView) view;
-        Set<BluetoothDevice> d = bluetooth.getBondedDevices();
-        Iterator<BluetoothDevice> i = d.iterator();
-
-        while(i.hasNext()){
-            BluetoothDevice device = i.next();
-            ConnectionsList.getInstance().makeConnectionTo(device);
-            String device_name = device.getName();
-            cL.add(device_name);
-        }
-        // now add from network devices
-        Iterator<String> di = ConnectionsList.getInstance().getNamesOfConnectedDevices().iterator();
-        while(di.hasNext()){
-            String name = di.next();
-            if(cL.contains(name)){
-                continue;
+                refreshView(view);
             }
-            cL.add(name);
-        }
 
-        adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, cL);
-        contactsList.setAdapter(adapter);
+        });
 
 
-        contactsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        bt.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                alert.setTitle("Enter a Group Name");
+                final EditText input = new EditText(getContext());
+                alert.setView(input);
+
+                alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface d, int button) {
+                        ArrayList<String> myStringArray1 = new ArrayList<String>();
+                        String value = input.getText().toString();
+                        Toast.makeText(getContext(), value, Toast.LENGTH_LONG).show();
+                        // add the input value to the group controller listli
+                        GroupController controller = GroupController.getInstance();
+                        controller.createNewGroupChat(value);
+                        List<GroupChat> data = controller.getGroupChats();
+                        //refreshView(view);
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface d, int button) {
+                    }
+                });
+
+                alert.show();
+                // read data into adapter
+                GroupController controller = GroupController.getInstance();
+                List<GroupChat> data = controller.getGroupChats();
+                adapter = new ArrayAdapter<GroupChat>(getActivity(), android.R.layout.simple_list_item_1, data);
+                adapter.notifyDataSetChanged();
+            }
+
+        });
+        //populateListView(view);
+        //rl.addView(bt);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String deviceName = contactsList.getItemAtPosition(position).toString();
-                BluetoothDevice device = MainActivity.getDeviceByName(deviceName);
-                if (device != null) {//for paired devices
-                    ConnectedThread t = ConnectionsList.getInstance().getConnectedThread((device));
-                    if (t == null) {//no connection available, try to connect
-                        ConnectionsList.getInstance().makeConnectionTo(device);
-                    }
-                }
-                if (ConnectionsList.getInstance().isDeviceInNetwork(device.getAddress()) == false) {
-
-                    return;
-
-                }
-
-                //goToChat(getView(), device);
+                Intent newGroupChatActivityIntent = new Intent(getActivity(), GroupChatActivity.class);
+                newGroupChatActivityIntent.putExtra("GroupChat", (GroupChat)listView.getItemAtPosition(position));
+                ConnectionsList.getInstance().setGroupChat((GroupChat)listView.getItemAtPosition(position));
+                startActivity(newGroupChatActivityIntent);
             }
         });
+
+        //ArrayList<String> listItems=new ArrayList<String>();
+        //listItems.add("hello");
+        //listItems.add("goodbye");
+        ListView lv = (ListView)view.findViewById(R.id.group_list);
+        adapter = new ArrayAdapter<GroupChat>(getActivity(), android.R.layout.simple_list_item_1, GroupController.getInstance().getGroupChats());
+        //adapter.add("hello");
+        //adapter.add("goodbye");
+        lv.setAdapter(adapter);
+
+        GroupController controller = GroupController.getInstance();
+
+        //populateListView(view);
+        refreshView(view);
+
+        refreshHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg){
+                refreshView(GroupFrag.this.getView());
+            }
+        };
+
+
+        refreshThread = new Thread(){
+            @Override
+            public void run(){
+                try {
+                    sleep(10000, 0);
+                } catch (InterruptedException e) {
+                    //e.printStackTrace();
+                } finally {
+                    refreshHandler.sendMessage(new Message());
+                }
+                this.run();
+            }
+        };
+        refreshThread.start();
+
         return view;
     }
-    */
-    public void createNewGroupChat() {
-        Toast.makeText(getContext(), "do something", Toast.LENGTH_LONG).show();
-        //Toast.makeText(GroupFrag.this, "doing something", Toast.LENGTH_SHORT).show();
-        //AlertDialog.Builder alert = new AlertDialog.Builder(this.getContext());
-        //alert.setTitle("Enter a Group Name");
 
-        //GroupController controller = new GroupController();
+    public void refreshView(View view) {
+        GroupController controller = GroupController.getInstance();
+        List<GroupChat> data = controller.getGroupChats();
+        Toast.makeText(getContext(), "Refreshing group chats...", Toast.LENGTH_LONG).show();
+        //LinearLayout rl = (LinearLayout) view.findViewById(R.id.myID);
 
-        //controller.createNewGroupChat();
+        adapter = new ArrayAdapter<GroupChat>(getActivity(), android.R.layout.simple_list_item_1, GroupController.getInstance().getGroupChats());
+        //adapter.add("hello");
+        //adapter.add("goodbye");
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        //rl.addView(lv);
     }
+
 
 }

@@ -157,6 +157,8 @@ public class MainActivity extends AppCompatActivity implements Serializable{
                                 break;
                             case 5:
                                 HandleType5(e);
+                                break;
+
                         }
 
                     }
@@ -170,7 +172,18 @@ public class MainActivity extends AppCompatActivity implements Serializable{
     };
 
     public void HandleType5(Event event){
+        Toast.makeText(getApplicationContext(), "you have been added to a grp chat", Toast.LENGTH_LONG).show();
         GroupController.getInstance().addGroupChat(event.getGroupChat());
+        event.removeFronAllowedClients(bluetooth.getAddress());
+        HashSet<String> allowedClients = event.getAllowedClients();
+        for(String client : allowedClients){
+            if(ConnectionsList.getInstance().isDeviceInNetwork(client)){
+                event.removeFronAllowedClients(client);
+            } else {
+                allowedClients.remove(client);
+            }
+        }
+        ConnectionsList.getInstance().sendEvent(event);
     }
 
     //Get devices

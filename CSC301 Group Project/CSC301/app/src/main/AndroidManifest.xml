@@ -71,6 +71,11 @@
             android:label="@string/title_activity_group_chat"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
+        <activity
+            android:name=".SettingsFrag"
+            android:label="@string/title_activity_settings_frag"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>
