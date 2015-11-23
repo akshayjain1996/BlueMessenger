@@ -118,7 +118,11 @@ public class AllContactsFrag extends Fragment {
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 5:
-                                HandleType5(e);
+                                if(e.getGroupChat().checkMemberByMAC(BluetoothAdapter.getDefaultAdapter().getAddress())) {
+                                    HandleType5(e);
+                                } else{
+                                    ConnectionsList.getInstance().sendEvent(e);
+                                }
                                 break;
                             case 6:
                                 //Toast.makeText(getContext(), "Keep alive from " + e.getSenderName(), Toast.LENGTH_LONG).show();
