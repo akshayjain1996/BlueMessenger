@@ -79,12 +79,12 @@ public class GroupFrag extends Fragment {
         //if (adapter == null) {
         //LinearLayout rl = (LinearLayout) view.findViewById(R.id.myID);
         Button bt = (Button)view.findViewById(R.id.Button01);
-        final Button refresh = (Button) view.findViewById(R.id.grp_frag_refresh);
+        //final Button refresh = (Button) view.findViewById(R.id.grp_frag_refresh);
 
         bt.setText("Add a Group");
         bt.setBackgroundColor(getResources().getColor(R.color.lightblue));
         bt.setTextColor(getResources().getColor(R.color.white));
-
+/*
         refresh.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
 
@@ -92,7 +92,7 @@ public class GroupFrag extends Fragment {
             }
 
         });
-
+*/
 
         bt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
