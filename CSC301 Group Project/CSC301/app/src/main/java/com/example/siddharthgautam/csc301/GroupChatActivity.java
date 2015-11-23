@@ -98,7 +98,8 @@ public class GroupChatActivity extends AppCompatActivity {
                 final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(GroupChatActivity.this,
                         android.R.layout.select_dialog_singlechoice);
 
-                arrayAdapter.addAll(ConnectionsList.getInstance().getConnectedMacs());
+                //arrayAdapter.addAll(ConnectionsList.getInstance().getConnectedMacs());
+                arrayAdapter.addAll(ConnectionsList.getInstance().getNamesOfConnectedDevices());
                 alert.setNegativeButton(
                         "cancel",
                         new DialogInterface.OnClickListener() {
@@ -113,7 +114,9 @@ public class GroupChatActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String strName = arrayAdapter.getItem(which);
-                                GroupController.getInstance().addToGroupChat(groupChat, strName);
+                                //GroupController.getInstance().addToGroupChat(groupChat, strName);
+                                GroupController.getInstance().addToGroupChat(groupChat,
+                                        ConnectionsList.getInstance().getMacFromName(strName));
                             }
                         });
                 alert.show();
