@@ -100,4 +100,5 @@
     <string name="title_activity_open_chat">OpenChat</string>
     <string name="title_activity_open_chat_frag">OpenChatFrag</string>
     <string name="title_activity_group_chat">GroupChatActivity</string>
+    <string name="title_activity_settings_frag">SettingsFrag</string>
 </resources>
