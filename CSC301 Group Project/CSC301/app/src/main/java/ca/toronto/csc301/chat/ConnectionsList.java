@@ -21,6 +21,8 @@ import java.util.Set;
  * Created by akshay on 31/10/15.
  */
 public class ConnectionsList {
+
+    GroupChat groupChat;
     HashMap<BluetoothDevice,ConnectedThread> map = new HashMap<BluetoothDevice,ConnectedThread>();
     HashMap<String, BluetoothDevice> macToDevice = new HashMap<String, BluetoothDevice>();
     HashMap<BluetoothDevice, ConnectThread> connectThreads = new HashMap<BluetoothDevice, ConnectThread>();
@@ -116,6 +118,9 @@ public class ConnectionsList {
             case 4:
                 //new device in the network, update my own local copy
                 newDeviceInNetwork(e.getSender(), e.getSenderName());
+                forward(e);
+                break;
+            case 5:
                 forward(e);
                 break;
             case 6:
@@ -305,5 +310,18 @@ public class ConnectionsList {
             }
         }).start();
     }
+
+    public Set<String> getConnectedMacs(){
+        return macToDevice.keySet();
+    }
+
+    public GroupChat getGroupChat() {
+        return groupChat;
+    }
+
+    public void setGroupChat(GroupChat groupChat) {
+        this.groupChat = groupChat;
+    }
+
 
 }
