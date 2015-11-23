@@ -25,35 +25,44 @@
         <ListView
             android:id="@+id/group_message_list"
             android:layout_width="match_parent"
-            android:layout_height="405dp"
+            android:layout_height="341dp"
             android:transcriptMode="alwaysScroll" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <Button
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_weight="100"
-                android:id="@+id/group_new_message" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Send"
-                android:id="@+id/group_send" />
-
-        </LinearLayout>
+            android:text="View group members"
+            android:id="@+id/viewGroupMembers"
+            android:layout_gravity="right" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Add User"
             android:id="@+id/addToGroupChat"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="right" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:id="@+id/group_new_message"
+                android:layout_weight="0.90" />
+
+            <Button
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:text="Send"
+                android:id="@+id/group_send"
+                android:layout_weight="0.07" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

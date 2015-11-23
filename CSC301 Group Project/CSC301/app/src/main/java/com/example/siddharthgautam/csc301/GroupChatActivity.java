@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import ca.toronto.csc301.chat.ConnectionsList;
@@ -41,6 +42,7 @@ public class GroupChatActivity extends AppCompatActivity {
     private ArrayList<String> stringList;
     GroupChat groupChat;
     private Button addUser;
+    private Button getGroupMembersButton;
 
 
 
@@ -115,6 +117,27 @@ public class GroupChatActivity extends AppCompatActivity {
                             }
                         });
                 alert.show();
+            }
+        });
+
+        getGroupMembersButton = (Button)findViewById(R.id.viewGroupMembers);
+        getGroupMembersButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(GroupChatActivity.this);
+                String s = "";
+                for(String userMac: groupChat.getmembers()){
+                    s += ConnectionsList.getInstance().getNameFromMac(userMac) + "\n";
+                }
+                dlgAlert.setMessage(s);
+                dlgAlert.setTitle("Group Members:");
+                dlgAlert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface d, int button) {
+
+                    }
+                });
+                dlgAlert.setCancelable(true);
+                dlgAlert.create().show();
             }
         });
     }
