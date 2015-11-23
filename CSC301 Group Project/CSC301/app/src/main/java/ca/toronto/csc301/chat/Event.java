@@ -22,6 +22,7 @@ public class Event implements Serializable{
      *  int 4 = broadcast -- new device in the network (the sender.)
      *  int 5 = new member added to group chat
      *  int 6 = keep alive
+     *  int 7 = recieving a group chat message
      */
     private int type;
     private String message;
@@ -117,5 +118,13 @@ public class Event implements Serializable{
 
     public void addAllowedClientsFromSet(HashSet<String> members){
         allowedClients.addAll(members);
+    }
+
+    public HashSet<String> getAllowedClients() {
+        return allowedClients;
+    }
+
+    public void removeFronAllowedClients(String mac){
+        allowedClients.remove(mac);
     }
 }
