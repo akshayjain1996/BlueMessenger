@@ -48,6 +48,7 @@ public class GroupFrag extends Fragment {
     EditText editText;
     Button addButton;
     ListView listView;
+    ListView lv;
 
     public static GroupFrag newInstance() {
         GroupFrag fragment = new GroupFrag();
@@ -67,15 +68,27 @@ public class GroupFrag extends Fragment {
 
         listView = (ListView) view.findViewById(R.id.group_list);
 
-
+        lv = (ListView)view.findViewById(R.id.group_list);
 
         //listItems = new ArrayList<String>();
         //if (adapter == null) {
         //LinearLayout rl = (LinearLayout) view.findViewById(R.id.myID);
         Button bt = (Button)view.findViewById(R.id.Button01);
+        final Button refresh = (Button) view.findViewById(R.id.grp_frag_refresh);
+
         bt.setText("Add a Group");
         bt.setBackgroundColor(getResources().getColor(R.color.lightblue));
         bt.setTextColor(getResources().getColor(R.color.white));
+
+        refresh.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+
+                refreshView(view);
+            }
+
+        });
+
+
         bt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
 
@@ -132,59 +145,7 @@ public class GroupFrag extends Fragment {
         //adapter.add("hello");
         //adapter.add("goodbye");
         lv.setAdapter(adapter);
-        //rl.addView(lv);
-            /*
 
-            // the list view is empty, just display the "Add a Group" button
-            listView.setEmptyView(view.findViewById(R.id.emptyView));
-            LinearLayout lr = (LinearLayout)view.findViewById(R.id.emptyView);
-            Button button = (Button)lr.findViewById(R.id.Button01);
-            button.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View view) {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                    alert.setTitle("Enter a Group Name");
-                    final EditText input = new EditText(getContext());
-                    alert.setView(input);
-
-                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface d, int button) {
-                            ArrayList<String> myStringArray1 = new ArrayList<String>();
-                            String value = input.getText().toString();
-                            Toast.makeText(getContext(), value, Toast.LENGTH_LONG).show();
-                            // add the input value to the group controller list
-                            GroupController controller = GroupController.getInstance();
-                            controller.createNewGroupChat(value);
-                            List<GroupChat> data = controller.getGroupChats();
-                            //Toast.makeText(getContext(), String.valueOf(data.size()), Toast.LENGTH_LONG).show();
-                            //myStringArray1.add(value);
-                           // adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, myStringArray1);
-                            //listView.setAdapter(adapter);
-                            //adapter.notifyDataSetChanged();
-
-                            addData(value);
-                            //String[] values = new String[]{value};
-                            //ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, values);
-
-
-                        }
-                    });
-
-                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface d, int button) {
-                        }
-                    });
-
-                    alert.show();
-                }
-            });
-
-
-
-
-        */
-        //} else {
-        // function stub
-        //}
         GroupController controller = GroupController.getInstance();
 
         //populateListView(view);
@@ -197,7 +158,7 @@ public class GroupFrag extends Fragment {
         List<GroupChat> data = controller.getGroupChats();
         Toast.makeText(getContext(), String.valueOf(data.size()), Toast.LENGTH_LONG).show();
         //LinearLayout rl = (LinearLayout) view.findViewById(R.id.myID);
-        ListView lv = (ListView)view.findViewById(R.id.group_list);
+
         adapter = new ArrayAdapter<GroupChat>(getContext(), android.R.layout.simple_list_item_1, GroupController.getInstance().getGroupChats());
         //adapter.add("hello");
         //adapter.add("goodbye");
