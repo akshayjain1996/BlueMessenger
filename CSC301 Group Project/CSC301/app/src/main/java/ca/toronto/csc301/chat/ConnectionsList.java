@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Created by akshay on 31/10/15.
@@ -38,6 +39,7 @@ public class ConnectionsList {
     private Handler mHandler;
     static ConnectionsList instance;
     static private AcceptThread acceptThread;
+    public HashMap<UUID, Boolean> alreadyRecieved = new HashMap<UUID, Boolean>();
 
     public void setHandler(Handler h){
         mHandler = h;
