@@ -17,9 +17,13 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +36,7 @@ import ca.toronto.csc301.chat.GroupController;
 
 public class GroupChatActivity extends AppCompatActivity {
 
-    public static int MAX_MSGS_ON_SCREEN = 5;
+    public static int MAX_MSGS_ON_SCREEN = 30;
     static GroupChatActivity instance;
     private static final UUID uuid = UUID.fromString("63183176-0f7c-4673-b120-ac4116843e65");
     private Button sendButton;
@@ -59,13 +63,12 @@ public class GroupChatActivity extends AppCompatActivity {
 //        groupChat = b.getParcelable("GroupChat");
         groupChat = ConnectionsList.getInstance().getGroupChat();
         if(groupChat == null){
-            Toast.makeText(getApplicationContext(), "Group chat is null", Toast.LENGTH_LONG).show();
+           //Toast.makeText(getApplicationContext(), "Group chat is null", Toast.LENGTH_LONG).show();
 
         } else {
-            Toast.makeText(getApplicationContext(), groupChat.getName(), Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), groupChat.getName(), Toast.LENGTH_LONG).show();
+            setTitle("Group: " + groupChat.getName());
         }
-
-//        setTitle("Chat: " + groupChat.getName());
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -143,6 +146,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 dlgAlert.create().show();
             }
         });
+        loadMessages(getApplicationContext().getFilesDir().getAbsoluteFile(), groupChat.getName());
     }
 
     public static GroupChatActivity getInstance() {
@@ -172,29 +176,79 @@ public class GroupChatActivity extends AppCompatActivity {
         if(true){//fix after
             //t.sendMessage(message);
             ConnectionsList.getInstance().sendEvent(e);
-            Toast.makeText(appContext, "Broadcast a group msg", Toast.LENGTH_LONG).show();
+            //Toast.makeText(appContext, "Broadcast a group msg", Toast.LENGTH_LONG).show();
         }
         else{
             Toast.makeText(appContext, "No connection available right now", Toast.LENGTH_LONG).show();
         }
+        saveMessages(getApplicationContext().getFilesDir().getAbsoluteFile(), groupChat.getName());
     }
     public void recieveMessage(String message, String senderMac, String groupName){
         String senderName = ConnectionsList.getInstance().getNameFromMac(senderMac);
-        Toast.makeText(appContext, "Got a group msg", Toast.LENGTH_LONG).show();
-        if(groupChat.getName().equals(groupName) == false){//the sending group chat isnt open rightnow
-            return;
-        }
-        stringArrayAdapter.add(senderName + ": " + message);
+        //Toast.makeText(appContext, "Got a group msg", Toast.LENGTH_LONG).show();
+        //if(ConnectionsList.getInstance().getGroupChat().getName().equals(groupName) == false){//the sending group chat isnt open rightnow
+          //  Toast.makeText(getApplicationContext(), ">> Saving msg for group " + groupName, Toast.LENGTH_LONG).show();
+                try {
+                    //Opens file and writes to it
+                    FileOutputStream fos = this.openFileOutput(groupName + ".txt", Context.MODE_APPEND);
+                    fos.write((senderName + ": " + message + "\n").getBytes());
+                    fos.close();
+                }catch(FileNotFoundException ex){
+                    try{
+                        FileOutputStream fos = this.openFileOutput(groupName + ".txt", Context.MODE_PRIVATE);
+                        fos.write((senderName + ": " + message + "\n").getBytes());
+                        fos.close();
+                        return;
+                    }catch(Exception exc){
+                        return;
+                    }
+
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+        //}
+        //stringArrayAdapter.add(senderName + ": " + message);
         //If this chat is not open
 
-        if(stringArrayAdapter.getCount() > MAX_MSGS_ON_SCREEN){
-            stringArrayAdapter.remove(stringArrayAdapter.getItem(0));
-        }
-
-        stringArrayAdapter.notifyDataSetChanged();
-        //BluetoothController.getInstance().sendMessage(new Message());
-        //implement this!
+        loadMessages(getApplicationContext().getFilesDir().getAbsoluteFile(), ConnectionsList.getInstance().getGroupChat().getName());
     }
 
+    public void loadMessages(File dir, String username){
+        Toast.makeText(getApplicationContext(), "Loading msg for group " + username, Toast.LENGTH_LONG).show();
+        try {
+            BufferedReader inputReader = new BufferedReader(new InputStreamReader(this.openFileInput(
+                    username + ".txt")));
+            String message;
+            stringArrayAdapter.clear();
+            while((message = inputReader.readLine()) != null){
+                stringArrayAdapter.add(message);
+                if(stringArrayAdapter.getCount() > MAX_MSGS_ON_SCREEN){
+                    stringArrayAdapter.remove(stringArrayAdapter.getItem(0));
+                }
+            }
+            inputReader.close();
+        }
+        catch (Exception e){
+
+        }
+
+    }
+
+
+    public void saveMessages(File dir, String username){
+
+        //File saveFile = new File(dir, username + ".txt");
+        try {
+            FileOutputStream fos = openFileOutput(username + ".txt", Context.MODE_PRIVATE);
+            for(int i = 0; i < messageView.getCount(); i++){
+                String m = stringArrayAdapter.getItem(i) + '\n';
+                fos.write(m.getBytes());
+            }
+            fos.close();
+        }
+        catch (Exception e){
+            //do later
+        }
+    }
 
 }

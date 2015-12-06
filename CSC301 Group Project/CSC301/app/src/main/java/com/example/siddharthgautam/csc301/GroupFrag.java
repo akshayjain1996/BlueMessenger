@@ -185,7 +185,7 @@ public class GroupFrag extends Fragment {
     public void refreshView(View view) {
         GroupController controller = GroupController.getInstance();
         List<GroupChat> data = controller.getGroupChats();
-        Toast.makeText(getContext(), "Refreshing group chats...", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getContext(), "Refreshing group chats...", Toast.LENGTH_LONG).show();
         //LinearLayout rl = (LinearLayout) view.findViewById(R.id.myID);
 
         adapter = new ArrayAdapter<GroupChat>(getActivity(), android.R.layout.simple_list_item_1, GroupController.getInstance().getGroupChats());

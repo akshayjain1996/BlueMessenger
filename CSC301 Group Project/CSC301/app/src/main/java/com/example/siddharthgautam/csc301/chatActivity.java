@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -45,7 +46,7 @@ import ca.toronto.csc301.chat.Event;
 
 public class chatActivity extends AppCompatActivity {
 
-    public static int MAX_MSGS_ON_SCREEN = 5;
+    public static int MAX_MSGS_ON_SCREEN = 20;
     static chatActivity instance;
     private BluetoothAdapter bluetooth;
     private Set<BluetoothDevice> devices;
@@ -107,40 +108,19 @@ public class chatActivity extends AppCompatActivity {
             if(filePath != null) {
                 Toast.makeText(getInstance().appContext, "You selected file " + filePath, Toast.LENGTH_SHORT).show();
                 File f = new File(filePath);
-                //byte[] bytes = ConnectionsList.getInstance().fileToByte(f);
-                InputStream is = null;
+                byte[] bytes = new byte[(int) f.length()];
                 try {
-                    is = new BufferedInputStream(new FileInputStream(
-                            filePath));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f));
+                    bis.read(bytes, 0, bytes.length);
                 }
+                catch(Exception ex){
 
-
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-
-                try {
-                    while (is.available() > 0) {
-                        bos.write(is.read());
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
-
-
-                byte[] bytes = bos.toByteArray();
-                Event e = new Event();
-                e.setSender(BluetoothAdapter.getDefaultAdapter().getAddress());
-                e.setSenderName(BluetoothAdapter.getDefaultAdapter().getName());
-                e.setType(1);
-                e.setFileBytes(bytes);
-                e.allowClient(mac);
-                e.setMessage("sending file " + filePath);
-                ConnectionsList.getInstance().sendEvent(e);
-                stringArrayAdapter.add("You: sending file " + filePath); //Todo: replace with message
-                stringArrayAdapter.notifyDataSetChanged();
-                saveMessages(appContext.getFilesDir().getAbsoluteFile(), mac);
+                File sourceFile = new File(filePath);
+                Intent intent = new Intent(); intent.setAction(Intent.ACTION_SEND);
+                intent.setType("image/jpeg");
+                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(sourceFile));
+                startActivity(Intent.createChooser(intent, "Send File"));
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -192,7 +172,7 @@ public class chatActivity extends AppCompatActivity {
      * send it through a BlueTooth connection and write the message on your own message log.
      */
     private void sendMessage(){
-        Toast.makeText(this, messageTextView.getText(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, messageTextView.getText(), Toast.LENGTH_SHORT).show();
         String message = messageTextView.getText().toString();
         stringArrayAdapter.add("You: " + message); //Todo: replace with message
         stringArrayAdapter.notifyDataSetChanged();
@@ -207,7 +187,7 @@ public class chatActivity extends AppCompatActivity {
         if(true){//fix after
             //t.sendMessage(message);
             ConnectionsList.getInstance().sendEvent(e);
-            Toast.makeText(appContext, "Broadcast a msg", Toast.LENGTH_LONG).show();
+            //Toast.makeText(appContext, "Broadcast a msg", Toast.LENGTH_LONG).show();
         }
         else{
             Toast.makeText(appContext, "No connection available right now", Toast.LENGTH_LONG).show();
@@ -217,31 +197,7 @@ public class chatActivity extends AppCompatActivity {
 
     public void recieveMessage(String message, String senderMac, Event e){
         //Toast.makeText(appContext, " got msg", Toast.LENGTH_SHORT).show();
-        byte[] fileBytes = e.getFileBytes();
-        if(fileBytes != null){
-            File old_file = ConnectionsList.getInstance().byteToFile(fileBytes);
-            String[] d = old_file.getAbsolutePath().split("/");
-            String name = d[d.length - 1];
-            File finalFile = new File(Environment.getExternalStorageDirectory(), "Download/" + name);
-            if(finalFile.exists()){
-                finalFile.delete();
-            }
-            try {
-                FileOutputStream fos=new FileOutputStream(finalFile.getPath());
 
-                fos.write(fileBytes);
-                fos.close();
-
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-            if(finalFile != null) {
-                message = message + ". File has been saved to " + finalFile.getAbsolutePath();
-            }
-        }
-        else{
-            Toast.makeText(appContext, " got null file bytes", Toast.LENGTH_SHORT).show();
-        }
         String senderName = ConnectionsList.getInstance().getNameFromMac(senderMac);
         //If this chat is not open
         if(senderMac.equals(mac) == false){//save messaged to be loaded later if the senders' chat is currently not open
@@ -263,7 +219,7 @@ public class chatActivity extends AppCompatActivity {
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
-            Toast.makeText(appContext, "SAVED A MESSAGE! Saved " + message + " to" + senderMac+".txt", Toast.LENGTH_LONG);
+            //Toast.makeText(appContext, "SAVED A MESSAGE! Saved " + message + " to" + senderMac+".txt", Toast.LENGTH_LONG);
             return;
         }
         stringArrayAdapter.add("Them: " + message);
@@ -296,6 +252,9 @@ public class chatActivity extends AppCompatActivity {
             stringArrayAdapter.clear();
             while((message = inputReader.readLine()) != null){
                 stringArrayAdapter.add(message);
+                if(stringArrayAdapter.getCount() > MAX_MSGS_ON_SCREEN){
+                    stringArrayAdapter.remove(stringArrayAdapter.getItem(0));
+                }
             }
             inputReader.close();
         }
