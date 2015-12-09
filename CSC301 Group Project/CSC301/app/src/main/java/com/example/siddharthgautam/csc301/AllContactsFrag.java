@@ -28,10 +28,17 @@ import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.RelativeLayout;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.UUID;
 
 import ca.toronto.csc301.chat.BlockedUsers;
 import ca.toronto.csc301.chat.ConnectedThread;
@@ -46,6 +53,8 @@ public class AllContactsFrag extends Fragment {
     private ListView contactsList;
     private ArrayList cL = new ArrayList();
     private ArrayAdapter adapter;
+    private Button mainBtn;
+    private static AllContactsFrag instance;
     public static AllContactsFrag newInstance() {
         AllContactsFrag fragment = new AllContactsFrag();
         return fragment;
@@ -54,10 +63,10 @@ public class AllContactsFrag extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
         ConnectionsList.getInstance().setHandler(mHandler);
         ConnectionsList.getInstance().accept();
-        Toast.makeText(getContext(),"Connecting to paired devices..." +
-                " asking for all network devices upon connect", Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(),"Scanning for networks to join", Toast.LENGTH_LONG).show();
         BluetoothAdapter local = BluetoothAdapter.getDefaultAdapter();
         Set<BluetoothDevice> paired = local.getBondedDevices();
         Iterator<BluetoothDevice> it = paired.iterator();
@@ -82,7 +91,6 @@ public class AllContactsFrag extends Fragment {
         getContext().registerReceiver(receiver, f2);
         getContext().registerReceiver(connectedReceiver, f3);
     }
-
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -91,30 +99,40 @@ public class AllContactsFrag extends Fragment {
                 case 1:
                     byte[] readBuf = (byte[]) msg.obj;
                     Event e;
+                    updateContactsList();
                     try{
                         e = (Event) Event.deserialize(readBuf);
+                        if(ConnectionsList.getInstance().alreadyRecieved.get(e.getUUID()) != null){
+                            return;
+                        }
+                        ConnectionsList.getInstance().alreadyRecieved.put(e.getUUID(), true);
                         int type = e.getType();
                         switch(type) {
                             case 1:
-                                Toast.makeText(getContext(), "Recieved a broadcast event", Toast.LENGTH_LONG).show();
+                                //
+                                // Toast.makeText(getContext(), "Recieved a broadcast event - sender blocked? " + isMacBlocked(e.getSender()), Toast.LENGTH_LONG).show();
 
                                 String m = e.getMessage();
+
+                                //code to forward
+                                ConnectionsList.getInstance().sendEvent(e);
                                 if(e.isClientAllowed(bluetooth.getAddress())) {
+                                    if(isMacBlocked(e.getSender())){
+                                        return;
+                                    }
                                     showNotification("BlueM - Message from " + e.getSenderName(),
                                             e.getMessage());
                                 }
                                 chatActivity.getInstance().recieveMessage(m, e.getSender(), e);
                                     //this client can see it
                                 //}
-                                //code to forward
-                                ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 2:
-                                Toast.makeText(getContext(), "Some device asked for a devices update, sending them", Toast.LENGTH_LONG).show();
+                                //Toast.makeText(getContext(), "Some device asked for a devices update, sending them", Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 3:
-                                Toast.makeText(getContext(), "Recieved a network devices event update", Toast.LENGTH_LONG).show();
+                                //Toast.makeText(getContext(), "Recieved a network devices event update", Toast.LENGTH_LONG).show();
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 4:
@@ -133,6 +151,8 @@ public class AllContactsFrag extends Fragment {
                                 ConnectionsList.getInstance().sendEvent(e);
                                 break;
                             case 7:
+                                //Toast.makeText(getContext(), "Got a group msg", Toast.LENGTH_LONG).show();
+
                                 GroupChat g = e.getGroupChat();
                                 if(g.checkMemberByMAC(BluetoothAdapter.getDefaultAdapter().getAddress())){
                                     GroupChatActivity.getInstance().recieveMessage(e.getMessage(),
@@ -144,7 +164,8 @@ public class AllContactsFrag extends Fragment {
 
                     }
                     catch(Exception ex) {
-
+                        ex.printStackTrace();
+                        //Toast.makeText(getContext(), "Got an event but couldn't deserialize it size " + readBuf.length, Toast.LENGTH_LONG).show();
                     }
                     updateContactsList();
                     break;
@@ -156,8 +177,13 @@ public class AllContactsFrag extends Fragment {
         }
     };
 
+
+    public static AllContactsFrag getInstance(){
+        return instance;
+    }
+
     public void HandleType5(Event event){
-        Toast.makeText(getActivity(), "you have been added to a grp chat", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "You have been added to Group Chat: " + event.getGroupChat().getName(), Toast.LENGTH_LONG).show();
         GroupController.getInstance().addGroupChat(event.getGroupChat());
         ConnectionsList.getInstance().sendEvent(event);
     }
@@ -181,7 +207,21 @@ public class AllContactsFrag extends Fragment {
 
             // add the listview header button
         Button button = new Button(getActivity());
-        button.setText("Scan for Devices");
+        button.setText("Scan for Networks");
+        mainBtn = button;
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Iterator<BluetoothDevice> i = BluetoothAdapter.getDefaultAdapter().getBondedDevices().iterator();
+                while(i.hasNext()){
+                    BluetoothDevice d = i.next();
+                    if(ConnectionsList.getInstance().isDeviceInNetwork(d.getAddress()) == false){
+                        ConnectionsList.getInstance().makeConnectionTo(d);
+                    }
+                }
+                Toast.makeText(getContext(),"Scanning for networks to join", Toast.LENGTH_LONG).show();
+            }
+        });
+
         button.setBackgroundColor(getResources().getColor(R.color.lightblue));
         listView.setBackgroundColor(getResources().getColor(R.color.white));
         button.setTextColor(getResources().getColor(R.color.white));
@@ -230,6 +270,10 @@ public class AllContactsFrag extends Fragment {
                         return;
                     }
                 }
+                if(isMacBlocked(mac)){
+                    Toast.makeText(getContext(), deviceName + " is blocked. Can't communicate with them.", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 goToChat(getView(), mac);
             }
         });
@@ -269,7 +313,82 @@ public class AllContactsFrag extends Fragment {
         return null;
     }
 
+    public static boolean isMacBlocked(String mac){
+        try {
+            BufferedReader inputReader = new BufferedReader(new InputStreamReader(AllContactsFrag.getInstance().getContext().openFileInput(
+                    "blocked.txt")));
+            String message;
+            while((message = inputReader.readLine()) != null){
+                //Toast.makeText(chatActivity.getInstance().getApplicationContext(), message + " is blocked", Toast.LENGTH_LONG).show();
 
+                if(message.equals(mac)){
+                    inputReader.close();
+                    return true;
+                }
+            }
+            inputReader.close();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static void unblockMac(String mac){
+        Set<String> macs = new HashSet<String>();
+        try {
+            BufferedReader inputReader = new BufferedReader(new InputStreamReader(AllContactsFrag.getInstance().getContext().openFileInput(
+                    "blocked.txt")));
+            String message;
+            while((message = inputReader.readLine()) != null){
+                macs.add(message);
+            }
+            inputReader.close();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        macs.remove(mac);
+        try {
+            FileOutputStream fos = AllContactsFrag.getInstance().getContext().openFileOutput("blocked.txt", Context.MODE_PRIVATE);
+            Iterator<String> i = macs.iterator();
+            while(i.hasNext()){
+                fos.write((i.next() + "\n").getBytes());
+            }
+            fos.close();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void blockMac(String mac){
+        Set<String> macs = new HashSet<String>();
+        try {
+            BufferedReader inputReader = new BufferedReader(new InputStreamReader(AllContactsFrag.getInstance().getContext().openFileInput(
+                    "blocked.txt")));
+            String message;
+            while((message = inputReader.readLine()) != null){
+                macs.add(message);
+            }
+            inputReader.close();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        macs.add(mac);
+        try {
+            FileOutputStream fos = AllContactsFrag.getInstance().getContext().openFileOutput("blocked.txt", Context.MODE_PRIVATE);
+            Iterator<String> i = macs.iterator();
+            while(i.hasNext()){
+                fos.write(("" + i.next() + "\n").getBytes());
+            }
+            fos.close();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override//disconnected
@@ -306,11 +425,12 @@ public class AllContactsFrag extends Fragment {
         bluetooth = BluetoothAdapter.getDefaultAdapter();
         Set<BluetoothDevice> d = bluetooth.getBondedDevices();
         Iterator<BluetoothDevice> i = d.iterator();
-
+        boolean connected = false;
         while(i.hasNext()){
             BluetoothDevice device = i.next();
             String device_name = device.getName();
             ConnectedThread t = ConnectionsList.getInstance().getConnectedThread(device);
+
             if(t == null){
                 //Toast.makeText(getContext(), device.getName() + " -- trying to connect to it", Toast.LENGTH_SHORT).show();
                 //ConnectionsList.getInstance().closeConnection(device);
@@ -322,13 +442,19 @@ public class AllContactsFrag extends Fragment {
                     //ConnectionsList.getInstance().makeConnectionTo(device);
                 }
                 else {
+                    connected = true;
                     device_name = "✓ " + device_name;
                 }
             }
             if(device_name.contains("✓") == false && ConnectionsList.getInstance().isDeviceInNetwork(device.getAddress())){//some other client has this client connected
                 device_name = "✓ " + device_name;
             }
-            cL.add(device_name);
+            if(ConnectionsList.getInstance().isDeviceInNetwork(device.getAddress())){
+
+            }
+            else {
+                cL.add(device_name);
+            }
         }
         // now add from network devices
         Iterator<String> di = ConnectionsList.getInstance().getNamesOfConnectedDevices().iterator();
@@ -338,6 +464,9 @@ public class AllContactsFrag extends Fragment {
                 continue;
             }
             cL.add("✓ "+name);
+        }
+        if(connected){
+            mainBtn.setTag("Connected");
         }
         contactsList.setAdapter(adapter);
     }

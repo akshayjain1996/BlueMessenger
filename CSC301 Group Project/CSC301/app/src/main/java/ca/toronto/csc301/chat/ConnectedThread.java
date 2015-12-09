@@ -41,7 +41,7 @@ public class ConnectedThread extends Thread {
     }
 
     public void run() {
-        byte[] buffer = new byte[1024];  // buffer store for the stream
+        byte[] buffer = new byte[8000];  // buffer store for the stream 3MB
         int bytes; // bytes returned from read()
         //chatActivity.getInstance().recieveMessage("I'm listening for messages");
         // Keep listening to the InputStream until an exception occurs

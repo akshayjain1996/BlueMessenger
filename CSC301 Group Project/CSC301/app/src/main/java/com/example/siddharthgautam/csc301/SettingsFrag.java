@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
 import ca.toronto.csc301.chat.BlockedUsers;
 import ca.toronto.csc301.chat.ConnectionsList;
 import ca.toronto.csc301.chat.FavouriteUsers;
@@ -42,7 +44,9 @@ public class SettingsFrag extends Fragment {
         update = (Button) view.findViewById(R.id.updateProfile);
         profileNameTextView = (EditText) view.findViewById(R.id.profile_name);
         favourite = (Button) view.findViewById(R.id.setting_favourits);
+        favourite.setText("Add/Remove Favourite Users");
         blacklist = (Button) view.findViewById(R.id.setting_blacklist);
+        blacklist.setText("Block/Unlock Users");
 
 
         if(profileNameTextView != null) {
@@ -86,7 +90,14 @@ public class SettingsFrag extends Fragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 String strName = arrayAdapter.getItem(which);
                                 //GroupController.getInstance().addToGroupChat(groupChat, strName);
-                                FavouriteUsers.getInstance().addFav(ConnectionsList.getInstance().getMacFromName(strName));
+                                String mac = ConnectionsList.getInstance().getMacFromName(strName);
+                                if(FavouriteUsers.getInstance().getFavs().contains(mac)) {
+                                    FavouriteUsers.getInstance().removeFav(mac);
+                                    Toast.makeText(getContext(), "Removed " + strName + " as a favourite", Toast.LENGTH_LONG).show();
+                                }else{
+                                    FavouriteUsers.getInstance().addFav(mac);
+                                    Toast.makeText(getContext(), "Added " + strName + " as a favourite", Toast.LENGTH_LONG).show();
+                                }
 
                             }
                         });
@@ -121,7 +132,15 @@ public class SettingsFrag extends Fragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 String strName = arrayAdapter.getItem(which);
                                 //GroupController.getInstance().addToGroupChat(groupChat, strName);
-                                BlockedUsers.getInstance().addUserToBlackList(ConnectionsList.getInstance().getMacFromName(strName));
+                                //BlockedUsers.getInstance().addUserToBlackList(ConnectionsList.getInstance().getMacFromName(strName));
+                                String mac = ConnectionsList.getInstance().getMacFromName(strName);
+                                if(AllContactsFrag.isMacBlocked(mac)){
+                                    AllContactsFrag.unblockMac(mac);
+                                    Toast.makeText(getContext(), "Unblocked " + strName + ". They can now communicate with you", Toast.LENGTH_LONG).show();
+                                }else{
+                                    AllContactsFrag.blockMac(mac);
+                                    Toast.makeText(getContext(), "Blocked " + strName + ". They can no longer communicate with you", Toast.LENGTH_LONG).show();
+                                }
 
                             }
                         });

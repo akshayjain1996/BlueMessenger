@@ -1,5 +1,4 @@
 package ca.toronto.csc301.chat;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * Created by Priyen on 2015-11-19.
@@ -36,7 +36,7 @@ public class Event implements Serializable{
     //who has already seen/received this event?
     private HashSet<String> excludedTargets = new HashSet<String>();
     private GroupChat groupChat;
-
+    private UUID UUID;
     public static byte[] serialize(Object obj) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream os = new ObjectOutputStream(out);
@@ -48,6 +48,14 @@ public class Event implements Serializable{
         ByteArrayInputStream in = new ByteArrayInputStream(data);
         ObjectInputStream is = new ObjectInputStream(in);
         return is.readObject();
+    }
+
+    public UUID getUUID(){
+        return this.UUID;
+    }
+
+    public Event (){
+        this.UUID = UUID.randomUUID();
     }
 
     public void setFileBytes(byte[] bytes){
